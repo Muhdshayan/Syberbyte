@@ -301,7 +301,7 @@ dist
 
 # vuepress build output
 .vuepress/dist
-
+.models/
 # vuepress v2.x temp and cache directory
 .temp
 .cache
