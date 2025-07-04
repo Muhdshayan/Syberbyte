@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "parser_version": "1.2",
+    "parsed_at": "2025-01-01T12:00:00Z",
+    "status": "success"
+  },
+  "profile": {
+    "name": "John Doe",
+    "contact": {
+      "phone": "+1-555-0123",
+      "email": "john.doe@email.com",
+      "linkedin": "https://linkedin.com/in/johndoe",
+      "github": "https://github.com/johndoe"
+    },
+    "skills": {
+      "technical": ["Python", "React", "Node.js", "PostgreSQL"],
+      "soft": ["Leadership", "Communication", "Problem Solving"]
+    },
+    "education": [
+      {
+        "degree": "Bachelor of Science in Computer Science",
+        "institution": "University Name",
+        "year": "2018-2022"
+      }
+    ],
+    "experience": [
+      {
+        "role": "Software Developer",
+        "organization": "Tech Company",
+        "duration": "2022-Present",
+        "description": [
+          "Developed RESTful APIs using Node.js",
+          "Built responsive UI components with React",
+          "Optimized database queries for 50% performance improvement"
+        ]
+      }
+    ],
+    "projects": [
+      {
+        "name": "E-commerce Platform",
+        "technologies": "React, Node.js, MongoDB",
+        "description": "Full-stack e-commerce solution with payment integration",
+        "links": [{"GitHub": "https://github.com/..."}]
+      }
+    ],
+    "certifications": [],
+    "entities": {}  
+  }
+}
