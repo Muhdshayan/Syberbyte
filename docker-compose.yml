@@ -1,1 +1,51 @@
-#it would be created 
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - 5173:5173
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /frontend
+          ignore:
+           - node_modules
+  backend:
+    build:
+        context: .
+    ports:
+        - 8000:8000
+    volumes:
+        - ./backend:/backend  
+    command: >
+        sh -c "python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000"
+    environment:
+        - DB_HOST=db
+        - DB_NAME=mydatabase
+        - DB_USER=admin
+        - DB_PASS=secret
+    depends_on:
+        db:
+          condition: service_healthy    
+
+  db:
+    image: postgres:17.1
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+    healthcheck:
+      test: ["CMD","pg_isready" , "-q" , "-d" ,"mydatabase","-U","admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
