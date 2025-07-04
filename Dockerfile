@@ -1,19 +1,32 @@
-FROM python:3.13.0-alpine3.20
+# Use a stable Debian-based Python image
+FROM python:3.11-slim
 
-ENV PYTHONUNBUFFERED 1
-
-COPY ./requirements.txt /requirements.txt
-
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 ENV PATH="/py/bin:$PATH"
+
+# Install system dependencies using APT
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    gcc \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
 RUN python -m venv /py && \
-    pip install --upgrade pip && \
-    apk add --update --upgrade --no-cache postgresql-client && \
-    apk add --update --upgrade --no-cache --virtual .tmp \
-        build-base postgresql-dev
+    /py/bin/pip install --upgrade pip
 
-RUN pip install -r /requirements.txt && apk del .tmp
-
-COPY ./backend /backend
+# Set working directory
 WORKDIR /backend
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Copy and install dependencies
+COPY ./requirements.txt .
+RUN /py/bin/pip install -r requirements.txt
+
+# Copy the project code
+COPY . .
+
+# Set the default command
+CMD ["/py/bin/python", "manage.py", "runserver", "0.0.0.0:8000"]

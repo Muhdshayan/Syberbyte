@@ -13,12 +13,23 @@ services:
           ignore:
            - node_modules
   backend:
-   build:
-      context: .
-   ports:
-      - 8000:8000
-   volumes:
-      - ./backend:/backend      
+    build:
+        context: .
+    ports:
+        - 8000:8000
+    volumes:
+        - ./backend:/backend  
+    command: >
+        sh -c "python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000"
+    environment:
+        - DB_HOST=db
+        - DB_NAME=mydatabase
+        - DB_USER=admin
+        - DB_PASS=secret
+    depends_on:
+        db:
+          condition: service_healthy    
 
   db:
     image: postgres:17.1
@@ -27,11 +38,11 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=db
-      - POSTGRES_USER=POSTGRES_USER
-      - POSTGRES_PASSWORD=localdevpw
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
     healthcheck:
-      test: ["CMD","pg_isready" , "-q" , "-d" ,"db","-U","user"]
+      test: ["CMD","pg_isready" , "-q" , "-d" ,"mydatabase","-U","admin"]
       interval: 5s
       timeout: 5s
       retries: 5
