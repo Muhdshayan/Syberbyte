@@ -12,3 +12,29 @@ services:
           target: /frontend
           ignore:
            - node_modules
+  backend:
+   build:
+      context: .
+   ports:
+      - 8000:8000
+   volumes:
+      - ./backend:/backend      
+
+  db:
+    image: postgres:17.1
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=POSTGRES_USER
+      - POSTGRES_PASSWORD=localdevpw
+    healthcheck:
+      test: ["CMD","pg_isready" , "-q" , "-d" ,"db","-U","user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
