@@ -26,7 +26,8 @@ services:
         - DB_HOST=db
         - DB_NAME=mydatabase
         - DB_USER=admin
-        - DB_PASS=secret
+        - DB_PASS=secret 
+        - CELERY_BROKER_URL=amqp://mquser:bunnypass123@mq:5672//
     depends_on:
         db:
           condition: service_healthy    
@@ -46,6 +47,28 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  mq:
+    image: rabbitmq:3.13.7-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=mquser
+      - RABBITMQ_DEFAULT_PASS=bunnypass123
 
+  worker:
+      build:
+        context: .
+      volumes:
+        - ./backend:/backend
+      command: >
+        sh -c "celery -A backend worker -l INFO"
+      environment:
+        - DB_HOST=db
+        - DB_NAME=db
+        - DB_USER=user
+        - DB_PASS=localdevpw
+        - CELERY_BROKER_URL=amqp://mquser:bunnypass123@mq:5672//
+      depends_on:
+        - backend
+        - mq
+        
 volumes:
   db-data:
