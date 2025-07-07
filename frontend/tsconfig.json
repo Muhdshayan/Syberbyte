@@ -9,9 +9,15 @@
     }
   ],
   "compilerOptions": {
+<<<<<<< HEAD
     "baseUrl": "",
     "paths": {
       "@/*": ["src/*"]
+=======
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+>>>>>>> origin/Frontend/Rida
     }
   }
 }

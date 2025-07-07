@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     "tsBuildInfoFile": "node_modules/.tmp/tsconfig.node.tsbuildinfo",
+=======
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+>>>>>>> origin/Frontend/Rida
     "target": "ES2023",
     "lib": ["ES2023"],
     "module": "ESNext",

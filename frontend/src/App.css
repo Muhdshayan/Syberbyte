@@ -1,7 +1,11 @@
 #root {
+<<<<<<< HEAD
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+=======
+  margin: 0 auto;
+>>>>>>> origin/Frontend/Rida
   text-align: center;
 }
 

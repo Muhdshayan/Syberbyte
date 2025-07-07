@@ -6,7 +6,11 @@
   "tailwind": {
     "config": "",
     "css": "src/index.css",
+<<<<<<< HEAD
     "baseColor": "neutral",
+=======
+    "baseColor": "zinc",
+>>>>>>> origin/Frontend/Rida
     "cssVariables": true,
     "prefix": ""
   },

@@ -1,12 +1,25 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     "tsBuildInfoFile": "node_modules/.tmp/tsconfig.app.tsbuildinfo",
+=======
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+>>>>>>> origin/Frontend/Rida
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+<<<<<<< HEAD
 
+=======
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+>>>>>>> origin/Frontend/Rida
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -21,6 +34,7 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
+<<<<<<< HEAD
     "noUncheckedSideEffectImports": true,
      
     "baseUrl": "",
@@ -29,6 +43,9 @@
         "src/*"
       ]
     }
+=======
+    "noUncheckedSideEffectImports": true
+>>>>>>> origin/Frontend/Rida
   },
   "include": ["src"]
 }
