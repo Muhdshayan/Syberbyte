@@ -1,33 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import Login from "./Login/Login"
+import AdminDashboard from "./dashboard/adminDashboard/dashboard"
+import HrDashboard from "./dashboard/HrDashboard/dashboard"
+import RecruiterDashboard from "./dashboard/RecruiterDashboard/dashboard"
+import DashboardLayout from "./dashboard/layout"
+import JobCategoryManagement from "./dashboard/adminDashboard/job-category-management"
+import SystemHealthMonitor from "./dashboard/adminDashboard/system-health-monitor"
+import AiPerformanceMetrics from "./dashboard/adminDashboard/ai-performance-metrics"
+import ActiveJobs from "./dashboard/HrDashboard/dashboard"
+import FinalInterview from "./dashboard/HrDashboard/final-interview"
+import EmailTemplatesHr from "./dashboard/HrDashboard/email-templates-hr"
+import ViewCandidates from "./dashboard/RecruiterDashboard/dashboard"
+import InitialScreening from "./dashboard/RecruiterDashboard/initial-screening"
+import EmailTemplatesRecruit from "./dashboard/RecruiterDashboard/email-templates-recruiter"
 import './App.css'
+import { Route, Routes } from "react-router-dom"
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Routes>
+        <Route path="/" element={<Login/>} />
+        <Route path="/dashboard" element={<DashboardLayout/>}>
+           <Route path="admin">
+             <Route index element={<AdminDashboard/>} />
+             <Route path="job-category-management" element={<JobCategoryManagement/>} />
+             <Route path="system-health-monitor" element={<SystemHealthMonitor/>} />
+              <Route path="ai-performance-metrics" element={<AiPerformanceMetrics/>} />
+           </Route>
+          <Route path="hr">
+            <Route index element={<ActiveJobs/>} />
+            <Route path="final-interview" element={<FinalInterview/>} />
+            <Route path="email-templates-hr" element={<EmailTemplatesHr/>} />
+          </Route>
+          <Route path="recruiter">
+            <Route index element={<ViewCandidates/>} />
+            <Route path="initial-screening" element={<InitialScreening/>} />
+            <Route path="email-templates-recruiter" element={<EmailTemplatesRecruit/>} />
+          </Route>
+        </Route>
+        </Routes>
     </>
   )
 }
