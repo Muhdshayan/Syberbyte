@@ -30,12 +30,12 @@ function App() {
           <Route path="hr">
             <Route index element={<ActiveJobs/>} />
             <Route path="final-interview" element={<FinalInterview/>} />
-            <Route path="email-templates-hr" element={<EmailTemplatesHr/>} />
+            <Route path="email-templates" element={<EmailTemplatesHr/>} />
           </Route>
           <Route path="recruiter">
             <Route index element={<ViewCandidates/>} />
             <Route path="initial-screening" element={<InitialScreening/>} />
-            <Route path="email-templates-recruiter" element={<EmailTemplatesRecruit/>} />
+            <Route path="email-templates" element={<EmailTemplatesRecruit/>} />
           </Route>
         </Route>
         </Routes>
