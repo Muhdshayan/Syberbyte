@@ -15,8 +15,8 @@ import { Users, Briefcase, BarChart, Brain, LogOut, Mail, Search, FileText } fro
 import type React from "react";
 import { Link } from "react-router-dom";
 import Breadcrumb from "@/dashboard-components/breadcrumb";
-import AddUserAmin from "@/dashboard-components/add-user-admin";
 import AddUserAdmin from "@/dashboard-components/add-user-admin";
+import AddCategory from "@/dashboard-components/add-new-category"
 
 
 
@@ -102,7 +102,8 @@ export default function DashboardLayout() {
         {isAdminTablePage ? (
           
           <div className=" flex md:flex-row flex-col items-start pl-3">
-            <AddUserAdmin/>
+             {pathname === "/dashboard/admin" && <AddUserAdmin />}
+              {pathname === "/dashboard/admin/job-category-management" && <AddCategory />}
             <div className="flex flex-col flex-1">
               <div className=" pt-5 inline-flex">
                 <Breadcrumb/>

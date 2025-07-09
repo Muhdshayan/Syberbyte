@@ -17,8 +17,15 @@ export default function useLogin(initialRole: Role = "HR") {
   const [error, setError] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<Role>(initialRole);
 
-  /* Replace this with your real backend endpoint
-  const API_BASE = "https://your-api.com";*/
+
+    const data = {
+    "message": "Login successful",
+    "user_id": 1,
+    "email": "admin@example.com",
+    "role": "Full Admin",
+    "permission": 10,
+    "time": "2025-07-07T09:15:23.785Z"
+  }
 
    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,8 +39,7 @@ export default function useLogin(initialRole: Role = "HR") {
     setError("");
 
     setTimeout(() => {
-      const role = selectedRole.toLowerCase();
-      navigate(`/dashboard/${role}`);
+      navigate(`/dashboard/${data.role}`);
       setLoading(false);
     }, 800);
   };

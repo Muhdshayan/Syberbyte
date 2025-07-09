@@ -1,9 +1,6 @@
 import Login from "./Login/Login"
 import AdminDashboard from "./dashboard/adminDashboard/dashboard"
-import HrDashboard from "./dashboard/HrDashboard/dashboard"
-import RecruiterDashboard from "./dashboard/RecruiterDashboard/dashboard"
 import DashboardLayout from "./dashboard/layout"
-import JobCategoryManagement from "./dashboard/adminDashboard/job-category-management"
 import SystemHealthMonitor from "./dashboard/adminDashboard/system-health-monitor"
 import AiPerformanceMetrics from "./dashboard/adminDashboard/ai-performance-metrics"
 import ActiveJobs from "./dashboard/HrDashboard/dashboard"
@@ -23,7 +20,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout/>}>
            <Route path="admin">
              <Route index element={<AdminDashboard/>} />
-             <Route path="job-category-management" element={<JobCategoryManagement/>} />
+             <Route path="job-category-management" element={<AdminDashboard/>} />
              <Route path="system-health-monitor" element={<SystemHealthMonitor/>} />
               <Route path="ai-performance-metrics" element={<AiPerformanceMetrics/>} />
            </Route>

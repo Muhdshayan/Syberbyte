@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { ChevronDown, Plus } from "lucide-react";
 export default function AddUserAdmin() {
     return (
-        <div className="md:w-[25%] w-full bg-cream shadow-none !font-inter-regular pt-5 ">
+        <div className="md:w-[25%] w-full bg-cream shadow-none !font-inter-regular py-5 ">
             <CardHeader>
                 <CardTitle className="text-2xl font-poppins-semibold text-left">Add new User</CardTitle>
             </CardHeader>
@@ -25,7 +25,7 @@ export default function AddUserAdmin() {
                 <Label htmlFor="role" className="my-4">Role</Label>  
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild >
-                        <Button variant="outline" className="w-full !text-left !text-sm font-inter-regular !bg-white">
+                        <Button variant="outline" className="w-full !text-left !text-sm font-inter-regular !border-gray-200 !bg-white">
 
                             Select Role
                             <ChevronDown className="ml-auto h-4 w-4" />
