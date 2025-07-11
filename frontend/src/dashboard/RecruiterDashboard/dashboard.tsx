@@ -1,5 +1,6 @@
 import JobCards from "@/dashboard-components/job-cards";
 
+
 export interface Job {
   id: number;           // unique identifier
   title: string;        // job title
@@ -64,7 +65,7 @@ export const jobs: Job[] = [
 export default function ViewCandidates() {
     
     return (
-        <div className="flex flex-col items-center justify-start h-auto w-full  py-40 px-10">
+        <div className="flex flex-col items-center justify-start h-auto w-full py-20 px-10">
             <div className="w-full flex justify-between items-center">
                 <h2 className="text-3xl font-poppins-semibold mb-6">View Candidates</h2>
             </div>

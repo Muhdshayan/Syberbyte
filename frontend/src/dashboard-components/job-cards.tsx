@@ -6,6 +6,9 @@ import { Card,
     CardFooter,
  } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+
+
 
 type Job ={
     id: number;        
@@ -18,6 +21,7 @@ type Job ={
 }
 
 export default function JobCards(props:Job) {
+    const navigate = useNavigate();
     return(
             <Card className="w-full">
                 <CardHeader>
@@ -31,7 +35,7 @@ export default function JobCards(props:Job) {
                     <div className="bg-green rounded-full inline-block text-sm text-white px-3 py-1 mt-2">Posted on: MM/DD/YY</div>
                 </CardContent>
                 <CardFooter>
-                    <Button className="!bg-blue text-white !font-inter-regular">View Candidates</Button>
+                   <Button className="!bg-blue !text-sm !font-inter-regular" onClick={() => navigate(`/dashboard/recruiter/${props.id}/view-candidates`)}>View Candidates</Button>
                 </CardFooter>
             </Card>
     )

@@ -54,7 +54,7 @@ a {
   text-decoration: inherit;
 }
 
-body { @apply !min-w-screen; overflow-x: hidden; background: #F9FAFB;}
+body { @apply !max-w-screen; overflow-x: hidden; background: #F9FAFB;}
 
 h1 {
   font-size: 3.2em;

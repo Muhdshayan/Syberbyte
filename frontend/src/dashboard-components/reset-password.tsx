@@ -28,7 +28,7 @@ export default function ResetPasswordDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md w-full !font-inter-regular">
+      <DialogContent className="md:max-w-md md:w-full w-[80%] !font-inter-regular">
         <DialogHeader>
           <DialogTitle>Reset Password</DialogTitle>
           <DialogDescription>Reset user password here.</DialogDescription>

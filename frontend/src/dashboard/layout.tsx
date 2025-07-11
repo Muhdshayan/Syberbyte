@@ -32,7 +32,7 @@ const menu: Record<string, MenuItem[]> = {
   ],
   recruiter: [
     { label: "View candidates", icon: <Users className="w-6 h-6 text-green" /> , to:"/dashboard/recruiter/"},
-    { label: "Initial screening", icon: <Search className="w-6 h-6 text-green" />, to:"/dashboard/recruiter/initial-screening" },
+    { label: "Manage Interview", icon: <Search className="w-6 h-6 text-green" />, to:"/dashboard/recruiter/manage-interview" },
     { label: "Email templates", icon: <Mail className="w-6 h-6 text-green" />, to:"/dashboard/recruiter/email-templates" },
     { label: "Sign out", icon: <LogOut className="w-6 h-6 text-green" />, onClick: () => {} },
   ],
@@ -46,7 +46,10 @@ const menu: Record<string, MenuItem[]> = {
 
 const adminTablePages = [
   '/dashboard/admin',
-  '/dashboard/admin/job-category-management'
+  '/dashboard/admin/job-category-management',
+  '/dashboard/admin/',
+  '/dashboard/admin/job-category-management/'
+
 ];
 
 export default function DashboardLayout() {
@@ -60,7 +63,8 @@ export default function DashboardLayout() {
 
   return (
     <>
-      <header className={`${isAdminTablePage? `sticky` : `fixed `} top-0 left-0 flex flex-col w-screen gap-3 bg-cream`}>
+
+      <header className={`${isAdminTablePage? `sticky` : `fixed `} top-0 left-0 flex flex-col w-screen gap-3 bg-cream z-3` }>
         <div className="w-screen overflow-x-hidden auto flex items-center justify-between pl-3 md:pr-6 pr-3 pt-2">
           <div className="flex items-center gap-2 ">
             <img src="/starblack.svg" className="w-6 h-6" />
@@ -115,10 +119,10 @@ export default function DashboardLayout() {
           </div>) : 
           (
           <>
-          <div className="relative left-3 top-16 inline-flex w-screen">
+          <div className="relative top-16 flex w-full overflow-x-auto">
             <Breadcrumb/>
           </div>
-          <main>
+          <main className="relative top-32 pb-6 w-full overflow-x-auto">
             <Outlet />
           </main>
           </>

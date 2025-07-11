@@ -22,7 +22,7 @@ export default function useLogin(initialRole: Role = "HR") {
     "message": "Login successful",
     "user_id": 1,
     "email": "admin@example.com",
-    "role": "Full Admin",
+    "role": "full-admin",
     "permission": 10,
     "time": "2025-07-07T09:15:23.785Z"
   }

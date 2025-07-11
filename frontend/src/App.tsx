@@ -7,10 +7,12 @@ import ActiveJobs from "./dashboard/HrDashboard/dashboard"
 import FinalInterview from "./dashboard/HrDashboard/final-interview"
 import EmailTemplatesHr from "./dashboard/HrDashboard/email-templates-hr"
 import ViewCandidates from "./dashboard/RecruiterDashboard/dashboard"
-import InitialScreening from "./dashboard/RecruiterDashboard/initial-screening"
+import ViewCandidatesJobPage from "./dashboard/RecruiterDashboard/view-candidate"
 import EmailTemplatesRecruit from "./dashboard/RecruiterDashboard/email-templates-recruiter"
+import JobCategoryManagement from "@/dashboard/adminDashboard/job-category-management"
 import './App.css'
 import { Route, Routes } from "react-router-dom"
+import ManageInterview from "@/dashboard/RecruiterDashboard/manage-interview"
 
 function App() {
   return (
@@ -20,7 +22,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout/>}>
            <Route path="admin">
              <Route index element={<AdminDashboard/>} />
-             <Route path="job-category-management" element={<AdminDashboard/>} />
+             <Route path="job-category-management" element={<JobCategoryManagement/>} />
              <Route path="system-health-monitor" element={<SystemHealthMonitor/>} />
               <Route path="ai-performance-metrics" element={<AiPerformanceMetrics/>} />
            </Route>
@@ -31,7 +33,8 @@ function App() {
           </Route>
           <Route path="recruiter">
             <Route index element={<ViewCandidates/>} />
-            <Route path="initial-screening" element={<InitialScreening/>} />
+            <Route path=":JobId/view-candidates" element={<ViewCandidatesJobPage/>} />
+            <Route path="manage-interview" element={<ManageInterview/>} />
             <Route path="email-templates" element={<EmailTemplatesRecruit/>} />
           </Route>
         </Route>

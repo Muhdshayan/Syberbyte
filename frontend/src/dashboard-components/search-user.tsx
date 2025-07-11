@@ -7,7 +7,7 @@ export default function SearchUser() {
         <div className="flex flex-col items-start mt-5 justify-start w-full !font-inter-regular">
             <Card className="w-[95%] p-3 flex md:flex-row flex-col justify-between">
                 <div className="flex gap-2">
-                    <div className="relative">
+                    <div className="relative z-1">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                             <Search className="h-5 w-5" />
                         </span>

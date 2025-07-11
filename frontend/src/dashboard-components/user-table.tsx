@@ -147,10 +147,15 @@ export default function UserTable() {
         </div>
 
         {/* Mobile Table */}
-        <div className="block md:hidden w-full">
+         <div className="block md:hidden w-full">
           {users.map((user) => (
             <div key={user.id} className="mb-4">
-              <MobileTable {...user} />
+              <MobileTable
+                {...user}
+                onEditUser={(u) => setEditUser(u)}
+                onResetUser={(u) => setResetUser(u)}
+                onDeleteUser={() => setOpen(true)}
+              />
             </div>
           ))}
         </div>
