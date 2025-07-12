@@ -207,52 +207,36 @@ def extract_email(text):
         return None
 
 def fix_broken_linkedin_urls(text):
-    # 1. Handle cases where URL is followed by text without space
+    # Fix hyphenated line breaks specifically in LinkedIn usernames (e.g., muhammad-talha-\nnadeem)
     text = re.sub(
-        r'(linkedin\.com\/[a-zA-Z0-9\-]+)([A-Z][a-z]+)',
-        r'\1 \2',
+        r'(linkedin\.com\/(?:in|pub|company)\/[a-zA-Z0-9\-]+)-\s*\n\s*([a-zA-Z0-9\-]+)',
+        r'\1\2',
         text,
         flags=re.IGNORECASE
     )
 
-    # 2. Join hyphenated line breaks specifically for LinkedIn URLs
-    # This handles cases like "laiba-khan-\n129347587"
-    text = re.sub(
-        r'(linkedin\.com\/[a-zA-Z\-]+)-\n([0-9]+)',
-        r'\1-\2',
-        text,
-        flags=re.IGNORECASE
-    )
-
-    # 3. Join LinkedIn URLs split across lines
+    # Fix generic line breaks within LinkedIn URLs (e.g., www\n.\nlinkedin\n.com/in/...)
     text = re.sub(r'www[\n\s]*\.?[\n\s]*linkedin', 'www.linkedin', text, flags=re.IGNORECASE)
     text = re.sub(r'(linkedin\.com)[\n\s]*\/[\n\s]*', r'\1/', text, flags=re.IGNORECASE)
-    text = re.sub(r'(linkedin\.com\/[a-zA-Z]+)[\n\s]*\/[\n\s]*', r'\1/', text)
+    text = re.sub(r'(linkedin\.com\/[a-zA-Z0-9\-]+)[\n\s]*\/[\n\s]*', r'\1/', text)
 
-    # 4. Clean up: remove internal newlines and fix space before http(s)
-    text = re.sub(r'\s+(?=https?:\/\/)', '', text)
     return text
 
 def extract_linkedin(text):
     text = fix_broken_linkedin_urls(text)
-    
-    # Improved LinkedIn regex that:
-    # 1. Matches standard LinkedIn URL patterns
-    # 2. Stops at word boundaries
-    # 3. Specifically handles the numeric suffix case
+
     LINKEDIN_REG = re.compile(
-        r'(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:in|pub|company)\/'
-        r'(?:[a-zA-Z0-9\-]+(?:-[0-9]+)?)'  # handles both name and name-number patterns
-        r'(?=\/|$|\s|\?|\))',  # stops at common delimiters
+        r'(https?:\/\/)?(www\.)?linkedin\.com\/(in|pub|company)\/[a-zA-Z0-9\-]+(?:-[a-zA-Z0-9]+)*',
         re.IGNORECASE
     )
-    
+
     matches = re.finditer(LINKEDIN_REG, text)
     for match in matches:
-        url = match.group(0).strip()
+        url = match.group(0).strip().rstrip('.,);:')
         if not url.startswith("http"):
-            url = "https://" + url.lstrip('/')
+            url = "https://" + url
         return url
+
     return None
 
 def fix_broken_github_urls(text):
