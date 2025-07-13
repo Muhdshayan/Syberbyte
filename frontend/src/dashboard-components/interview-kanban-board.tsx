@@ -2,15 +2,11 @@ import { useState } from "react";
 import InterviewCard from "@/dashboard-components/interview-cards";
 import ActiveScreeningNotes from "@/dashboard-components/active-screening-notes";
 import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import { useDroppable, useDraggable } from "@dnd-kit/core";
+import { Button } from "@/components/ui/button";
 
 // Draggable InterviewCard wrapper
-function DraggableInterviewCard({ id, card, index }: any) {
+function DraggableInterviewCard({ id, card}: any) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id,
   });
@@ -34,13 +30,13 @@ function DraggableInterviewCard({ id, card, index }: any) {
 }
 
 // Droppable column wrapper
-function DroppableColumn({ id, title, cards, children }: any) {
+function DroppableColumn({ id, title, children }: any) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
     <div
       ref={setNodeRef}
       className={`bg-white rounded-lg border p-4 flex-1 min-w-[200px] transition-all ${
-        isOver ? "ring-2 ring-blue-400" : ""
+        isOver ? "ring-2 ring-blue" : ""
       }`}
     >
       <div className="font-poppins-semibold text-xl text-left mb-4">{title}</div>
@@ -49,7 +45,20 @@ function DroppableColumn({ id, title, cards, children }: any) {
   );
 }
 
-const initialData = {
+type Candidate = {
+  id: string;
+  name: string;
+  time: string;
+  role: string;
+};
+
+type Columns = {
+  upcoming: Candidate[];
+  inProgress: Candidate[];
+  completed: Candidate[];
+};
+
+const initialData: Columns = {
   upcoming: [
     { id: "c3", name: "Candidate 3", time: "June 13 10:20AM", role: "Frontend Developer" },
     { id: "c4", name: "Candidate 4", time: "June 13 10:30AM", role: "Frontend Developer" },
@@ -63,36 +72,37 @@ const initialData = {
 };
 
 export default function InterviewKanbanBoard() {
-  const [columns, setColumns] = useState(initialData);
+  const [columns, setColumns] = useState<Columns>(initialData);
+   const [showNotes, setShowNotes] = useState(false);
 
-  function handleDragEnd(event: any) {
-    const { active, over } = event;
-    if (!over) return;
+ function handleDragEnd(event: any) {
+  const { active, over } = event;
+  if (!over) return;
 
-    // Find source and destination columns
-    let sourceCol: keyof typeof columns | null = null;
-    let destCol: keyof typeof columns | null = null;
-    Object.keys(columns).forEach((col) => {
-      if (columns[col as keyof typeof columns].find((c) => c.id === active.id)) {
-        sourceCol = col as keyof typeof columns;
-      }
-      if (col === over.id) {
-        destCol = col as keyof typeof columns;
-      }
-    });
+  // Find source and destination columns
+  let sourceCol: keyof Columns | null = null;
+  let destCol: keyof Columns | null = null;
+  (Object.keys(columns) as (keyof Columns)[]).forEach((col) => {
+    if (columns[col].find((c) => c.id === active.id)) {
+      sourceCol = col;
+    }
+    if (col === over.id) {
+      destCol = col;
+    }
+  });
 
-    if (!sourceCol || !destCol) return;
-    if (sourceCol === destCol) return;
+  if (!sourceCol || !destCol) return;
+  if (sourceCol === destCol) return;
 
-    // Move card from sourceCol to destCol
-    const card = columns[sourceCol].find((c) => c.id === active.id);
-    if (!card) return;
-    setColumns((prev) => ({
-      ...prev,
-      [sourceCol!]: prev[sourceCol!].filter((c) => c.id !== active.id),
-      [destCol!]: [card, ...prev[destCol!]],
-    }));
-  }
+  // Move card from sourceCol to destCol
+ const card = columns[sourceCol as keyof Columns].find((c) => c.id === active.id);
+  if (!card) return;
+  setColumns((prev) => ({
+    ...prev,
+    [sourceCol!]: prev[sourceCol!]?.filter((c) => c.id !== active.id),
+    [destCol!]: [card, ...prev[destCol!]],
+  }));
+}
 
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -115,8 +125,30 @@ export default function InterviewKanbanBoard() {
             ))}
           </DroppableColumn>
         </div>
-        {/* Active Screening Notes */}
-        <ActiveScreeningNotes />
+        {/* Desktop: Show notes on side */}
+        <div className="hidden md:block">
+          <ActiveScreeningNotes />
+        </div>
+        {/* Mobile: Show button to open notes dialog */}
+        <div className="block md:hidden w-full mt-4">
+          <Button className="w-full !bg-blue" onClick={() => setShowNotes(true)}>
+            Add Screening Notes
+          </Button>
+          {showNotes && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="w-[95vw] max-h-[95vh] overflow-y-auto">
+                <ActiveScreeningNotes />
+                <Button
+                  className="w-full mt-4 !bg-blue text-white"
+                  variant="outline"
+                  onClick={() => setShowNotes(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </DndContext>
   );

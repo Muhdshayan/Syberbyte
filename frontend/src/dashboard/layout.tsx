@@ -64,7 +64,7 @@ export default function DashboardLayout() {
   return (
     <>
 
-      <header className={`${isAdminTablePage? `sticky` : `fixed `} top-0 left-0 flex flex-col w-screen gap-3 bg-cream z-3` }>
+      <header className={`sticky top-0 left-0 flex flex-col w-screen gap-3 bg-cream z-3` }>
         <div className="w-screen overflow-x-hidden auto flex items-center justify-between pl-3 md:pr-6 pr-3 pt-2">
           <div className="flex items-center gap-2 ">
             <img src="/starblack.svg" className="w-6 h-6" />
@@ -119,10 +119,8 @@ export default function DashboardLayout() {
           </div>) : 
           (
           <>
-          <div className="relative top-16 flex w-full overflow-x-auto">
-            <Breadcrumb/>
-          </div>
-          <main className="relative top-32 pb-6 w-full overflow-x-auto">
+          <main className="mt-5 flex flex-col items-start justify-start pb-6 w-full overflow-x-auto">
+            <Breadcrumb />
             <Outlet />
           </main>
           </>

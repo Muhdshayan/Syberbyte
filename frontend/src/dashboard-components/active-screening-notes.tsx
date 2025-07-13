@@ -12,7 +12,7 @@ import {
 
 export default function ActiveScreeningNotes() {
   return (
-    <Card className="p-6 w-full max-w-xs rounded-lg border font-inter-regular text-left text-md">
+    <Card className="p-6 w-full rounded-lg border font-inter-regular text-left text-md">
       <div className="font-poppins-semibold text-xl mb-4">Active Screening Notes</div>
       {/* Communication Skills */}
       <div className="mb-3">
@@ -83,7 +83,7 @@ export default function ActiveScreeningNotes() {
       />
       <div className="flex gap-2">
         <Button className="!bg-red-500 flex-1 inline-flex" >Reject</Button>
-        <Button className="!bg-blue flex-1">Refer to HR</Button>
+        <Button className="!bg-gradient-to-br from-green to-blue flex-1">Refer to HR</Button>
       </div>
     </Card>
   );
