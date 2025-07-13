@@ -62,13 +62,34 @@ services:
         sh -c "celery -A backend worker -l INFO"
       environment:
         - DB_HOST=db
-        - DB_NAME=db
-        - DB_USER=user
-        - DB_PASS=localdevpw
+        - DB_NAME=mydatabase
+        - DB_USER=admin
+        - DB_PASS=secret 
         - CELERY_BROKER_URL=amqp://mquser:bunnypass123@mq:5672//
       depends_on:
         - backend
         - mq
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - backend
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-data:/var/lib/grafana
+
         
 volumes:
   db-data:
+  grafana-data:

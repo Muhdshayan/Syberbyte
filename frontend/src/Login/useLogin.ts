@@ -1,41 +1,52 @@
-// hooks/useLogin.js
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";  // ✅ Import
 
+export default function useLogin(defaultRole: string) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedRole, setSelectedRole] = useState(defaultRole);
+  const navigate = useNavigate();  // ✅ Initialize navigate()
 
-/**
- * @param {string} initialRole - The default selected role ("HR", "Recruiter", "Admin")
- */4
-
-type Role = "HR" | "Recruiter" | "Admin";
-export default function useLogin(initialRole: Role = "HR") {
-  const navigate = useNavigate();
-
- const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [selectedRole, setSelectedRole] = useState<Role>(initialRole);
-
-  /* Replace this with your real backend endpoint
-  const API_BASE = "https://your-api.com";*/
-
-   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email || !password) {
-      setError("Both fields are required.");
-      return;
-    }
-
     setLoading(true);
     setError("");
 
-    setTimeout(() => {
-      const role = selectedRole.toLowerCase();
-      navigate(`/dashboard/${role}`);
+    console.log("[DEBUG] Submitting login form");
+    console.log("[DEBUG] Email entered:", email);
+    console.log("[DEBUG] Password entered:", password);
+    console.log("[DEBUG] Role selected:", selectedRole);
+
+    try {
+      const response = await fetch("http://localhost:8000/api/user/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      console.log("[DEBUG] Server response:", data);
+
+      if (!response.ok) {
+        console.log("[DEBUG] Login failed. Server returned:", data.detail);
+        setError(data.detail || "Login failed");
+      } else {
+        console.log("[DEBUG] Login successful for:", data.email);
+
+        // ✅ Redirect based on role/permission/etc.
+        navigate("/admin/job-category-management");  // or /admin, /home, etc.
+      }
+    } catch (err: any) {
+      console.log("[DEBUG] Network error:", err);
+      setError("Network error");
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   return {
