@@ -13,6 +13,7 @@ import JobCategoryManagement from "@/dashboard/adminDashboard/job-category-manag
 import './App.css'
 import { Route, Routes } from "react-router-dom"
 import ManageInterview from "@/dashboard/RecruiterDashboard/manage-interview"
+import { Toaster } from "sonner";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           </Route>
         </Route>
         </Routes>
+        <Toaster position="top-right" />
     </>
   )
 }

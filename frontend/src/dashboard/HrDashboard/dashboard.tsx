@@ -1,9 +1,13 @@
+import HrDashboardCards from "@/dashboard-components/hr-dashboard-cards";
 export default function ActiveJobs() {
     return (
-        <div className="flex flex-col items-center justify-center h-screen w-full ">
-            <h1 className="text-3xl font-bold mb-4">Active Jobs</h1>
-            <p className="text-lg text-gray-700">Welcome to your dashboard!</p>
-            {/* Add more dashboard components here */}
+        <div className="flex flex-col mt-5 justify-start h-screen w-full ">
+            <HrDashboardCards
+                activeJobs={{ value: 3, sub: "2+ this week" }}
+                totalCandidates={{ value: 1400, sub: "+150 this week" }}
+                interviewsScheduled={{ value: 5, sub: "for next 7 days" }}
+                timeToHire={{ value: "12 days", sub: "-2 vs last month" }}
+            />
         </div>
     );
 }

@@ -17,8 +17,7 @@ import { Link } from "react-router-dom";
 import Breadcrumb from "@/dashboard-components/breadcrumb";
 import AddUserAdmin from "@/dashboard-components/add-user-admin";
 import AddCategory from "@/dashboard-components/add-new-category"
-
-
+ 
 
 type MenuItem = { label: string; icon: React.ReactNode; to?: string; onClick?: () => void};
 
@@ -119,7 +118,7 @@ export default function DashboardLayout() {
           </div>) : 
           (
           <>
-          <main className="mt-5 flex flex-col items-start justify-start pb-6 w-full overflow-x-auto">
+          <main className="mt-5 flex flex-col items-start justify-start pb-6 w-full overflow-x-hidden">
             <Breadcrumb />
             <Outlet />
           </main>

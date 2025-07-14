@@ -10,15 +10,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useState } from "react";
+import type { User, UserRole, UserStatus} from "@/dashboard/adminDashboard/admin-store";
+
 
 interface EditUserDialogProps {
-  user: { name: string; email: string; role: string; status: string };
+  user: User;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSave: (user: User) => void;
 }
 
-export default function EditUserDialog({ user, open, onOpenChange }: EditUserDialogProps) {
-  const [form, setForm] = useState(user);
+export default function EditUserDialog({ user, open, onOpenChange, onSave }: EditUserDialogProps) {
+  const [form, setForm] = useState<User>(user);
+
+    const handleRoleChange = (role: string) => {
+      setForm({ ...form, role: role as UserRole });
+    };
+
+    const handleStatusChange = (status: string) => {
+      setForm({ ...form, status: status as UserStatus });
+    };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -32,6 +43,7 @@ export default function EditUserDialog({ user, open, onOpenChange }: EditUserDia
         <form
           onSubmit={e => {
             e.preventDefault();
+            onSave(form);
             // handle save here
           }}
           className="space-y-3"
@@ -59,7 +71,7 @@ export default function EditUserDialog({ user, open, onOpenChange }: EditUserDia
             <label className="block text-sm font-medium mb-1">Role</label>
             <Select
               value={form.role}
-              onValueChange={role => setForm({ ...form, role })}
+              onValueChange={handleRoleChange}
               
             >
               <SelectTrigger className="w-full !bg-white !outline-none">
@@ -76,7 +88,7 @@ export default function EditUserDialog({ user, open, onOpenChange }: EditUserDia
             <label className="block text-sm font-medium mb-1">Status</label>
             <Select
               value={form.status}
-              onValueChange={status => setForm({ ...form, status })}
+              onValueChange={handleStatusChange}
             >
               <SelectTrigger className="w-full !bg-white !outline-none">
                 <SelectValue placeholder="Select status" />

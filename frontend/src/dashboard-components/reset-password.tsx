@@ -9,6 +9,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { z } from "zod";
+
+const passwordSchema = z
+  .string()
+  .min(6, "Password must be at least 6 characters")
+  .regex(/[A-Z]/, "Password must contain an uppercase letter")
+  .regex(/[a-z]/, "Password must contain a lowercase letter")
+  .regex(/[0-9]/, "Password must contain a number");
+
 
 interface ResetPasswordDialogProps {
   open: boolean;
@@ -25,6 +34,23 @@ export default function ResetPasswordDialog({
 }: ResetPasswordDialogProps) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    const result = passwordSchema.safeParse(password);
+    if (!result.success) {
+      setError(result.error.errors[0].message);
+      return;
+    }
+    if (password !== confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
+    onReset(password);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -33,15 +59,7 @@ export default function ResetPasswordDialog({
           <DialogTitle>Reset Password</DialogTitle>
           <DialogDescription>Reset user password here.</DialogDescription>
         </DialogHeader>
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            if (password === confirm) {
-              onReset(password);
-            }
-          }}
-          className="space-y-3"
-        >
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
             <Input value={email} disabled />
@@ -67,6 +85,7 @@ export default function ResetPasswordDialog({
               <p className="text-xs text-red-600 mt-1">Passwords do not match.</p>
             )}
           </div>
+          {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
           <DialogFooter className="flex justify-end gap-2">
             <Button className="!bg-white !text-sm !text-black" type="button" onClick={() => onOpenChange(false)}>
               Cancel
