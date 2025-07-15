@@ -41,6 +41,44 @@ const dummyUsers: User[] = [
   },
 ];
 
+const jobCategories = [
+  {
+    industry: "Technology",
+    role: "Software Engineering",
+    experience: "Mid level",
+    skills: ["Python", "JavaScript", "Node", "Git", "React", "SQL", "HTML", "CSS"],
+    salary: "$80k-$100k",
+  },
+  {
+    industry: "Healthcare",
+    role: "Nurse",
+    experience: "senior level",
+    skills: ["Clinical", "Communication"],
+    salary: "$80k-$100k",
+  },
+  {
+    industry: "Finance",
+    role: "Financial Analyst",
+    experience: "Mid level",
+    skills: ["Power BI", "Tableau", "Excel"],
+    salary: "$80k-$100k",
+  },
+  {
+    industry: "Education",
+    role: "Teacher",
+    experience: "Entry level",
+    skills: ["Classroom Management", "Lesson Planning", "Communication"],
+    salary: "$40k-$60k",
+  },
+  {
+    industry: "Retail",
+    role: "Store Manager",
+    experience: "Senior level",
+    skills: ["Inventory Management", "Customer Service", "Leadership"],
+    salary: "$60k-$80k",
+  },
+];
+
 import { create } from "zustand";
 import { toast } from "sonner";
 import axios from "axios";
@@ -64,16 +102,30 @@ interface NewUser {
   password: string;
 }
 
+export interface JobCategory {
+  industry: string;
+  role: string;
+  experience: string;
+  skills: string[];
+  salary: string;
+}
+
 
 interface AdminStore {
     newUsers: NewUser[];
     users: User[];
+    searchCategory: (query: string) => JobCategory[]
     addUser: (user: NewUser) => void;
     fetchUsers: () => void;
     editUser: (updatedUser: User) => void;
     deleteUser: (userId: number) => void;
     resetPassword: (userId: number, newPassword: string) => void;
     searchUser: (query: string) => User[];
+    jobCategories: JobCategory[];
+    fetchJobCategories: () => void;
+    editCategory: (category: JobCategory) => Promise<void>;
+    deleteCategory: (role: string) => Promise<void>;
+    addCategory: (category: JobCategory) => Promise<void>;
     loading: boolean;
     error: string | null;
 }
@@ -90,9 +142,20 @@ export function getUserStats(users: User[]) {
   };
 }
 
+export function getCategoryStats(categories: JobCategory[]) {
+  const total = categories.length;
+  const roles = categories.map(c => c.role);
+  const uniqueRoles = Array.from(new Set(roles));
+  return {
+    total,
+    uniqueRoles,
+  };
+}
+
 export const useAdminStore = create<AdminStore>((set, get) => ({
   users: [],
   newUsers: [],
+  jobCategories: [],
   loading: false,
   error: null,
   addUser: async (user) => {
@@ -218,6 +281,101 @@ searchUser: (query: string) => {
         user.status.toLowerCase().includes(lowerQuery)
     );
   },
+  fetchJobCategories: async () => {
+  set({ loading: true, error: null });
+  try {
+    const res = await axios.get<JobCategory[]>("/api/admin/job-categories");
+    if (Array.isArray(res.data)) {
+      set({ jobCategories: res.data, loading: false, error: null });
+    } else {
+      throw new Error("Unexpected response format");
+    }
+  } catch (err: any) {
+    set({ jobCategories: jobCategories, loading: false, error: "Failed to fetch job categories, showing dummy data." });
+    toast.error("Failed to fetch job categories, showing dummy data.");
+  }
+},
+ editCategory: async (updatedCategory: JobCategory) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axios.put(`/api/admin/job-categories/${updatedCategory.role}`, updatedCategory);
+      if (!res.data || res.status !== 200) throw new Error("Failed to update category");
 
+      set((state) => ({
+        jobCategories: state.jobCategories.map((cat) =>
+          cat.role === updatedCategory.role ? { ...cat, ...updatedCategory } : cat
+        ),
+        loading: false,
+        error: null,
+      }));
+      toast.success("Category updated!");
+    } catch (err) {
+      // Fallback to dummy update
+      set((state) => ({
+        jobCategories: state.jobCategories.map((cat) =>
+          cat.role === updatedCategory.role ? { ...cat, ...updatedCategory } : cat
+        ),
+        loading: false,
+        error: "Failed to update category on server. Dummy data updated.",
+      }));
+      toast.error("Failed to update category on server. Dummy data updated.");
+    }
+  },
+
+  deleteCategory: async (role: string) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axios.delete(`/api/admin/job-categories/${role}`);
+      if (res.status !== 200) throw new Error("Failed to delete category");
+
+      set((state) => ({
+        jobCategories: state.jobCategories.filter((cat) => cat.role !== role),
+        loading: false,
+        error: null,
+      }));
+      toast.success("Category deleted!");
+    } catch (err) {
+      // Fallback to dummy delete
+      set((state) => ({
+        jobCategories: state.jobCategories.filter((cat) => cat.role !== role),
+        loading: false,
+        error: "Failed to delete category on server. Dummy data updated.",
+      }));
+      toast.error("Failed to delete category on server. Dummy data updated.");
+    }
+  },
+  addCategory: async (category: JobCategory) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axios.post("/api/admin/job-categories", category);
+      if (!res.data || res.status !== 201) throw new Error("Failed to add category");
+
+      set((state) => ({
+        jobCategories: [...state.jobCategories, category],
+        loading: false,
+        error: null,
+      }));
+      toast.success("Category added!");
+    } catch (err) {
+      set((state) => ({
+        jobCategories: [...state.jobCategories, category],
+        loading: false,
+        error: "Failed to add category on server. Dummy data updated.",
+      }));
+      toast.error("Failed to add category on server. Dummy data updated.");
+    }
+  },
+  searchCategory: (query: string) => {
+  const categories = get().jobCategories;
+  const lowerQuery = query.toLowerCase();
+  return categories.filter(
+    cat =>
+      cat.industry.toLowerCase().includes(lowerQuery) ||
+      cat.role.toLowerCase().includes(lowerQuery) ||
+      cat.experience.toLowerCase().includes(lowerQuery) ||
+      cat.salary.toLowerCase().includes(lowerQuery) ||
+      cat.skills.some(skill => skill.toLowerCase().includes(lowerQuery))
+  );
+  },
 }));
 

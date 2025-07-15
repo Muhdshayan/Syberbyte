@@ -36,9 +36,9 @@ const menu: Record<string, MenuItem[]> = {
     { label: "Sign out", icon: <LogOut className="w-6 h-6 text-green" />, onClick: () => {} },
   ],
   hr: [
-    { label: "Active jobs", icon: <Briefcase className="w-6 h-6 text-green" />, to:"/dashboard/hr" },
-    { label: "Final interview", icon: <FileText className="w-6 h-6 text-green" />, to:"/dashboard/hr/final-interview" },
-    { label: "Email templates", icon: <Mail className="w-6 h-6 text-green" />, to:"/dashboard/hr/email-templates" },
+    { label: "Active jobs", icon: <Briefcase className="w-6 h-6 text-green" />, to:"/dashboard/hr_manager" },
+    { label: "Final interview", icon: <FileText className="w-6 h-6 text-green" />, to:"/dashboard/hr_manager/final-interview" },
+    { label: "Email templates", icon: <Mail className="w-6 h-6 text-green" />, to:"/dashboard/hr_manager/email-templates" },
     { label: "Sign out", icon: <LogOut className="w-6 h-6 text-green" />, onClick: () => {} },
   ],
 };

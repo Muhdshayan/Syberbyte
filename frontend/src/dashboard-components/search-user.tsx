@@ -6,14 +6,10 @@ import { Input } from "@/components/ui/input";
 import { useAdminStore } from "@/dashboard/adminDashboard/admin-store";
 import {
   Table,
-  TableHeader,
   TableBody,
   TableRow,
   TableCell,
-  TableHead,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import MobileTable from "@/dashboard-components/mobile-table";
 import WebTable from "./webTable";
@@ -22,8 +18,6 @@ export default function SearchUser() {
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
   const [inputActive, setInputActive] = useState(false);
-
-
   const searchUser = useAdminStore((state) => state.searchUser);
   const users = searchUser(query);
 

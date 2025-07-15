@@ -20,7 +20,6 @@ export default function UserTable() {
 
   // Fetch users from store
   const users = useAdminStore((state) => state.users);
-  console.log("users from store:", users);
 
   const fetchUsers = useAdminStore((state) => state.fetchUsers);
   const editUserInStore = useAdminStore((state) => state.editUser);

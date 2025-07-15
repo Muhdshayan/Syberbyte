@@ -27,7 +27,7 @@ function App() {
              <Route path="system-health-monitor" element={<SystemHealthMonitor/>} />
               <Route path="ai-performance-metrics" element={<AiPerformanceMetrics/>} />
            </Route>
-          <Route path="hr">
+          <Route path="hr_manager">
             <Route index element={<ActiveJobs/>} />
             <Route path="final-interview" element={<FinalInterview/>} />
             <Route path="email-templates" element={<EmailTemplatesHr/>} />

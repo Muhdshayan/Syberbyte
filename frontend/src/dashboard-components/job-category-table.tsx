@@ -5,38 +5,35 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditJobCategoryDialog from "@/dashboard-components/edit-job-category";
 import DeleteJobCategoryDialog from "@/dashboard-components/delete-job-category";
 import JobCategoryMobTable from "./job-category-mob-table";
+import { useAdminStore } from "@/dashboard/adminDashboard/admin-store";
+import type { JobCategory } from "@/dashboard/adminDashboard/admin-store";
 
-const jobCategories = [
-  {
-    industry: "Technology",
-    role: "Software Engineering",
-    experience: "Mid level",
-    skills: ["Python", "JavaScript", "Node", "Git", "React", "SQL", "HTML", "CSS"],
-    salary: "$80k-$100k",
-  },
-  {
-    industry: "Healthcare",
-    role: "Nurse",
-    experience: "senior level",
-    skills: ["Clinical", "Communication"],
-    salary: "$80k-$100k",
-  },
-  {
-    industry: "Finance",
-    role: "Financial Analyst",
-    experience: "Mid level",
-    skills: ["Power BI", "Tableau", "Excel"],
-    salary: "$80k-$100k",
-  },
-];
 
 export default function JobCategoryTable() {
-  const [editJob, setEditJob] = useState<any | null>(null);
-  const [deleteJob, setDeleteJob] = useState<any | null>(null);
+  const jobCategories = useAdminStore((state) => state.jobCategories);
+  const editCategory = useAdminStore((state) => state.editCategory);
+  const deleteCategory = useAdminStore((state) => state.deleteCategory);
+  const [editJob, setEditJob] = useState<JobCategory | null>(null);
+  const [deleteJob, setDeleteJob] = useState<JobCategory | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const categoriesPerPage = 3;
+  const fetchJobCategories = useAdminStore((state) => state.fetchJobCategories);
+  useEffect(() => {
+    fetchJobCategories();
+  }
+  , [fetchJobCategories]);
+
+  const indexOfLastCategory = currentPage * categoriesPerPage;
+  const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
+  const currentCategories = Array.isArray(jobCategories)
+    ? jobCategories.slice(indexOfFirstCategory, indexOfLastCategory)
+    : [];
+  const totalPages = Math.ceil(jobCategories.length / categoriesPerPage);
+
 
   return (
     <Card className="w-[95%] !font-inter-regular mt-5">
@@ -59,7 +56,7 @@ export default function JobCategoryTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {jobCategories.map((cat, idx) => (
+              {currentCategories.map((cat, idx) => (
                 <TableRow key={idx}>
                   <TableCell align="left">{cat.industry}</TableCell>
                   <TableCell align="left">{cat.role}</TableCell>
@@ -100,39 +97,45 @@ export default function JobCategoryTable() {
         </div>
         {/* Mobile Cards */}
         <div className="block md:hidden">
-          {jobCategories.map((cat, idx) => (
-            <div key={idx} className="mb-4">
               <JobCategoryMobTable
-                job={cat}
-                onEdit={() => setEditJob(cat)}
-                onDelete={() => setDeleteJob(cat)}
+                jobs={currentCategories}
+                onEdit={cat => setEditJob(cat)}
+                onDelete={cat => setDeleteJob(cat)}
               />
-            </div>
-          ))}
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col items-start gap-2">
-        <div className="flex w-full justify-between items-center mt-5">
+      <CardFooter className="flex flex-col items-start gap-2 w-full">
+        <div className="flex justify-between items-center mt-5 w-full">
           <p className="text-sm text-muted-foreground">
-            Showing 1-3 of {jobCategories.length} users
+            Showing {indexOfFirstCategory + 1}-{Math.min(indexOfLastCategory, jobCategories.length)} of {jobCategories.length} Categories
           </p>
-          <div>
-            <Button className="!bg-blue">
+          <div className="flex gap-2">
+            <Button
+              className="!bg-blue"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
               <ChevronLeft />
             </Button>
-            <Button className="ml-2 !bg-blue">
+            <Button
+              className="!bg-blue"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
               <ChevronRight />
             </Button>
           </div>
         </div>
       </CardFooter>
-      {editJob && (
+     {editJob && (
         <EditJobCategoryDialog
           open={!!editJob}
           onOpenChange={(open: boolean) => !open && setEditJob(null)}
           job={editJob}
-          onSave={updatedJob => {
-            // handle save logic here
+          onSave={(updatedJob) => {
+            editCategory(updatedJob);
+            console.log("Final job data:", updatedJob);
+
             setEditJob(null);
           }}
         />
@@ -143,7 +146,7 @@ export default function JobCategoryTable() {
           open={!!deleteJob}
           onOpenChange={(open: boolean) => !open && setDeleteJob(null)}
           onDelete={() => {
-            // handle delete logic here
+            deleteCategory(deleteJob.role);
             setDeleteJob(null);
           }}
         />
