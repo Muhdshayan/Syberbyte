@@ -63,9 +63,9 @@ export default function JobCategoryTable() {
                   <TableCell align="left">{cat.experience}</TableCell>
                   <TableCell align="left">
                     <div className="flex flex-wrap w-[200px] gap-1">
-                      {cat.skills.map((skill, i) => (
-                        <Badge key={i} className="bg-green text-white">{skill}</Badge>
-                      ))}
+                       {(Array.isArray(cat.skills) ? cat.skills : String(cat.skills).split(",").map(s => s.trim())).map((skill, i) => (
+                          <Badge key={i} className="bg-green text-white">{skill}</Badge>
+                        ))}
                     </div>
                   </TableCell>
                   <TableCell align="left">{cat.salary}</TableCell>

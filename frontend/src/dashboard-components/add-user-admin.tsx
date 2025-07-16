@@ -18,7 +18,7 @@ import { toast } from "sonner";
 const newUserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
-  role: z.enum(["Admin", "HR Manager", "Recruiter"]),
+  role: z.enum(["Basic Admin", "Advanced Admin","Full Admin", "HR Manager", "Recruiter"]),
   password: z.string().min(5, "Password must be at least 5 characters"),
 });
 type NewUser = z.infer<typeof newUserSchema>;
@@ -27,7 +27,7 @@ export default function AddUserAdmin() {
   const [form, setForm] = useState<NewUser>({
     name: "",
     email: "",
-    role: "Admin",
+    role: "Basic Admin",
     password: "",
   });
   const [roleOpen, setRoleOpen] = useState(false);
@@ -51,7 +51,7 @@ export default function AddUserAdmin() {
       return;
     }
     await addUser(form);
-    setForm({ name: "", email: "", role: "Admin", password: "" });
+    setForm({ name: "", email: "", role: "Basic Admin", password: "" });
   };
 
   const users = useAdminStore((state) => state.users);
@@ -101,7 +101,9 @@ export default function AddUserAdmin() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-48 font-inter-regular" align="start">
-            <DropdownMenuItem onClick={() => handleRoleSelect("Admin")}>Admin</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleRoleSelect("Basic Admin")}>Basic Admin</DropdownMenuItem>     
+            <DropdownMenuItem onClick={() => handleRoleSelect("Advanced Admin")}>Advanced Admin</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleRoleSelect("Full Admin")}>Full Admin</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleRoleSelect("HR Manager")}>HR</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleRoleSelect("Recruiter")}>Recruiter</DropdownMenuItem>
           </DropdownMenuContent>

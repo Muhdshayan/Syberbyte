@@ -60,23 +60,14 @@ export default function AddCategory() {
         {/* Experience Level */}
         <div>
           <Label htmlFor="experience">Experience Level</Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full !text-left !text-sm font-inter-regular !bg-white mt-2 !border-gray-200"
-              >
-                {experience ? experience : "Select Experience level"}
-                <ChevronDown className="ml-auto h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48 font-inter-regular" align="start">
-              <DropdownMenuItem onClick={() => setExperience("Fresher")}>Fresher</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setExperience("Mid Level")}>Mid Level</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setExperience("Senior")}>Senior</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="text-secondary text-sm text-left mt-1">Select job experience level</div>
+          <Input
+            id="Experience"
+            placeholder="Enter Experience"
+            className="w-full mt-2 bg-white"
+            value={experience}
+            onChange={e => setExperience(e.target.value)}
+          />
+           <div className="text-secondary text-sm text-left mt-1">Select job experience level</div>
         </div>
         {/* Role */}
         <div>

@@ -3,27 +3,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import type { Candidate } from "@/dashboard/RecruiterDashboard/recruiter-store"; // Adjust path as needed
 
 
 interface CandidateProfileCardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  candidate: {
-    name: string;
-    role: string;
-    experience: string;
-    score: number;
-    breakdown: {
-      technical: number;
-      experience: number;
-      cultural: number;
-    };
-    summary: string;
-    skills: string[];
-    experienceList: { title: string; company: string; duration: string; location: string; description: string }[];
-  };
+  candidate: Candidate;
+  
   onReject?: () => void;
-  onSchedule?: () => void;
+  referToHr?: () => void;
 }
 
 export default function CandidateProfileCard({
@@ -31,7 +20,7 @@ export default function CandidateProfileCard({
   onOpenChange,
   candidate,
   onReject,
-  onSchedule,
+  referToHr,
 }: CandidateProfileCardProps) {
   if (!open) return null;
   return (
@@ -91,9 +80,12 @@ export default function CandidateProfileCard({
       <div className="mt-3 text-left">
         <div className="font-inter-semibold mb-1">Technical skills</div>
         <div className="flex flex-wrap gap-2">
-          {candidate.skills.map((skill, i) => (
-            <Badge key={i} className="bg-green text-white">{skill}</Badge>
-          ))}
+          {(Array.isArray(candidate.skills)
+             ? candidate.skills
+             : String(candidate.skills).split(",").map(s => s.trim())
+           ).map((skill, i) => (
+             <Badge key={i} className="bg-green text-white">{skill}</Badge>
+           ))}
         </div>
       </div>
       {/* Experience */}
@@ -111,7 +103,7 @@ export default function CandidateProfileCard({
       </div>
       <div className="flex justify-between gap-2 mt-6">
         <Button className="!bg-red-500 !text-sm" onClick={onReject}>Reject</Button>
-        <Button className="!bg-blue !text-sm" onClick={onSchedule}>Schedule Interview</Button>
+        <Button className="!bg-blue !text-sm" onClick={referToHr}>Refer to HR</Button>
       </div>
     </Card>
   );

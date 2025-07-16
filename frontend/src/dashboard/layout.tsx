@@ -32,13 +32,10 @@ const menu: Record<string, MenuItem[]> = {
   recruiter: [
     { label: "View candidates", icon: <Users className="w-6 h-6 text-green" /> , to:"/dashboard/recruiter/"},
     { label: "Manage Interview", icon: <Search className="w-6 h-6 text-green" />, to:"/dashboard/recruiter/manage-interview" },
-    { label: "Email templates", icon: <Mail className="w-6 h-6 text-green" />, to:"/dashboard/recruiter/email-templates" },
     { label: "Sign out", icon: <LogOut className="w-6 h-6 text-green" />, onClick: () => {} },
   ],
   hr: [
     { label: "Active jobs", icon: <Briefcase className="w-6 h-6 text-green" />, to:"/dashboard/hr_manager" },
-    { label: "Final interview", icon: <FileText className="w-6 h-6 text-green" />, to:"/dashboard/hr_manager/final-interview" },
-    { label: "Email templates", icon: <Mail className="w-6 h-6 text-green" />, to:"/dashboard/hr_manager/email-templates" },
     { label: "Sign out", icon: <LogOut className="w-6 h-6 text-green" />, onClick: () => {} },
   ],
 };

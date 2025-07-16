@@ -3,7 +3,7 @@ const dummyUsers: User[] = [
     id: 1,
     name: "Alice Johnson",
     email: "alice.johnson@company.com",
-    role: "Admin",
+    role: "Basic Admin",
     status: "Active",
     lastActive: "2 hours ago",
   },
@@ -73,7 +73,7 @@ const jobCategories = [
   {
     industry: "Retail",
     role: "Store Manager",
-    experience: "Senior level",
+    experience: "2+ years",
     skills: ["Inventory Management", "Customer Service", "Leadership"],
     salary: "$60k-$80k",
   },
@@ -84,7 +84,7 @@ import { toast } from "sonner";
 import axios from "axios";
 
 export type UserStatus = "Active" | "Suspended";
-export type UserRole = "Admin" | "HR Manager" | "Recruiter";
+export type UserRole = "Full Admin" | "HR Manager" | "Recruiter" | "Advanced Admin" | "Basic Admin";
 
 export interface User {
   id: number;
@@ -116,13 +116,13 @@ interface AdminStore {
     users: User[];
     searchCategory: (query: string) => JobCategory[]
     addUser: (user: NewUser) => void;
-    fetchUsers: () => void;
+    fetchUsers: () => Promise<void>;
     editUser: (updatedUser: User) => void;
     deleteUser: (userId: number) => void;
     resetPassword: (userId: number, newPassword: string) => void;
     searchUser: (query: string) => User[];
     jobCategories: JobCategory[];
-    fetchJobCategories: () => void;
+    fetchJobCategories: () => Promise<void>;
     editCategory: (category: JobCategory) => Promise<void>;
     deleteCategory: (role: string) => Promise<void>;
     addCategory: (category: JobCategory) => Promise<void>;
@@ -173,11 +173,9 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         throw new Error(data.message || "Failed to add user");
       }
 
-      set((state) => ({
-        newUsers: [...state.newUsers, user],
-        loading: false,
-        error: null,
-      }));
+      await get().fetchUsers();
+
+      set({ loading: false, error: null });
       toast.success("User added!");
     } catch (err: any) {
         const newDummyUser = {
@@ -217,11 +215,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       const res = await axios.put(`/api/admin/users/${updatedUser.id}`, updatedUser);
       if (!res.data || res.status !== 200) throw new Error("Failed to update user");
 
-      set((state) => ({
-        users: state.users.map((user) =>
-          user.id === updatedUser.id ? { ...user, ...updatedUser } : user
-        ),
-      }));
+      await get().fetchUsers();
 
       toast.success("User updated!");
     } catch (err) {
@@ -241,9 +235,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       const res = await axios.delete(`/api/admin/users/${userId}`);
       if (res.status !== 200) throw new Error("Failed to delete user");
 
-      set((state) => ({
-        users: state.users.filter((user) => user.id !== userId),
-      }));
+      await get().fetchUsers();
 
       toast.success("User deleted!");
     } catch (err) {
@@ -301,13 +293,7 @@ searchUser: (query: string) => {
       const res = await axios.put(`/api/admin/job-categories/${updatedCategory.role}`, updatedCategory);
       if (!res.data || res.status !== 200) throw new Error("Failed to update category");
 
-      set((state) => ({
-        jobCategories: state.jobCategories.map((cat) =>
-          cat.role === updatedCategory.role ? { ...cat, ...updatedCategory } : cat
-        ),
-        loading: false,
-        error: null,
-      }));
+      await get().fetchJobCategories();
       toast.success("Category updated!");
     } catch (err) {
       // Fallback to dummy update
@@ -328,11 +314,7 @@ searchUser: (query: string) => {
       const res = await axios.delete(`/api/admin/job-categories/${role}`);
       if (res.status !== 200) throw new Error("Failed to delete category");
 
-      set((state) => ({
-        jobCategories: state.jobCategories.filter((cat) => cat.role !== role),
-        loading: false,
-        error: null,
-      }));
+      await get().fetchJobCategories();
       toast.success("Category deleted!");
     } catch (err) {
       // Fallback to dummy delete
@@ -350,11 +332,7 @@ searchUser: (query: string) => {
       const res = await axios.post("/api/admin/job-categories", category);
       if (!res.data || res.status !== 201) throw new Error("Failed to add category");
 
-      set((state) => ({
-        jobCategories: [...state.jobCategories, category],
-        loading: false,
-        error: null,
-      }));
+      await get().fetchJobCategories();
       toast.success("Category added!");
     } catch (err) {
       set((state) => ({

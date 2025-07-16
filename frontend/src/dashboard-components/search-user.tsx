@@ -13,6 +13,7 @@ import {
 import { X } from "lucide-react";
 import MobileTable from "@/dashboard-components/mobile-table";
 import WebTable from "./webTable";
+import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
 
 export default function SearchUser() {
   const [query, setQuery] = useState("");
@@ -53,15 +54,22 @@ export default function SearchUser() {
           </div>
         </div>
         <div className="flex md:gap-2 gap-1">
-          <Button
-              className="!bg-blue !text-sm !font-inter-regular !px-2"
-              onClick={() => {
-                setRoleFilter("Admin");
-                setInputActive(true); // keep card open
-              }}
-            >
-              Admin
-            </Button>
+         <Select
+            value={roleFilter || ""}
+            onValueChange={(value) => {
+              setRoleFilter(value);
+              setInputActive(true);
+            }}
+          >
+            <SelectTrigger className="!bg-white !text-sm !font-inter-regular !text-black !border-gray-200">
+              {roleFilter ? roleFilter : "Admin"}
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Basic Admin">Basic Admin</SelectItem>
+              <SelectItem value="Advanced Admin">Advanced Admin</SelectItem>
+              <SelectItem value="Full Admin">Full Admin</SelectItem>
+            </SelectContent>
+          </Select>
             <Button
               className="!bg-blue !text-sm !font-inter-regular !px-2"
               onClick={() => {

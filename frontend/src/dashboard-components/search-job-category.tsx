@@ -23,7 +23,8 @@ export default function SearchJobCategory() {
   const searchCategory = useAdminStore((state) => state.searchCategory);
   const [results, setResults] = useState<JobCategory[]>([]);
   const jobCategories = useAdminStore((state) => state.jobCategories);
-
+  const [inputActive, setInputActive] = useState(false); // <-- add this
+ 
    const uniqueIndustries = useMemo(
     () => Array.from(new Set(jobCategories.map(cat => cat.industry))),
     [jobCategories]
@@ -52,12 +53,27 @@ export default function SearchJobCategory() {
             placeholder="Search Job Category"
             className="pl-10"
             value={filters.search}
-            onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+            onChange={e => {
+              const value = e.target.value;
+              setFilters(f => ({ ...f, search: value }));
+              setInputActive(true);
+              // Real-time filter
+              const query = [value, filters.industry, filters.role].filter(Boolean).join(" ");
+              setResults(searchCategory(query));
+            }}
+            onFocus={() => setInputActive(true)} // activate card on focus
           />
         </div>
         {/* Industry Select */}
         <div className="flex md:w-[70%] w-full md:gap-2 gap-1">
-          <Select value={filters.industry} onValueChange={val => setFilters(f => ({ ...f, industry: val }))}>
+          <Select 
+          value={filters.industry} 
+          onValueChange={val => 
+            {setFilters(f => ({ ...f, industry: val }))
+            setInputActive(true);
+            const query = [filters.search, val, filters.role].filter(Boolean).join(" ");
+            setResults(searchCategory(query));
+            }}>
             <SelectTrigger className=" md:min-w-[140px] w-full !border-gray-200 !bg-white">
               <SelectValue placeholder="Select Industry" />
             </SelectTrigger>
@@ -70,8 +86,15 @@ export default function SearchJobCategory() {
         </div>
         {/* Role Select */}
         <div className="flex w-full gap-2">
-           <Select value={filters.role} onValueChange={val => setFilters(f => ({ ...f, role: val }))}>
-            <SelectTrigger className=" md:min-w-[140px] w-full !bg-white !border-gray-200">
+           <Select
+            value={filters.role}
+            onValueChange={val => {
+              setFilters(f => ({ ...f, role: val }));
+              setInputActive(true); // activate card on select
+              const query = [filters.search, filters.industry, val].filter(Boolean).join(" ");
+              setResults(searchCategory(query));
+            }}>
+              <SelectTrigger className=" md:min-w-[140px] w-full !bg-white !border-gray-200">
               <SelectValue placeholder="Select Role" />
             </SelectTrigger>
             <SelectContent>
@@ -88,6 +111,7 @@ export default function SearchJobCategory() {
             className="!bg-green"
             onClick={() => {
               setFilters({ search: "", industry: "", role: "" });
+              setInputActive(false); 
               setResults([]);
             }}
           >
@@ -96,71 +120,83 @@ export default function SearchJobCategory() {
         </div>
       </Card>
       {/* Results Preview */}
-      {results.length > 0 && (
-        <div className="w-[95%] mt-4">
-          <Card className="p-4 hidden md:block mt-5 transition-all duration-300 ease-in-out opacity-100 translate-y-0 animate-fade-in">
-            {/* Desktop Table */}
-            <div className="hidden md:block">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Industry</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Experience Level</TableHead>
-                    <TableHead>Required Skills</TableHead>
-                    <TableHead>Salary Range</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {results.map((cat, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell align="left">{cat.industry}</TableCell>
-                      <TableCell align="left">{cat.role}</TableCell>
-                      <TableCell align="left">{cat.experience}</TableCell>
-                      <TableCell align="left">
-                        <div className="flex flex-wrap w-[200px] gap-1">
-                          {cat.skills.map((skill, i) => (
-                            <Badge key={i} className="bg-green text-white">{skill}</Badge>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">{cat.salary}</TableCell>
-                      <TableCell align="center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <MoreVertical className="w-5 h-5" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              className="justify-between"
-                              onClick={() => {/* implement edit logic here */}}
-                            >
-                              Edit Job <Edit className="w-5 h-5 text-green-600" />
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="justify-between text-red-600"
-                              onClick={() => {/* implement delete logic here */}}
-                            >
-                              Delete Job <Trash2 className="w-5 h-5 text-green-600" />
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            
-          </Card>
-          {/* Mobile Cards */}
-            <div className="md:hidden block w-[95%] mt-5">
-                  <JobCategoryMobTable
-                    jobs={results} />
-            </div>
+      {inputActive && (
+  <>
+    <Card className="p-4 w-[95%] hidden md:block mt-5 transition-all duration-300 ease-in-out opacity-100 translate-y-0 animate-fade-in">
+      <Table>
+        <TableBody>
+          {filters.search.trim() === "" && !filters.industry && !filters.role ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-black text-sm">
+                Please enter a search query or select a filter.
+              </TableCell>
+            </TableRow>
+          ) : results.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-black text-sm">
+                No job categories found.
+              </TableCell>
+            </TableRow>
+          ) : (
+            results.map((cat, idx) => (
+              <TableRow key={idx}>
+                <TableCell align="left">{cat.industry}</TableCell>
+                <TableCell align="left">{cat.role}</TableCell>
+                <TableCell align="left">{cat.experience}</TableCell>
+                <TableCell align="left">
+                  <div className="flex flex-wrap w-[200px] gap-1">
+                    {(Array.isArray(cat.skills)
+                      ? cat.skills
+                      : String(cat.skills).split(",").map(s => s.trim())
+                    ).map((skill, i) => (
+                      <Badge key={i} className="bg-green text-white">{skill}</Badge>
+                    ))}
+                  </div>
+                </TableCell>
+                <TableCell align="left">{cat.salary}</TableCell>
+                <TableCell align="center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <MoreVertical className="w-5 h-5" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="justify-between"
+                        onClick={() => {/* implement edit logic here */}}
+                      >
+                        Edit Job <Edit className="w-5 h-5 text-green-600" />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="justify-between text-red-600"
+                        onClick={() => {/* implement delete logic here */}}
+                      >
+                        Delete Job <Trash2 className="w-5 h-5 text-green-600" />
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </Card>
+    {/* Mobile Cards */}
+    <div className="md:hidden block w-[95%] mt-5">
+      {filters.search.trim() === "" && !filters.industry && !filters.role ? (
+        <div className="text-center text-black text-sm bg-white rounded-lg py-8">
+          Please enter a search query or select a filter.
         </div>
+      ) : results.length === 0 ? (
+        <div className="text-center text-black text-sm bg-white rounded-lg py-8">
+          No job categories found.
+        </div>
+      ) : (
+        <JobCategoryMobTable jobs={results} />
       )}
+    </div>
+  </>
+)}
     </div>
   );
 }

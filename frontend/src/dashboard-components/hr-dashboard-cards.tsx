@@ -35,7 +35,7 @@ interface HrDashboardCardsProps {
 
 export default function HrDashboardCards(props: HrDashboardCardsProps) {
   return (
-    <div className="flex md:flex-row flex-col justify-center items-center bg-yellow-200  w-full gap-4">
+    <div className="flex md:flex-row flex-col justify-center items-center  w-full gap-4">
       <StatCard
         label="Active Jobs"
         icon={<Briefcase className="w-5 h-5 ml-2 text-muted-foreground" />}

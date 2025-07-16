@@ -49,9 +49,9 @@ export default function JobCategoryMobTable({ jobs, onEdit, onDelete }: JobCateg
           <div>
             <span className="block text-xs text-muted-foreground mb-1">Required Skills</span>
             <div className="flex flex-wrap gap-2">
-              {item.skills.map((skill, i) => (
-                <Badge key={i} className="bg-green text-white">{skill}</Badge>
-              ))}
+                {(Array.isArray(item.skills) ? item.skills : String(item.skills).split(",").map(s => s.trim())).map((skill, i) => (
+                  <Badge key={i} className="bg-green text-white">{skill}</Badge>
+                ))}
             </div>
           </div>
         </Card>
