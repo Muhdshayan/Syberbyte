@@ -161,8 +161,14 @@ def extract_name(resume_text):
 # CONTACT INFO EXTRACTION
 PHONE_REG = re.compile(r'[\+\(]?[0-9][0-9 .\-\(\)]{8,}[0-9]|\([0-9][0-9 .\-\(\)]{7,}[0-9]')
 EMAIL_REG = re.compile(r'[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+', re.IGNORECASE)
-GITHUB_REG = re.compile(r'https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9\-_.]+')
-LINKEDIN_REG = re.compile(r'(https?:\/\/)?(www\.)?linkedin\.com\/(?:in|pub|company)\/[a-zA-Z0-9\-_/]+')
+GITHUB_PROFILE_REG = re.compile(
+    r'https?:\/\/(?:www\.)?github\.com\/([a-zA-Z0-9\-]+)(?!\/[a-zA-Z0-9])',
+    re.IGNORECASE
+)
+LINKEDIN_REG = re.compile(
+    r'(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:in|pub|company)\/[a-zA-Z0-9\-\/]+(?=\s|$)',
+    re.IGNORECASE
+)
 
 def extract_phone_number(text):
     phones = re.findall(PHONE_REG, text)
@@ -177,57 +183,109 @@ def extract_phone_number(text):
     return None
 
 def extract_email(text):
-    emails = re.findall(EMAIL_REG, text)
-    return emails[0] if emails else None
+    try:
+        emails = re.findall(EMAIL_REG, text)
+        return emails[0] if emails else None
+    except Exception as e:
+        print("[DEBUG] Email regex failed:", e)
+        return None
+
+
+def fix_broken_github_urls(text):
+    # Fix hyphenated line breaks
+    text = re.sub(r'(\S)-\n(\S)', r'\1\2', text)
+
+    # Add newline after GitHub/LinkedIn links to prevent merge with following words
+    text = re.sub(r'(https?:\/\/[^\s]+)', r'\1\n', text)
+
+    # Remove any leftover newlines and spaces before URLs
+    text = re.sub(r'\s+(?=https?:\/\/)', '', text)
+    return text
 
 def extract_github(text):
-    github = re.search(GITHUB_REG, text)
-    return github.group(0).strip() if github else None
+    text = fix_broken_github_urls(text)
+    match = re.search(GITHUB_PROFILE_REG, text)
+    if match:
+        username = match.group(1)
+        return f"https://github.com/{username}"
+    return None
+
+
+def fix_broken_linkedin_urls(text):
+    # Fix hyphenated line breaks specifically in LinkedIn usernames (e.g., muhammad-talha-\nnadeem)
+    text = re.sub(
+        r'(linkedin\.com\/(?:in|pub|company)\/[a-zA-Z0-9\-]+)-\s*\n\s*([a-zA-Z0-9\-]+)',
+        r'\1\2',
+        text,
+        flags=re.IGNORECASE
+    )
+
+    # Fix generic line breaks within LinkedIn URLs (e.g., www\n.\nlinkedin\n.com/in/...)
+    text = re.sub(r'www[\n\s]*\.?[\n\s]*linkedin', 'www.linkedin', text, flags=re.IGNORECASE)
+    text = re.sub(r'(linkedin\.com)[\n\s]*\/[\n\s]*', r'\1/', text, flags=re.IGNORECASE)
+    text = re.sub(r'(linkedin\.com\/[a-zA-Z0-9\-]+)[\n\s]*\/[\n\s]*', r'\1/', text)
+
+    return text
 
 def extract_linkedin(text):
-    linkedin = re.search(LINKEDIN_REG, text)
-    return linkedin.group(0).strip() if linkedin else None
+    text = fix_broken_linkedin_urls(text)
+
+    LINKEDIN_REG = re.compile(
+        r'(https?:\/\/)?(www\.)?linkedin\.com\/(in|pub|company)\/[a-zA-Z0-9\-]+(?:-[a-zA-Z0-9]+)*',
+        re.IGNORECASE
+    )
+
+    matches = re.finditer(LINKEDIN_REG, text)
+    for match in matches:
+        url = match.group(0).strip().rstrip('.,);:')
+        if not url.startswith("http"):
+            url = "https://" + url
+        return url
+
+    return None
+
+
 
 # EDUCATION EXTRACTION USING LLM
-# def extract_education(resume_text):
-#     url = LM_STUDIO_URL
-#     user_message = {
-#         "role": "user",
-#         "content": (
-#             "You are a helpful assistant that extracts education details from resumes. "
-#             "Extract only the latest (most recent) education entry from the resume. "
-#             "Return a single JSON object with keys 'institute', 'degree', and 'year'. "
-#             "Provide only the JSON output without any additional text.\n\n"
-#             f"Here is the resume text: {resume_text}"
-#         )
-#     }
-#     payload = {
-#         "model": "mistral",
-#         "messages": [user_message],
-#         "temperature": 0.3,
-#         "max_tokens": 512,
-#         "stream": False
-#     }
-#     headers = {
-#         "Content-Type": "application/json"
-#     }
-#     try:
-#         response = requests.post(url, headers=headers, data=json.dumps(payload))
-#         response.raise_for_status()
-#         result = response.json()
-#         content = result["choices"][0]["message"]["content"]
-#         education_entry = json.loads(content)
-#         return education_entry
-#     except requests.exceptions.RequestException as e:
-#         print(f"API request failed: {e}")
-#         return None
-#     except json.JSONDecodeError as e:
-#         print(f"Failed to parse JSON: {e}")
-#         print(f"Model response: {content}")
-#         return None
-#     except KeyError as e:
-#         print(f"Unexpected response format: {e}")
-#         return None
+def extract_education(resume_text):
+    url = LM_STUDIO_URL
+    user_message = {
+        "role": "user",
+        "content": (
+            "You are a helpful assistant that extracts education details from resumes. "
+            "Extract only the latest (most recent) education entry from the resume. "
+            "Return a single JSON object with keys 'institute', 'degree', and 'year'. "
+            "Provide only the JSON output without any additional text.\n\n"
+            f"Here is the resume text: {resume_text}"
+        )
+    }
+    payload = {
+        "model": "mistral",
+        "messages": [user_message],
+        "temperature": 0.3,
+        "max_tokens": 512,
+        "stream": False
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        response.raise_for_status()
+        result = response.json()
+        content = result["choices"][0]["message"]["content"]
+        education_entry = json.loads(content)
+        return education_entry
+    except requests.exceptions.RequestException as e:
+        print(f"API request failed: {e}")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Failed to parse JSON: {e}")
+        print(f"Model response: {content}")
+        return None
+    except KeyError as e:
+        print(f"Unexpected response format: {e}")
+        return None
 
 
 
@@ -375,7 +433,60 @@ def extract_skills(resume_text):
         print(f"Unexpected response format: {e}")
         return None
 
+# NEW FUNCTION: Extract Years of Experience Using Mistral 7B LLM
+def extract_years_of_experience(resume_text):
+    # Preprocess the text to replace "Present" with current date
+    current_date = datetime.now().strftime("%B %Y")  # e.g., "July 2025"
+    processed_text = re.sub(r'\bPresent\b', current_date, resume_text, flags=re.IGNORECASE)
+    
+    # Define the prompt for the LLM
+    prompt = f"""
+    STRICT INSTRUCTION: Extract the total years of work experience from the resume text provided. Identify all periods of work experience, which may be listed with date ranges (e.g., '01/2021 - 01/2022', 'Jan 2021 - Jan 2022'), durations (e.g., '1 year', '6 months'), or other formats. Convert all durations to years, where 12 months = 1 year, 6 months = 0.5 years, etc. Sum up all the years from all jobs. If a job's duration is ambiguous (e.g., 'several years'), do not include it in the total (treat as 0). If no work experience is mentioned, return 0.0.
 
+    STRICTEST INSTRUCTION: Return ONLY the total years as a float (e.g., 2.5, 0.0), with NO extra text, NO explanation, NO formatting, NO units, and NO markdown. If you do not follow this, your answer will be considered wrong.
+
+    Before processing, replace any instance of 'Present' with the current date (e.g., '{current_date}').
+
+    Here is the resume text:
+    {processed_text}
+    """
+    
+    # Send request to Mistral 7B
+    user_message = {
+        "role": "user",
+        "content": prompt
+    }
+    payload = {
+        "model": "mistral",
+        "messages": [user_message],
+        "temperature": 0.0,
+        "max_tokens": 200,
+        "stream": False
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    try:
+        response = requests.post(LM_STUDIO_URL, headers=headers, data=json.dumps(payload))
+        response.raise_for_status()
+        result = response.json()
+        content = result["choices"][0]["message"]["content"].strip()
+        # Always extract the float number from the response, even if extra text is present
+        match = re.search(r'\d+(\.\d+)?', content)
+        if match:
+            return float(match.group(0))
+        else:
+            return 0.0
+    except requests.exceptions.RequestException as e:
+        print(f"API request failed: {e}")
+        return 0.0
+    except KeyError as e:
+        print(f"Unexpected response format: {e}")
+        return 0.0
+    except ValueError as e:
+        print(f"Failed to convert to float: {e}")
+        return 0.0
+    
 # MAIN RESUME PARSING FUNCTION
 def parse_resume(file_path):
     text = extract_text_auto(file_path)
@@ -393,7 +504,7 @@ def parse_resume(file_path):
 
 
 
-    # education = extract_education(text)
+    education = extract_education(text)
     # work_experience = extract_work_experience(text)
     
     # if work_experience and isinstance(work_experience, int): # Check if it's an integer
@@ -409,7 +520,7 @@ def parse_resume(file_path):
         "email": email,
         "github": github,
         "linkedin": linkedin,
-        "skills": skills,
+        # "skills": skills,
         # "education": education if education is not None else "Failed to extract education details",
         # "work_experience": total_exp,
         # "expertise_level": expertise_level
