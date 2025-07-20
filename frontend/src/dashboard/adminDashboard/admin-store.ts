@@ -131,13 +131,14 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       console.log(res)
       // Map API data to candidate interface
       
+      
       const mappedUser = res.data.map((item: any) => ({
         id: item.user_id,
         name: item.name,
         email: item.email,
         role: formatRole(item.role),
         status: "Active" as UserStatus,
-        lastActive: new Date().toLocaleString("en-US", {
+        lastActive: new Date(item.time).toLocaleString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",

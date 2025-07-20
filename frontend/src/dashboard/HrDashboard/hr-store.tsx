@@ -69,7 +69,15 @@ export const useHrStore = create<hrStore>((set) => ({
         job_id: job.job_id,
         posted_by: job.posted_by,
         assigned_to: job.assigned_to,
-        date_posted: job.date_posted,
+        date_posted: new Date(job.date_posted).toLocaleString("en-GB", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                      timeZone: "UTC",
+                    }).replace(",", ""), // "14/07/2025 08:00"
         description: job.description,
         education_level: job.education_level,
         experience_level: job.experience_level,
