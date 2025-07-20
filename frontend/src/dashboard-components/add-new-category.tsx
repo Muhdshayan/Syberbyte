@@ -1,20 +1,21 @@
 import { CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { ChevronDown, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useAdminStore } from "@/dashboard/adminDashboard/admin-store";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+
 
 export default function AddCategory() {
+  const [description, setDescription] = useState("");
+  const [educationLevel, setEducationLevel] = useState("");
+  const [experienceLevel, setExperienceLevel] = useState("");
   const [industry, setIndustry] = useState("");
-  const [experience, setExperience] = useState("");
+  const [isActive, setIsActive] = useState(true);
+  const [jobType, setJobType] = useState("");
+  const [location, setLocation] = useState("");
   const [role, setRole] = useState("");
   const [salary, setSalary] = useState("");
   const [skills, setSkills] = useState("");
@@ -22,17 +23,45 @@ export default function AddCategory() {
   const [loading, setLoading] = useState(false);
 
   const handleAddCategory = async () => {
-    if (!industry || !experience || !role || !salary || !skills) return;
+    if (
+      !description ||
+      !educationLevel ||
+      !experienceLevel ||
+      !industry ||
+      !jobType ||
+      !location ||
+      !role ||
+      !salary ||
+      !skills
+    )
+      return;
     setLoading(true);
+    const currentDate = new Date().toISOString().split("T")[0]; // Format as YYYY-MM-DD
     await addJobCategory({
+      job_id: 1, // Set as undefined to satisfy interface while letting backend handle it
+      posted_by: 4,
+      assigned_to: 5,
+      date_posted: currentDate,
+      description,
+      education_level: educationLevel,
+      experience_level: experienceLevel,
       industry,
+      is_active: isActive,
+      job_type: jobType,
+      location,
       role,
-      experience,
-      skills: skills.split(",").map(s => s.trim()).filter(Boolean),
       salary,
+      salary_currency: "USD",
+      salary_period: "year",
+      skills: skills.split(",").map((s) => s.trim()).filter(Boolean).join(","),
     });
+    setDescription("");
+    setEducationLevel("");
+    setExperienceLevel("");
     setIndustry("");
-    setExperience("");
+    setIsActive(true);
+    setJobType("");
+    setLocation("");
     setRole("");
     setSalary("");
     setSkills("");
@@ -45,6 +74,39 @@ export default function AddCategory() {
         <CardTitle className="text-2xl font-poppins-semibold text-left">Add New Category</CardTitle>
       </CardHeader>
       <CardContent className="!font-inter-regular mt-6 flex flex-col gap-4">
+        {/* Description */}
+        <div>
+          <Label htmlFor="description">Description</Label>
+          <Input
+            id="description"
+            placeholder="Enter Job Description"
+            className="w-full mt-2 bg-white"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+         </div>
+        {/* Education Level */}
+        <div>
+          <Label htmlFor="educationLevel">Education Level</Label>
+          <Input
+            id="educationLevel"
+            placeholder="Enter Education Level"
+            className="w-full mt-2 bg-white"
+            value={educationLevel}
+            onChange={(e) => setEducationLevel(e.target.value)}
+          />
+          </div>
+        {/* Experience Level */}
+        <div>
+          <Label htmlFor="experienceLevel">Experience Level</Label>
+          <Input
+            id="experienceLevel"
+            placeholder="Enter Experience Level"
+            className="w-full mt-2 bg-white"
+            value={experienceLevel}
+            onChange={(e) => setExperienceLevel(e.target.value)}
+          />
+          </div>
         {/* Industry */}
         <div>
           <Label htmlFor="industry">Industry</Label>
@@ -53,22 +115,36 @@ export default function AddCategory() {
             placeholder="Enter Industry"
             className="w-full mt-2 bg-white"
             value={industry}
-            onChange={e => setIndustry(e.target.value)}
+            onChange={(e) => setIndustry(e.target.value)}
           />
-          <div className="text-secondary text-sm text-left mt-1">Select job technology</div>
-        </div>
-        {/* Experience Level */}
+          </div>
+        {/* Job Type */}
         <div>
-          <Label htmlFor="experience">Experience Level</Label>
-          <Input
-            id="Experience"
-            placeholder="Enter Experience"
-            className="w-full mt-2 bg-white"
-            value={experience}
-            onChange={e => setExperience(e.target.value)}
-          />
-           <div className="text-secondary text-sm text-left mt-1">Select job experience level</div>
+          <Label htmlFor="jobType">Job Type</Label>
+          <Select
+            value={jobType}
+            onValueChange={setJobType}
+          >
+            <SelectTrigger id="jobType" className="w-full mt-2 !bg-white !border-gray-200 !text-primary !text-sm">
+              <SelectValue placeholder="Select Job Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="onsite">Onsite</SelectItem>
+              <SelectItem value="remote">Remote</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+        {/* Location */}
+        <div>
+          <Label htmlFor="location">Location</Label>
+          <Input
+            id="location"
+            placeholder="Enter Location"
+            className="w-full mt-2 bg-white"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+          </div>
         {/* Role */}
         <div>
           <Label htmlFor="role">Role</Label>
@@ -77,22 +153,9 @@ export default function AddCategory() {
             placeholder="Enter Role"
             className="w-full mt-2 bg-white"
             value={role}
-            onChange={e => setRole(e.target.value)}
+            onChange={(e) => setRole(e.target.value)}
           />
-          <div className="text-secondary text-sm text-left mt-1">Select user role</div>
-        </div>
-        {/* Required Skills */}
-        <div>
-          <Label htmlFor="skills">Required Skills</Label>
-          <Input
-            id="skills"
-            placeholder="Comma separated (e.g. Python, SQL, Excel)"
-            className="w-full mt-2 bg-white"
-            value={skills}
-            onChange={e => setSkills(e.target.value)}
-          />
-          <div className="text-secondary text-sm text-left mt-1">Select Job Skills</div>
-        </div>
+          </div>
         {/* Salary */}
         <div>
           <Label htmlFor="salary">Salary</Label>
@@ -101,12 +164,23 @@ export default function AddCategory() {
             placeholder="Enter Salary Range"
             className="w-full mt-2 bg-white"
             value={salary}
-            onChange={e => setSalary(e.target.value)}
+            onChange={(e) => setSalary(e.target.value)}
           />
-          <div className="text-secondary text-sm text-left mt-1">Select Salary Range</div>
-        </div>
+          </div>
+        {/* Required Skills */}
+        <div>
+          <Label htmlFor="skills">Required Skills</Label>
+          <Input
+            id="skills"
+            placeholder="Comma separated (e.g., Python, SQL, Excel)"
+            className="w-full mt-2 bg-white"
+            value={skills}
+            onChange={(e) => setSkills(e.target.value)}
+          />
+          </div>
+        
       </CardContent>
-      <CardFooter className="mt-6 flex flex-col gap-5">
+      <CardFooter className="mt-6 flex flex-col gap-2">
         <Button
           className="w-full !bg-blue"
           onClick={handleAddCategory}

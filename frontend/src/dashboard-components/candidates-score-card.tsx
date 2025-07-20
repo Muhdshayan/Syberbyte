@@ -17,9 +17,9 @@ export default function CandidatesScoreCard({
   return (
     <Card className=" w-full p-5 flex flex-col gap-2 shadow-sm">
       <div className="flex justify-between items-center font-inter-regular">
-        <span className="text-lg font-poppins-semibold">Candidate {name}</span>
+        <span className="text-lg font-poppins-semibold">{name}</span>
         <span className="bg-green text-white rounded-full px-4 py-1 text-sm font-medium">
-          Score {score}/100
+         {score}/100
         </span>
       </div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mt-2 gap-2">

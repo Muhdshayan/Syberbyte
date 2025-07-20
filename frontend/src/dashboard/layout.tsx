@@ -61,7 +61,7 @@ export default function DashboardLayout() {
     <>
 
       <header className={`sticky top-0 left-0 flex flex-col w-screen gap-3 bg-cream z-3` }>
-        <div className="w-screen overflow-x-hidden auto flex items-center justify-between pl-3 md:pr-6 pr-3 pt-2">
+        <div className="w-screen overflow-x-hidden auto flex items-center justify-between px-3 pt-2">
           <div className="flex items-center gap-2 ">
             <img src="/starblack.svg" className="w-6 h-6" />
             <span className="font-inter-medium text-xl">Company Portal</span>
@@ -101,7 +101,7 @@ export default function DashboardLayout() {
         </header>
         {isAdminTablePage ? (
           
-          <div className=" flex md:flex-row flex-col items-start pl-3">
+          <div className=" flex md:flex-row flex-col justify-between w-full items-start">
              {pathname === "/dashboard/admin" && <AddUserAdmin />}
               {pathname === "/dashboard/admin/job-category-management" && <AddCategory />}
             <div className="flex flex-col flex-1">
@@ -116,7 +116,9 @@ export default function DashboardLayout() {
           (
           <>
           <main className="mt-5 flex flex-col items-start justify-start pb-6 w-full overflow-x-hidden">
-            <Breadcrumb />
+            <div className="ml-4">
+              <Breadcrumb />
+            </div>
             <Outlet />
           </main>
           </>

@@ -27,7 +27,7 @@ export default function CandidateProfileCard({
     <Card className="w-full  shadow-lg p-6 relative animate-in fade-in font-inter-regular">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <div className="text-2xl font-poppins-semibold">Candidate {candidate.name}</div>
+          <div className="text-2xl font-poppins-semibold">{candidate.name}</div>
         </div>
           <X className="w-5 h-5 " onClick={() => onOpenChange(false)}/>
       </div>

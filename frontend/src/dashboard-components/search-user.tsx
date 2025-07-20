@@ -4,32 +4,32 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminStore } from "@/dashboard/adminDashboard/admin-store";
-import {
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
 import { X } from "lucide-react";
 import MobileTable from "@/dashboard-components/mobile-table";
-import WebTable from "./webTable";
+import UserTable from "@/dashboard-components/user-table"; // <-- import your user-table component
+
 import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
+
 
 export default function SearchUser() {
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
-  const [inputActive, setInputActive] = useState(false);
   const searchUser = useAdminStore((state) => state.searchUser);
-  const users = searchUser(query);
+  const allUsers = useAdminStore((state) => state.users);
+ 
 
-  // Optional: filter by role if a role button is clicked
-  const filteredUsers = roleFilter
-    ? users.filter((u) => u.role.toLowerCase() === roleFilter.toLowerCase())
-    : users;
+  // Filtered users by search and role
+  const filteredUsers = searchUser(query).filter(u =>
+    roleFilter ? u.role.toLowerCase() === roleFilter.toLowerCase() : true
+  );
+
+  const isFilterApplied = !!query || !!roleFilter;
+  const usersToShow = isFilterApplied ? filteredUsers : allUsers;
+
 
   return (
-    <div className="flex flex-col items-start mt-5 justify-start w-full !font-inter-regular">
-      <Card className="w-[95%] p-3 flex md:flex-row flex-col justify-between">
+    <div className="flex flex-col md:items-start items-center mt-5  justify-start md:w-full w-screen !font-inter-regular">
+      <Card className="md:w-[99%] w-[95%] p-3 flex md:flex-row flex-col justify-between">
         <div className="flex gap-2">
           <div className="relative z-1">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -40,7 +40,6 @@ export default function SearchUser() {
               className="pl-10"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              onFocus={() => setInputActive(true)}
             />
           </div>
           <div>
@@ -53,16 +52,17 @@ export default function SearchUser() {
             </Button>
           </div>
         </div>
-        <div className="flex md:gap-2 gap-1">
+        <div className="flex flex-wrap md:gap-2 gap-1 md:w-auto w-full">
          <Select
             value={roleFilter || ""}
             onValueChange={(value) => {
               setRoleFilter(value);
-              setInputActive(true);
             }}
           >
-            <SelectTrigger className="!bg-white !text-sm !font-inter-regular !text-black !border-gray-200">
-              {roleFilter ? roleFilter : "Admin"}
+            <SelectTrigger
+              className={`!bg-blue !text-white !text-sm !font-inter-regular chevron-white ${roleFilter?.includes("admin") ? "!bg-white !text-blue-700 border border-blue-200" : "!bg-blue !text-white"}`}
+            >
+              Admin
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Basic Admin">Basic Admin</SelectItem>
@@ -71,59 +71,43 @@ export default function SearchUser() {
             </SelectContent>
           </Select>
             <Button
-              className="!bg-blue !text-sm !font-inter-regular !px-2"
+              className={`!text-sm !font-inter-regular !px-2 ${roleFilter === "Recruiter" ? "!bg-white !text-blue-700 border border-blue-200" : "!bg-blue !text-white"}`}
               onClick={() => {
                 setRoleFilter("Recruiter");
-                setInputActive(true);
+
               }}
             >
               Recruiter
             </Button>
             <Button
-              className="!bg-blue !text-sm !font-inter-regular !px-2"
+              className={`!text-sm !font-inter-regular !px-2 ${roleFilter === "HR Manager" ? "!bg-white !text-blue-700 border border-blue-200" : "!bg-blue !text-white"}`}
               onClick={() => {
                 setRoleFilter("HR Manager");
-                setInputActive(true);
               }}
             >
               Hr Manager
             </Button>
-            <Button className="!bg-green" onClick={() => { setInputActive(false); setRoleFilter(null); }}>
+            <Button className="!bg-green" onClick={() => { setRoleFilter(null); }}>
                 <X />
             </Button>
         </div>
       </Card>
-      {inputActive && (
-        <>
-          <Card className="p-4 w-[95%] hidden md:block mt-5 transition-all duration-300 ease-in-out opacity-100 translate-y-0 animate-fade-in">
-            <Table>
-              <TableBody>
-                {query.trim() === "" && !roleFilter ?  (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-black text-sm">
-                      Please enter a search query.
-                    </TableCell>
-                  </TableRow>
-                ) : filteredUsers.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-black text-sm">
-                      No users found.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                    <div className="hidden md:block w-[95%] mt-5">
-                      <WebTable users={filteredUsers} />
-                     </div>
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-          {/* Mobile List */}
-            <div className="md:hidden block w-[95%] mt-5">
-                <MobileTable users={filteredUsers} />
-            </div>
-        </>
-      )}
+      <>
+        {/* Desktop Table */}
+        <div className="hidden md:block w-[99%] mt-5">
+          <UserTable users={usersToShow} />
+          {usersToShow.length === 0 && (
+            <div className="text-black text-sm mt-4">No users found.</div>
+          )}
+        </div>
+        {/* Mobile List */}
+        <div className="md:hidden block w-[95%] mt-5">
+          <MobileTable users={usersToShow} />
+          {usersToShow.length === 0 && (
+            <div className="text-black text-sm mt-4">No users found.</div>
+          )}
+        </div>
+      </>
     </div>
   );
 }

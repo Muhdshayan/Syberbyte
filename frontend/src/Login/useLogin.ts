@@ -27,21 +27,20 @@ export default function useLogin(initialRole: Role = "HR") {
     setError("");
 
     try {
-      const res = await fetch("https://e6f8137658d1.ngrok-free.app/api/user/login/", {
+      const res = await fetch("http://localhost:8000/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
-
+      
       if (!res.ok) {
         setError(data.message || "Login failed.");
         console.log("Login error:", data);
         setLoading(false);
         return;
       }
-      console.log("Login success:", data);
       setAuthUser(data);
       if (data.permission == 5 || data.permission == 10 || data.permission == 7){
         navigate("/dashboard/admin");

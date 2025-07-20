@@ -4,65 +4,42 @@ import { toast } from "sonner";
 
 const dummyJobs: Job[] = [
   {
-    id: 1,
-    title: "Software Engineer",
-    description:
-      "We're looking for a passionate Frontend Developer to join our product team and bring designs to life using React.js. You'll work closely with designers and backend engineers to build fast, intuitive, and responsive web apps.",
+    job_id: 1,
+    posted_by: 4,
+    assigned_to: 5,
+    date_posted: "2025-07-15T10:00:00Z",
+    description: "Build and maintain REST APIs using Django.",
+    education_level: "Bachelor's in Computer Science",
+    experience_level: "2+ years",
+    industry: "Information Technology",
+    is_active: true,
+    job_type: "Full-time",
     location: "Remote",
-    type: "Full-time",
-    salary: "$60,000/year",
-    postedOn: "07/01/25",
-  },
-  {
-    id: 2,
-    title: "Backend Developer",
-    description:
-      "Join our backend team to help build scalable APIs using Node.js and PostgreSQL. You'll design robust systems and optimize performance.",
-    location: "Lahore, PK",
-    type: "Contract",
-    salary: "$45/hour",
-    postedOn: "06/29/25",
-  },
-  {
-    id: 3,
-    title: "UI/UX Designer",
-    description:
-      "We're seeking a creative UI/UX designer to craft intuitive interfaces and deliver amazing user experiences across all devices.",
-    location: "Remote",
-    type: "Internship",
-    salary: "$1,000/month",
-    postedOn: "07/03/25",
-  },
-  {
-    id: 4,
-    title: "DevOps Engineer",
-    description:
-      "You will manage CI/CD pipelines, monitor system performance, and ensure high availability of services using AWS and Docker.",
-    location: "Karachi, PK",
-    type: "Full-time",
-    salary: "$75,000/year",
-    postedOn: "06/28/25",
-  },
-  {
-    id: 5,
-    title: "AI/ML Engineer",
-    description:
-      "Work on cutting‑edge AI projects including NLP, recommendation systems, and predictive analytics. Experience with Python and TensorFlow required.",
-    location: "Hybrid (Islamabad)",
-    type: "Full-time",
-    salary: "$90,000/year",
-    postedOn: "06/27/25",
+    role: "Backend Developer",
+    salary: "70000.00",
+    salary_currency: "USD",
+    salary_period: "year",
+    skills: "Python, Django, REST, PostgreSQL",
   },
 ];
 
 export interface Job {
-  id: number;
-  title: string;
+  job_id: number;
+  posted_by: number,
+  assigned_to: number;
+  date_posted: string;
   description: string;
+  education_level: string;
+  experience_level: string;
+  industry: string;
+  is_active: boolean;
+  job_type: string;
   location: string;
-  type: string;
+  role: string;
   salary: string;
-  postedOn: string;
+  salary_currency: string;
+  salary_period: string;
+  skills: string;
 }
 
 interface hrStore {
@@ -83,14 +60,33 @@ export const useHrStore = create<hrStore>((set) => ({
   fetchJobs: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.get<[]>("/api/hr/jobs");
+      const res = await axios.get<Job[]>("http://localhost:8000/api/jobdetails/");
       if (!res.data || !Array.isArray(res.data)) {
         throw new Error("Invalid data format");
       }
-      set({ jobs: res.data, loading: false });
-    } catch (error: any) {
-      set({ jobs:dummyJobs, loading: false, error: error.message });
+      // Map API data to Job interface
+      const mappedJobs = res.data.map(job => ({
+        job_id: job.job_id,
+        posted_by: job.posted_by,
+        assigned_to: job.assigned_to,
+        date_posted: job.date_posted,
+        description: job.description,
+        education_level: job.education_level,
+        experience_level: job.experience_level,
+        industry: job.industry,
+        is_active: job.is_active,
+        job_type: job.job_type,
+        location: job.location,
+        role: job.role,
+        salary: job.salary,
+        salary_currency: job.salary_currency,
+        salary_period: job.salary_period,
+        skills: job.skills,
+      }));
+      set({ jobs: mappedJobs, loading: false, error: null });
+    } catch (err) {
       toast.error("Failed to fetch jobs");
+      set({ jobs: dummyJobs, loading: false, error: "Failed to fetch from API. Showing dummy data." });
     }
   },
 
@@ -102,7 +98,7 @@ export const useHrStore = create<hrStore>((set) => ({
   updateJob: (id, updatedJob) => {
     set((state) => ({
       jobs: state.jobs.map((job) =>
-        job.id === id ? { ...job, ...updatedJob } : job
+        job.job_id === id ? { ...job, ...updatedJob } : job
       ),
     }));
     toast.success("Job updated successfully");
@@ -110,7 +106,7 @@ export const useHrStore = create<hrStore>((set) => ({
 
   deleteJob: (id) => {
     set((state) => ({
-      jobs: state.jobs.filter((job) => job.id !== id),
+      jobs: state.jobs.filter((job) => job.job_id !== id),
     }));
     toast.success("Job deleted successfully");
   },

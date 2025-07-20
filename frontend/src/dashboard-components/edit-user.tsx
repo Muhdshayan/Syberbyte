@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useState } from "react";
-import type { User, UserRole, UserStatus} from "@/dashboard/adminDashboard/admin-store";
+import type { User, UserStatus} from "@/dashboard/adminDashboard/admin-store";
 
 
 interface EditUserDialogProps {
@@ -24,7 +24,7 @@ export default function EditUserDialog({ user, open, onOpenChange, onSave }: Edi
   const [form, setForm] = useState<User>(user);
 
     const handleRoleChange = (role: string) => {
-      setForm({ ...form, role: role as UserRole });
+      setForm({ ...form, role: role });
     };
 
     const handleStatusChange = (status: string) => {
@@ -71,14 +71,14 @@ export default function EditUserDialog({ user, open, onOpenChange, onSave }: Edi
             <label className="block text-sm font-medium mb-1">Role</label>
             <Select
               value={form.role}
-              onValueChange={handleRoleChange}
-              
-            >
-              <SelectTrigger className="w-full !bg-white !outline-none">
+              onValueChange={handleRoleChange}>
+              <SelectTrigger className="w-full !bg-white !text-primary !border-gray-200 !outline-none">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="Advanced Admin">Advanced Admin</SelectItem>
+                <SelectItem value="Basic Admin">Basic Admin</SelectItem>
+                <SelectItem value="Full Admin">Full Admin</SelectItem>
                 <SelectItem value="HR Manager">HR Manager</SelectItem>
                 <SelectItem value="Recruiter">Recruiter</SelectItem>
               </SelectContent>
@@ -90,7 +90,7 @@ export default function EditUserDialog({ user, open, onOpenChange, onSave }: Edi
               value={form.status}
               onValueChange={handleStatusChange}
             >
-              <SelectTrigger className="w-full !bg-white !outline-none">
+              <SelectTrigger className="w-full !border-gray-200 !bg-white !outline-none">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>

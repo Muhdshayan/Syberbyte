@@ -30,6 +30,9 @@ function SelectTrigger({
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: "sm" | "default"
 }) {
+  const isBlueBg =
+    typeof className === "string" && className.includes("!bg-blue");
+
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
@@ -42,7 +45,12 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 opacity-50" />
+        <ChevronDownIcon
+          className={cn(
+            "size-4",
+            isBlueBg && "text-white"
+          )}
+        />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )

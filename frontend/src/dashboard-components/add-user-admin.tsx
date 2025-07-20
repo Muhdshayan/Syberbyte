@@ -18,17 +18,34 @@ import { toast } from "sonner";
 const newUserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
-  role: z.enum(["Basic Admin", "Advanced Admin","Full Admin", "HR Manager", "Recruiter"]),
+  role: z.enum(["full_admin", "advanced_admin", "basic_admin", "hr_manager", "recruiter"]),
   password: z.string().min(5, "Password must be at least 5 characters"),
+  permission: z.number().default(1),
 });
 type NewUser = z.infer<typeof newUserSchema>;
+
+// Role choices type
+type RoleChoice = {
+  value: NewUser["role"];
+  label: string;
+};
+
+// Role choices mapping for display
+const ROLE_CHOICES: RoleChoice[] = [
+  { value: "full_admin", label: "Full Admin" },
+  { value: "advanced_admin", label: "Advanced Admin" },
+  { value: "basic_admin", label: "Basic Admin" },
+  { value: "hr_manager", label: "HR Manager" },
+  { value: "recruiter", label: "Recruiter" },
+];
 
 export default function AddUserAdmin() {
   const [form, setForm] = useState<NewUser>({
     name: "",
     email: "",
-    role: "Basic Admin",
+    role: "recruiter",
     password: "",
+    permission: 1,
   });
   const [roleOpen, setRoleOpen] = useState(false);
 
@@ -37,7 +54,20 @@ export default function AddUserAdmin() {
   };
 
   const handleRoleSelect = (role: NewUser["role"]) => {
-    setForm((prev) => ({ ...prev, role }));
+    const rolePermissionMap: Record<NewUser["role"], number> = {
+      full_admin: 10,
+      advanced_admin: 7,
+      basic_admin: 5,
+      hr_manager: 3,
+      recruiter: 1,
+    };
+
+    setForm((prev) => ({
+      ...prev,
+      role,
+      permission: rolePermissionMap[role],
+    }));
+
     setRoleOpen(false);
   };
 
@@ -45,13 +75,13 @@ export default function AddUserAdmin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = newUserSchema.safeParse(form);
-    console.log(result)
+    console.log(result);
     if (!result.success) {
-     toast.error(result.error.errors[0].message); // Show toast on zod error
+      toast.error(result.error.errors[0].message);
       return;
     }
     await addUser(form);
-    setForm({ name: "", email: "", role: "Basic Admin", password: "" });
+    setForm({ name: "", email: "", role: "recruiter", password: "", permission: 1 });
   };
 
   const users = useAdminStore((state) => state.users);
@@ -59,7 +89,7 @@ export default function AddUserAdmin() {
 
   return (
     <form
-      className="md:w-[25%] w-full bg-cream shadow-none !font-inter-regular py-5"
+      className="md:w-[25%] w-full justify-between bg-cream shadow-none !font-inter-regular pt-5"
       onSubmit={handleSubmit}
     >
       <CardHeader>
@@ -72,9 +102,8 @@ export default function AddUserAdmin() {
           value={form.name}
           onChange={handleChange}
           placeholder="Enter name"
-          className="w-full mb-2 mt-4 bg-white"
+          className="w-full mb-2 mt-1 bg-white"
         />
-        <div className="text-secondary text-sm text-left">enter your full name</div>
         <Label htmlFor="email" className="mt-4">
           Email Address
         </Label>
@@ -83,11 +112,10 @@ export default function AddUserAdmin() {
           value={form.email}
           onChange={handleChange}
           placeholder="Enter email"
-          className="w-full mb-2 mt-4 bg-white"
+          className="w-full mb-2 mt-1 bg-white"
         />
-        <div className="text-secondary text-sm text-left">enter your email address</div>
-        <Label htmlFor="role" className="my-4">
-          Role
+        <Label htmlFor="role" className="mb-2">
+          Role 
         </Label>
         <DropdownMenu open={roleOpen} onOpenChange={setRoleOpen}>
           <DropdownMenuTrigger asChild>
@@ -96,16 +124,16 @@ export default function AddUserAdmin() {
               variant="outline"
               className="w-full !text-left !text-sm font-inter-regular !border-gray-200 !bg-white"
             >
-              {form.role}
+              {ROLE_CHOICES.find((choice) => choice.value === form.role)?.label || form.role}
               <ChevronDown className="ml-auto h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-48 font-inter-regular" align="start">
-            <DropdownMenuItem onClick={() => handleRoleSelect("Basic Admin")}>Basic Admin</DropdownMenuItem>     
-            <DropdownMenuItem onClick={() => handleRoleSelect("Advanced Admin")}>Advanced Admin</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleRoleSelect("Full Admin")}>Full Admin</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleRoleSelect("HR Manager")}>HR</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleRoleSelect("Recruiter")}>Recruiter</DropdownMenuItem>
+            {ROLE_CHOICES.map((choice) => (
+              <DropdownMenuItem key={choice.value} onClick={() => handleRoleSelect(choice.value)}>
+                {choice.label}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
         <Label htmlFor="password" className="mt-4">
@@ -117,16 +145,15 @@ export default function AddUserAdmin() {
           value={form.password}
           onChange={handleChange}
           placeholder="password"
-          className="w-full mb-2 mt-4 bg-white"
+          className="w-full mb-2 mt-1 bg-white"
         />
-        <div className="text-secondary text-sm text-left">enter your password</div>
       </CardContent>
       <CardFooter className="mt-6 flex flex-col gap-5">
         <Button type="submit" className="w-full !bg-blue">
           <Plus className="w-4 h-4" /> Create User
         </Button>
         <div className="font-inter-medium bg-green rounded-lg w-full text-white text-left p-5">
-          Quick States
+          Quick Stats
           <div className="mt-1 w-full flex justify-between font-inter-regular text-sm">
             <p>Total user</p>
             <p>{stats.total}</p>

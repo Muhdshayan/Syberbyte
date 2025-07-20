@@ -16,10 +16,7 @@ export default function JobCategoryMobTable({ jobs, onEdit, onDelete }: JobCateg
       {jobs.map((item, idx) => (
         <Card key={idx} className="p-4 w-full flex flex-col gap-2 shadow-md relative">
           <div className="flex justify-between items-center mb-2">
-            <div>
-              <span className="block text-xs text-muted-foreground">Industry</span>
-              <span className="block text-sm font-medium">{item.industry}</span>
-            </div>
+           
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <MoreVertical className="w-5 h-5 cursor-pointer" />
@@ -34,21 +31,44 @@ export default function JobCategoryMobTable({ jobs, onEdit, onDelete }: JobCateg
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+           <div className="flex w-full justify-between items-center">
+              <span className="block text-xs text-muted-foreground">Industry</span>
+              <span className="block text-sm font-medium">{item.industry}</span>
+            </div>
           <div className="flex justify-between">
             <span className="text-xs text-muted-foreground">Role</span>
             <span className="text-sm font-medium">{item.role}</span>
           </div>
           <div className="flex justify-between">
+            <span className="text-xs text-muted-foreground">Status</span>
+            <Badge className={`text-white ${item.is_active ? "bg-green" : "bg-red-500"}`}>
+                        {item.is_active ? "Active" : "Inactive"}
+                      </Badge>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-xs text-muted-foreground">Education</span>
+            <span className="text-sm font-medium">{item.education_level}</span>
+          </div>
+          <div className="flex justify-between">
             <span className="text-xs text-muted-foreground">Experience</span>
-            <span className="text-sm font-medium">{item.experience}</span>
+            <span className="text-sm font-medium">{item.experience_level}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-xs text-muted-foreground">Salary</span>
             <span className="text-sm font-medium">{item.salary}</span>
           </div>
-          <div>
-            <span className="block text-xs text-muted-foreground mb-1">Required Skills</span>
-            <div className="flex flex-wrap gap-2">
+          <div className="flex justify-between">
+            <span className="text-xs text-muted-foreground">Location</span>
+            <span className="text-sm font-medium">{item.location}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-xs text-muted-foreground">Job</span>
+            <span className="text-sm font-medium">{item.job_type}</span>
+          </div>
+          
+          <div className="flex w-full justify-between item-start">
+            <span className="text-xs text-muted-foreground text-left">Required Skills</span>
+            <div className="flex flex-wrap gap-2 justify-end">
                 {(Array.isArray(item.skills) ? item.skills : String(item.skills).split(",").map(s => s.trim())).map((skill, i) => (
                   <Badge key={i} className="bg-green text-white">{skill}</Badge>
                 ))}

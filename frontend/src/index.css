@@ -79,6 +79,12 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -215,7 +221,6 @@ button:focus-visible {
   src: url("/fonts/Poppins_18pt-SemiBold.ttf") format("truetype");
 }
 
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -223,4 +228,16 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important; /* background */
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  -webkit-text-fill-color: #222 !important; /* text color */
+  color: #222 !important;
+  caret-color: auto;
+  transition: background-color 9999s ease-in-out 0s;
 }

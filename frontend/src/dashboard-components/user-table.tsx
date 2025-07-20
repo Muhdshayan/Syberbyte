@@ -9,17 +9,17 @@ import ResetPasswordDialog from "./reset-password";
 import { useAdminStore } from "@/dashboard/adminDashboard/admin-store";
 import type { User } from "@/dashboard/adminDashboard/admin-store"; // <-- add this
 import WebTable from "./webTable";
+import { toast } from "sonner";
+interface UserTableProps {
+  users: User[];
+}
 
-export default function UserTable() {
+export default function UserTable({ users }: UserTableProps) {
   const [editUser, setEditUser] = useState<User | null>(null);
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
   const [resetUser, setResetUser] = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 3;
-  
-
-  // Fetch users from store
-  const users = useAdminStore((state) => state.users);
 
   const fetchUsers = useAdminStore((state) => state.fetchUsers);
   const editUserInStore = useAdminStore((state) => state.editUser);
@@ -31,14 +31,19 @@ export default function UserTable() {
     fetchUsers();
   }, [fetchUsers]);
 
+    useEffect(() => {
+    setCurrentPage(1);
+  }, [users]);
+
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = Array.isArray(users) ? users.slice(indexOfFirstUser, indexOfLastUser) : [];
   const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
-    <div className="w-full flex items-center mt-5 justify-start">
-      <Card className="w-[95%] p-5 font-inter-regular">
+    <div className="w-full flex items-center justify-start">
+      <Card className="md:h-[400px] md:w-full w-[95%] p-5 font-inter-regular justify-between">
+        <div className="flex flex-col gap-4">
         <CardHeader>
           <CardTitle className="text-2xl font-poppins-semibold text-left text-primary">
             User Management
@@ -59,13 +64,14 @@ export default function UserTable() {
         </div>
 
         {/* Mobile Table */}
-        <div className="block md:hidden w-full">
+        <div className="block md:hidden w-full ">
           <MobileTable
             users={currentUsers} // Pass current users to MobileTable
             onEditUser={(u) => setEditUser(u)}
             onResetUser={(u) => setResetUser(u)}
             onDeleteUser={(u) => setDeleteUser(u)}
           />
+        </div>
         </div>
         <div className="flex justify-between items-center mt-5">
           <p className="text-sm text-muted-foreground">
@@ -88,7 +94,7 @@ export default function UserTable() {
             </Button>
           </div>
         </div>
-          {editUser && (
+        {editUser && (
           <EditUserDialog
             user={editUser}
             open={!!editUser}
@@ -96,19 +102,24 @@ export default function UserTable() {
             onSave={(updatedUser: User) => {
               editUserInStore(updatedUser);
               setEditUser(null);
-           }}
-          />
-        )}
-         {deleteUser && (
-          <DeleteUserDialog
-            open={!!deleteUser}
-            onOpenChange={(open: boolean) => !open && setDeleteUser(null)}
-            onDelete={() => {
-              deleteUserFromStore(deleteUser.id); // <-- pass id to store
-              setDeleteUser(null);
             }}
           />
         )}
+        <DeleteUserDialog
+          open={!!deleteUser}
+          onOpenChange={(open: boolean) => !open && setDeleteUser(null)}
+          onDelete={() => {
+            if (!deleteUser?.id) {
+              console.error("Delete user ID is undefined:", deleteUser);
+              toast.error("Cannot delete user: ID is missing");
+              setDeleteUser(null);
+              return;
+            }
+            console.log("Deleting user with ID:", deleteUser.id);
+            deleteUserFromStore(deleteUser.id);
+            setDeleteUser(null);
+          }}
+        />
         {resetUser && (
           <ResetPasswordDialog
             open={!!resetUser}

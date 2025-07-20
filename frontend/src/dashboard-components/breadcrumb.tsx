@@ -10,7 +10,7 @@ export default function Breadcrumb() {
   const icons = [<Home className="w-4 h-4" />, <Folder className="w-4 h-4" />];
 
   return (
-    <nav className="ml-4 bg-white rounded-lg shadow inline-flex items-center px-4 py-2 gap-2 font-inter-regular text-sm">
+    <nav className=" bg-white rounded-lg shadow inline-flex items-center px-4 py-2 gap-2 font-inter-regular text-sm">
       {paths.map((segment, idx) => {
         const to = "/" + ["dashboard", ...paths.slice(0, idx + 1)].join("/");
         return (

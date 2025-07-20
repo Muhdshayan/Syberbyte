@@ -1,96 +1,16 @@
-const dummyUsers: User[] = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-    email: "alice.johnson@company.com",
-    role: "Basic Admin",
-    status: "Active",
-    lastActive: "2 hours ago",
-  },
-  {
-    id: 2,
-    name: "Bob Smith",
-    email: "bob.smith@company.com",
-    role: "HR Manager",
-    status: "Active",
-    lastActive: "1 day ago",
-  },
-  {
-    id: 3,
-    name: "Carol Lee",
-    email: "carol.lee@company.com",
-    role: "Recruiter",
-    status: "Suspended",
-    lastActive: "3 days ago",
-  },
-  {
-    id: 4,
-    name: "David Kim",
-    email: "david.kim@company.com",
-    role: "Recruiter",
-    status: "Active",
-    lastActive: "5 hours ago",
-  },
-  {
-    id: 5,
-    name: "Eva Green",
-    email: "eva.green@company.com",
-    role: "HR Manager",
-    status: "Suspended",
-    lastActive: "2 weeks ago",
-  },
-];
-
-const jobCategories = [
-  {
-    industry: "Technology",
-    role: "Software Engineering",
-    experience: "Mid level",
-    skills: ["Python", "JavaScript", "Node", "Git", "React", "SQL", "HTML", "CSS"],
-    salary: "$80k-$100k",
-  },
-  {
-    industry: "Healthcare",
-    role: "Nurse",
-    experience: "senior level",
-    skills: ["Clinical", "Communication"],
-    salary: "$80k-$100k",
-  },
-  {
-    industry: "Finance",
-    role: "Financial Analyst",
-    experience: "Mid level",
-    skills: ["Power BI", "Tableau", "Excel"],
-    salary: "$80k-$100k",
-  },
-  {
-    industry: "Education",
-    role: "Teacher",
-    experience: "Entry level",
-    skills: ["Classroom Management", "Lesson Planning", "Communication"],
-    salary: "$40k-$60k",
-  },
-  {
-    industry: "Retail",
-    role: "Store Manager",
-    experience: "2+ years",
-    skills: ["Inventory Management", "Customer Service", "Leadership"],
-    salary: "$60k-$80k",
-  },
-];
 
 import { create } from "zustand";
 import { toast } from "sonner";
 import axios from "axios";
+//import type { ReactNode } from "react";
 
 export type UserStatus = "Active" | "Suspended";
-export type UserRole = "Full Admin" | "HR Manager" | "Recruiter" | "Advanced Admin" | "Basic Admin";
 
 export interface User {
   id: number;
   name: string;
   email: string;
-  role: UserRole;
+  role: string;
   status: UserStatus;
   lastActive: string;
 }
@@ -98,16 +18,27 @@ export interface User {
 interface NewUser {
   name: string;
   email: string;
-  role: UserRole;
+  role: String;
   password: string;
 }
 
 export interface JobCategory {
+  job_id: number;
+  posted_by: number,
+  assigned_to: number;
+  date_posted: string;
+  description: string;
+  education_level: string;
+  experience_level: string;
   industry: string;
+  is_active: boolean;
+  job_type: string;
+  location: string;
   role: string;
-  experience: string;
-  skills: string[];
   salary: string;
+  salary_currency: string;
+  salary_period: string;
+  skills: string;
 }
 
 
@@ -124,7 +55,7 @@ interface AdminStore {
     jobCategories: JobCategory[];
     fetchJobCategories: () => Promise<void>;
     editCategory: (category: JobCategory) => Promise<void>;
-    deleteCategory: (role: string) => Promise<void>;
+    deleteCategory: (job_id: number) => Promise<void>;
     addCategory: (category: JobCategory) => Promise<void>;
     loading: boolean;
     error: string | null;
@@ -152,6 +83,13 @@ export function getCategoryStats(categories: JobCategory[]) {
   };
 }
 
+// Add this utility function at the top or in a utils file
+function formatRole(role: string) {
+  return role
+    .replace(/_/g, " ") // replace underscores with spaces
+    .replace(/\b\w/g, (char) => char.toUpperCase()); // capitalize first letter of each word
+}
+
 export const useAdminStore = create<AdminStore>((set, get) => ({
   users: [],
   newUsers: [],
@@ -162,7 +100,8 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       // Replace with your actual API endpoint
-      const res = await fetch("/api/admin/users", {
+      console.log(user)
+      const res = await fetch("http://localhost:8000/api/useraccounts/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
@@ -178,18 +117,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       set({ loading: false, error: null });
       toast.success("User added!");
     } catch (err: any) {
-        const newDummyUser = {
-          id: Date.now(),
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          status: "Active" as UserStatus, // <-- fix here
-          lastActive: "Just now",
-        };
-        dummyUsers.push(newDummyUser); // <-- append to dummyUsers array
-
-        set(() => ({
-          users: [...dummyUsers], // always use dummyUsers as source
+        set(() => ({ 
           loading: false,
           error: "API failed, user added to dummy data.",
         }));
@@ -199,14 +127,29 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
   fetchUsers: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.get<User[]>("/api/admin/users");
-      if (Array.isArray(res.data)) {
-      set({ users: res.data, loading: false, error: null });
-    } else {
-      throw new Error("Unexpected response format");
-    }
+      const res = await axios.get<User[]>("http://localhost:8000/api/useraccounts/");
+      console.log(res)
+      // Map API data to candidate interface
+      
+      const mappedUser = res.data.map((item: any) => ({
+        id: item.user_id,
+        name: item.name,
+        email: item.email,
+        role: formatRole(item.role),
+        status: "Active" as UserStatus,
+        lastActive: new Date().toLocaleString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),   
+      }));
+
+      set({ users: mappedUser, loading: false, error: null });
     } catch (err: any) {
-      set({ users: dummyUsers, loading: false, error: "Failed to fetch users, showing dummy data." });
+      set({ loading: false, error: "Failed to fetch users, showing dummy data." });
       toast.error("Failed to fetch users, showing dummy data.");
     }
   },
@@ -232,7 +175,8 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
 
   deleteUser: async (userId) => {
     try {
-      const res = await axios.delete(`/api/admin/users/${userId}`);
+      console.log(userId)
+      const res = await axios.delete(`http://localhost:8000/api/useraccounts/${userId}/`);
       if (res.status !== 200) throw new Error("Failed to delete user");
 
       await get().fetchUsers();
@@ -261,8 +205,8 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     set({ loading: false, error: "Failed to reset password" });
     toast.error("Failed to reset password");
   }
-},
-searchUser: (query: string) => {
+  },
+  searchUser: (query: string) => {
     const users = get().users; // <-- FIXED: get is available
     const lowerQuery = query.toLowerCase();
     return users.filter(
@@ -275,19 +219,37 @@ searchUser: (query: string) => {
   },
   fetchJobCategories: async () => {
   set({ loading: true, error: null });
-  try {
-    const res = await axios.get<JobCategory[]>("/api/admin/job-categories");
-    if (Array.isArray(res.data)) {
-      set({ jobCategories: res.data, loading: false, error: null });
-    } else {
-      throw new Error("Unexpected response format");
+    try {
+      const res = await axios.get<JobCategory[]>("http://localhost:8000/api/jobdetails/");
+      if (!res.data || !Array.isArray(res.data)) {
+        throw new Error("Invalid data format");
+      }
+      // Map API data to Job interface
+      const mappedJobs = res.data.map(job => ({
+        job_id: job.job_id,
+        posted_by: job.posted_by,
+        assigned_to: job.assigned_to,
+        date_posted: job.date_posted,
+        description: job.description,
+        education_level: job.education_level,
+        experience_level: job.experience_level,
+        industry: job.industry,
+        is_active: job.is_active,
+        job_type: job.job_type,
+        location: job.location,
+        role: job.role,
+        salary: job.salary,
+        salary_currency: job.salary_currency,
+        salary_period: job.salary_period,
+        skills: job.skills,
+      }));
+      set({ jobCategories: mappedJobs, loading: false, error: null });
+    } catch (err) {
+      toast.error("Failed to fetch jobs");
+      set({loading: false, error: "Failed to fetch from API. Showing dummy data." });
     }
-  } catch (err: any) {
-    set({ jobCategories: jobCategories, loading: false, error: "Failed to fetch job categories, showing dummy data." });
-    toast.error("Failed to fetch job categories, showing dummy data.");
-  }
-},
- editCategory: async (updatedCategory: JobCategory) => {
+  },
+  editCategory: async (updatedCategory: JobCategory) => {
     set({ loading: true, error: null });
     try {
       const res = await axios.put(`/api/admin/job-categories/${updatedCategory.role}`, updatedCategory);
@@ -307,29 +269,30 @@ searchUser: (query: string) => {
       toast.error("Failed to update category on server. Dummy data updated.");
     }
   },
+  deleteCategory: async (job_id: number) => {
+  set({ loading: true, error: null });
+  try {
+    const res = await axios.delete(`http://localhost:8000/api/jobdetails/${job_id}/`); // Ensure the endpoint uses job_id
+    if (res.status !== 200) throw new Error("Failed to delete category");
 
-  deleteCategory: async (role: string) => {
-    set({ loading: true, error: null });
-    try {
-      const res = await axios.delete(`/api/admin/job-categories/${role}`);
-      if (res.status !== 200) throw new Error("Failed to delete category");
-
-      await get().fetchJobCategories();
-      toast.success("Category deleted!");
-    } catch (err) {
-      // Fallback to dummy delete
-      set((state) => ({
-        jobCategories: state.jobCategories.filter((cat) => cat.role !== role),
-        loading: false,
-        error: "Failed to delete category on server. Dummy data updated.",
-      }));
-      toast.error("Failed to delete category on server. Dummy data updated.");
-    }
-  },
+    await get().fetchJobCategories();
+    toast.success("Category deleted!");
+  } catch (err) {
+    // Fallback to dummy delete
+    set((state) => ({
+      jobCategories: state.jobCategories.filter((cat) => cat.job_id !== job_id),
+      loading: false,
+      error: "Failed to delete category on server. Dummy data updated.",
+    }));
+    toast.error("Failed to delete category on server. Dummy data updated.");
+  }
+},
   addCategory: async (category: JobCategory) => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.post("/api/admin/job-categories", category);
+      const { job_id, ...categoryWithoutJobId } = category;
+      console.log(categoryWithoutJobId); // Log the payload without job_id
+      const res = await axios.post("http://localhost:8000/api/jobdetails/", categoryWithoutJobId);
       if (!res.data || res.status !== 201) throw new Error("Failed to add category");
 
       await get().fetchJobCategories();
@@ -346,14 +309,18 @@ searchUser: (query: string) => {
   searchCategory: (query: string) => {
   const categories = get().jobCategories;
   const lowerQuery = query.toLowerCase();
-  return categories.filter(
-    cat =>
-      cat.industry.toLowerCase().includes(lowerQuery) ||
-      cat.role.toLowerCase().includes(lowerQuery) ||
-      cat.experience.toLowerCase().includes(lowerQuery) ||
-      cat.salary.toLowerCase().includes(lowerQuery) ||
-      cat.skills.some(skill => skill.toLowerCase().includes(lowerQuery))
+  console.log("Searching categories with query:", lowerQuery);
+  return categories.filter(cat =>
+    cat.industry.toLowerCase().includes(lowerQuery) ||
+    cat.role.toLowerCase().includes(lowerQuery) ||
+    `${cat.industry} ${cat.role}`.toLowerCase().includes(lowerQuery) || // <-- add this line
+    cat.experience_level.toLowerCase().includes(lowerQuery) ||
+    cat.salary.toLowerCase().includes(lowerQuery) ||
+    cat.skills
+      .split(',')
+      .map(skill => skill.trim().toLowerCase())
+      .some(skill => skill.includes(lowerQuery))
   );
-  },
+},
 }));
 

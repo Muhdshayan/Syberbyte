@@ -23,7 +23,7 @@ export default function MobileTable({ users, onEditUser, onResetUser, onDeleteUs
   return (
        <>
       {users.map(user => (
-        <Card key={user.id} className="w-full p-5 font-inter-regular mb-3">
+        <Card key={user.id} className="w-full p-5 font-inter-regular mb-3 mt-2">
           <div className="flex flex-row justify-between items-center">
             <div className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
@@ -68,11 +68,11 @@ export default function MobileTable({ users, onEditUser, onResetUser, onDeleteUs
           </div>
           <div className="flex flex-col justify-center items-center w-full">
             <div className="flex flex-row justify-between w-full">
-              <p>Role</p>
+              <p className="text-left text-sm">Role</p>
               <Badge variant="outline">{user.role}</Badge>
             </div>
             <div className="flex flex-row justify-between w-full mt-2">
-              <p>Status</p>
+              <p className="text-left text-sm">Status</p>
               <Badge
                 className={
                   user.status === "Active"
@@ -83,10 +83,7 @@ export default function MobileTable({ users, onEditUser, onResetUser, onDeleteUs
                 {user.status}
               </Badge>
             </div>
-            <div className="flex flex-row justify-between w-full">
-              <p>Last Active</p>
-              <span>{user.lastActive}</span>
-            </div>
+           
           </div>
         </Card>
       ))}

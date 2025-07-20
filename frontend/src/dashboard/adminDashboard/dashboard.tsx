@@ -1,11 +1,9 @@
 import SearchUser from "@/dashboard-components/search-user";
-import UserTable from "@/dashboard-components/user-table";
 
 export default function AdminDashboard() {
     return ( 
-        <div className="flex flex-col items-start justify-start min-h-screen ">
+        <div className="flex flex-col md:items-start items-center md:justify-start justify-center">
             <SearchUser />
-            <UserTable />
         </div> 
         
     );  

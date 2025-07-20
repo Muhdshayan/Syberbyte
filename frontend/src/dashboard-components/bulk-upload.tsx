@@ -11,12 +11,12 @@ import { toast } from "sonner"
 
 interface BulkUploadProps {
   onClose: () => void
-  jobId: Job["id"]
+  jobId: Job["job_id"]
 }
 
 export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
   const [isDragOver, setIsDragOver] = useState(false)
-  
+
   // Get store state and actions
   const {
     uploadFiles,
@@ -54,12 +54,14 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
     processItems(items)
   }, [])
 
-  const getFileType = (fileName: string): "resume" | "excel" => {
-    if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
-      return "excel"
-    }
-    return "resume"
-  }
+  const getFileType = (fileName: string): "pdf" | "docx" | "doc" => {
+    const lowerName = fileName.toLowerCase();
+    if (lowerName.endsWith(".pdf")) return "pdf";
+    if (lowerName.endsWith(".docx")) return "docx";
+    if (lowerName.endsWith(".doc")) return "doc";
+    throw new Error("Unsupported file type");
+  };
+
 
   const processItems = async (items: DataTransferItem[]) => {
     const newFiles: UploadFile[] = []
@@ -155,7 +157,7 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
       for (let i = 0; i < uploadFiles.length; i++) {
         const file = uploadFiles[i]
         updateFileStatus(file.id, "processing")
-        
+
         // Simulate progress for each file
         for (let progress = 0; progress <= 100; progress += 20) {
           await new Promise((resolve) => setTimeout(resolve, 100))
@@ -165,20 +167,20 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
 
       // Now process the actual upload
       const result = await processBulkUpload(jobId)
-      
+
       // Mark files as completed or error based on result
       uploadFiles.forEach((file) => {
         const hasError = result.errors.some(error => error.fileName === file.name)
         updateFileStatus(
-          file.id, 
-          hasError ? "error" : "completed", 
+          file.id,
+          hasError ? "error" : "completed",
           hasError ? result.errors.find(e => e.fileName === file.name)?.error : undefined
         )
         updateFileProgress(file.id, 100)
       })
 
       toast.success(`Upload completed! ${result.successCount} files processed successfully`)
-      
+
     } catch (error) {
       console.error("Upload failed:", error)
       toast.error("Upload failed. Please try again.")
@@ -227,7 +229,7 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
   }
 
   return (
-    <div 
+    <div
       className="fixed inset-0 font-inter-regular bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
@@ -240,9 +242,9 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
                 Upload individual files, entire folders, or Excel sheets with candidate data
               </p>
             </div>
-            <Button 
-              className="!bg-blue" 
-              size="sm" 
+            <Button
+              className="!bg-blue"
+              size="sm"
               onClick={handleClose}
               disabled={isUploading}
             >
@@ -258,9 +260,8 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
-              } ${isUploading ? "pointer-events-none opacity-50" : ""}`}
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
+                } ${isUploading ? "pointer-events-none opacity-50" : ""}`}
             >
               <div className="space-y-4">
                 <div className="flex justify-center">
@@ -278,16 +279,16 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
                 </div>
 
                 <div className="flex justify-center space-x-4">
-                  <Button 
-                    className="!bg-blue-600 !text-sm" 
+                  <Button
+                    className="!bg-blue-600 !text-sm"
                     onClick={() => document.getElementById("file-input")?.click()}
                     disabled={isUploading}
                   >
                     <Upload className="w-4 h-4 mr-2" />
                     Select Files
                   </Button>
-                  <Button 
-                    className="!bg-blue-600 !text-sm" 
+                  <Button
+                    className="!bg-blue-600 !text-sm"
                     onClick={() => document.getElementById("folder-input")?.click()}
                     disabled={isUploading}
                   >
@@ -366,11 +367,20 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
                           <div className="flex items-center space-x-2">
                             <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
                             <Badge variant="outline" className="text-xs">
-                              {file.type === "excel" ? "Excel" : "Resume"}
+                              {["pdf", "doc", "docx"].includes(file.type)
+                                ? file.type.toUpperCase()
+                                : "Unknown"}
                             </Badge>
                           </div>
                           <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
-                          {file.errorMessage && <p className="text-xs text-red-600 mt-1">{file.errorMessage}</p>}
+                          {file.errorMessage && (
+                            <div className="text-xs text-red-600 mt-1">
+                              {Object.entries(file.errorMessage).map(([key, messages], i) => (
+                                <p key={i}>{key}: {Array.isArray(messages) ? messages.join(', ') : messages}</p>
+                              ))}
+                            </div>
+                          )}
+
                         </div>
 
                         {file.status === "processing" && (
@@ -380,8 +390,8 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
                         )}
 
                         {file.status === "pending" && !isUploading && (
-                          <Button  
-                            size="sm" 
+                          <Button
+                            size="sm"
                             onClick={() => removeUploadFile(file.id)}
                             className="hover:bg-red-50 !bg-red-500"
                           >
@@ -409,21 +419,21 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
             </div>
             <div className="flex space-x-3">
               {isProcessingComplete ? (
-                  <Button
-                    onClick={handleClose}
-                    className="!bg-gradient-to-bl from-green to-blue !text-sm"
-                  >
-                    Done
-                  </Button>
-                ) : (
-                  <Button
-                      onClick={handleProcessFiles}
-                      className="!bg-blue !text-sm"
-                      disabled={isUploading || uploadFiles.length === 0}
-                    >
-                      {isUploading ? "Processing..." : `Process ${uploadFiles.length} Files`}
-                    </Button>
-                )}
+                <Button
+                  onClick={handleClose}
+                  className="!bg-gradient-to-bl from-green to-blue !text-sm"
+                >
+                  Done
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleProcessFiles}
+                  className="!bg-blue !text-sm"
+                  disabled={isUploading || uploadFiles.length === 0}
+                >
+                  {isUploading ? "Processing..." : `Process ${uploadFiles.length} Files`}
+                </Button>
+              )}
             </div>
           </div>
         </div>

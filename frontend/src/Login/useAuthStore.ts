@@ -14,9 +14,20 @@ interface AuthStore {
     setAuthUser: (user: AuthUser) => void;
 }
 
+const getInitialAuthUser = (): AuthUser | null => {
+  try {
+    const user = localStorage.getItem("authUser");
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
+};
+
 export const useAuthStore = create<AuthStore>((set) => ({
-    authUser: null,
-    setAuthUser: (user) => {set({ authUser: user })
-      console.log("Auth user set:", user);
-    },
+  authUser: getInitialAuthUser(),
+  setAuthUser: (user) => {
+    set({ authUser: user });
+    localStorage.setItem("authUser", JSON.stringify(user));
+    console.log("Auth user set:", user);
+  },
 }))

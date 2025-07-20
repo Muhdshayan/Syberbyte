@@ -4,54 +4,22 @@ import { toast } from "sonner";
 
 const dummyJobs: Job[] = [
   {
-    id: 1,
-    title: "Software Engineer",
-    description:
-      "We're looking for a passionate Frontend Developer to join our product team and bring designs to life using React.js. You'll work closely with designers and backend engineers to build fast, intuitive, and responsive web apps.",
+    job_id: 1,
+    posted_by: 4,
+    assigned_to: 5,
+    date_posted: "2025-07-15T10:00:00Z",
+    description: "Build and maintain REST APIs using Django.",
+    education_level: "Bachelor's in Computer Science",
+    experience_level: "2+ years",
+    industry: "Information Technology",
+    is_active: true,
+    job_type: "Full-time",
     location: "Remote",
-    type: "Full-time",
-    salary: "$60,000/year",
-    postedOn: "07/01/25",
-  },
-  {
-    id: 2,
-    title: "Backend Developer",
-    description:
-      "Join our backend team to help build scalable APIs using Node.js and PostgreSQL. You'll design robust systems and optimize performance.",
-    location: "Lahore, PK",
-    type: "Contract",
-    salary: "$45/hour",
-    postedOn: "06/29/25",
-  },
-  {
-    id: 3,
-    title: "UI/UX Designer",
-    description:
-      "We're seeking a creative UI/UX designer to craft intuitive interfaces and deliver amazing user experiences across all devices.",
-    location: "Remote",
-    type: "Internship",
-    salary: "$1,000/month",
-    postedOn: "07/03/25",
-  },
-  {
-    id: 4,
-    title: "DevOps Engineer",
-    description:
-      "You will manage CI/CD pipelines, monitor system performance, and ensure high availability of services using AWS and Docker.",
-    location: "Karachi, PK",
-    type: "Full-time",
-    salary: "$75,000/year",
-    postedOn: "06/28/25",
-  },
-  {
-    id: 5,
-    title: "AI/ML Engineer",
-    description:
-      "Work on cutting‑edge AI projects including NLP, recommendation systems, and predictive analytics. Experience with Python and TensorFlow required.",
-    location: "Hybrid (Islamabad)",
-    type: "Full-time",
-    salary: "$90,000/year",
-    postedOn: "06/27/25",
+    role: "Backend Developer",
+    salary: "70000.00",
+    salary_currency: "USD",
+    salary_period: "year",
+    skills: "Python, Django, REST, PostgreSQL",
   },
 ];
 
@@ -151,13 +119,22 @@ const dummyCandidates: Candidate[] = [
 ];
 
 export interface Job {
-  id: number;
-  title: string;
+  job_id: number;
+  posted_by: number,
+  assigned_to: number;
+  date_posted: string;
   description: string;
+  education_level: string;
+  experience_level: string;
+  industry: string;
+  is_active: boolean;
+  job_type: string;
   location: string;
-  type: string;
+  role: string;
   salary: string;
-  postedOn: string;
+  salary_currency: string;
+  salary_period: string;
+  skills: string;
 }
 
 export interface Candidate {
@@ -192,11 +169,13 @@ export interface UploadFile {
   status: "pending" | "processing" | "completed" | "error";
   progress: number;
   errorMessage?: string;
-  type: "resume" | "excel";
-  file?: File; // Store actual file for upload
+  type: "pdf" | "docx" | "doc";
+  file?: File;
 }
 
+
 export interface BulkUploadResult {
+  files: any;
   totalFiles: number;
   successCount: number;
   errorCount: number;
@@ -212,19 +191,19 @@ interface RecruiterStore {
   candidates: Candidate[];
   loading: boolean;
   error: string | null;
-  
+
   // Bulk upload state
   uploadFiles: UploadFile[];
   uploadProgress: number;
   isUploading: boolean;
   uploadError: string | null;
-  
+
   // Existing methods
   fetchJobs: () => Promise<void>;
   fetchCandidates: (jobId?: number) => Promise<void>;
   RejectCandidate: (candidateId: string, jobId: number) => Promise<void>;
   ReferToHr: (candidateId: string, jobId: number) => Promise<void>;
-  
+
   // New bulk upload methods
   addUploadFiles: (files: UploadFile[]) => void;
   removeUploadFile: (fileId: string) => void;
@@ -239,53 +218,98 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
   candidates: [],
   loading: false,
   error: null,
-  
+
   // Bulk upload initial state
   uploadFiles: [],
   uploadProgress: 0,
   isUploading: false,
   uploadError: null,
-  
+
   fetchJobs: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.get<Job[]>("/api/recruiter/jobs");
+      const res = await axios.get<Job[]>("http://localhost:8000/api/jobdetails/");
       if (!res.data || !Array.isArray(res.data)) {
         throw new Error("Invalid data format");
       }
-      set({ jobs: res.data, loading: false, error: null });
+      // Map API data to Job interface
+      const mappedJobs = res.data.map(job => ({
+        job_id: job.job_id,
+        posted_by: job.posted_by,
+        assigned_to: job.assigned_to,
+        date_posted: job.date_posted,
+        description: job.description,
+        education_level: job.education_level,
+        experience_level: job.experience_level,
+        industry: job.industry,
+        is_active: job.is_active,
+        job_type: job.job_type,
+        location: job.location,
+        role: job.role,
+        salary: job.salary,
+        salary_currency: job.salary_currency,
+        salary_period: job.salary_period,
+        skills: job.skills,
+      }));
+      set({ jobs: mappedJobs, loading: false, error: null });
     } catch (err) {
       toast.error("Failed to fetch jobs");
       set({ jobs: dummyJobs, loading: false, error: "Failed to fetch from API. Showing dummy data." });
     }
   },
-  
+
   fetchCandidates: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.get<Candidate[]>(`/api/recruiter//candidates`);
+      const res = await axios.get<Candidate[]>("http://localhost:8000/api/jobapplication/");
+      console.log(res)
       if (!res.data || !Array.isArray(res.data)) {
         throw new Error("Invalid data format");
       }
-      set({ candidates: res.data, loading: false, error: null });
+      // Map API data to candidate interface
+      const mappedCandidates = res.data.map((item: any) => ({
+        id: item.candidate.candidate_id,
+        jobId: item.job.job_id,
+        name: item.candidate.name,
+        score: item.score ?? 0,
+        recommendation: item.ai_recommendation ?? "",
+        role: item.job.role,
+        experience: "",
+        breakdown: {
+          technical: item.technical_score,
+          experience: item.experience_score,
+          cultural: item.cultural_score,
+        },
+        summary: item.candidate.summary,
+        skills: item.candidate.technical_skills + item.candidate.soft_skills,
+        experienceList: (item.candidate.work_experiences || []).map((exp: any) => ({
+          title: exp.role,
+          company: exp.company_name,
+          duration: `${exp.start_year} - ${exp.end_year ?? "Present"}`,
+          location: "",
+          description: exp.summary,
+        })),
+      }));
+
+      set({ candidates: mappedCandidates, loading: false, error: null });
     } catch (err) {
       set({ candidates: dummyCandidates, loading: false, error: "Failed to fetch candidates. Showing dummy data." });
     }
   },
-  
+
   // Bulk upload methods
   addUploadFiles: (files: UploadFile[]) => {
     set((state) => ({
       uploadFiles: [...state.uploadFiles, ...files]
     }));
   },
-  
+
   removeUploadFile: (fileId: string) => {
     set((state) => ({
       uploadFiles: state.uploadFiles.filter(f => f.id !== fileId)
     }));
   },
-  
+
   clearUploadFiles: () => {
     set({
       uploadFiles: [],
@@ -293,105 +317,107 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
       uploadError: null
     });
   },
-  
+
   updateFileProgress: (fileId: string, progress: number) => {
     set((state) => ({
-      uploadFiles: state.uploadFiles.map(f => 
+      uploadFiles: state.uploadFiles.map(f =>
         f.id === fileId ? { ...f, progress } : f
       )
     }));
   },
-  
+
   updateFileStatus: (fileId: string, status: UploadFile['status'], errorMessage?: string) => {
     set((state) => ({
-      uploadFiles: state.uploadFiles.map(f => 
+      uploadFiles: state.uploadFiles.map(f =>
         f.id === fileId ? { ...f, status, errorMessage } : f
       )
     }));
   },
-  
+
   processBulkUpload: async (jobId: number) => {
     const { uploadFiles } = get();
-    
+
     if (uploadFiles.length === 0) {
       throw new Error("No files to upload");
     }
-    
+
     set({ isUploading: true, uploadError: null, uploadProgress: 0 });
-    
+
     try {
       const formData = new FormData();
-      
+
       // Add job ID
       formData.append('jobId', jobId.toString());
-      
-      // Add all files
-      uploadFiles.forEach((uploadFile, index) => {
+
+      // Add files with their types, using indexed keys for clarity
+      uploadFiles.forEach((uploadFile) => {
         if (uploadFile.file) {
-          formData.append(`files`, uploadFile.file);
-          formData.append(`fileTypes`, uploadFile.type);
+          formData.append('files', uploadFile.file);
+          formData.append('fileTypes', uploadFile.type);
         }
       });
-      
-      const result = await axios.post<BulkUploadResult>("/api/recruiter/bulk-upload", formData, {
+
+      const result = await axios.post<BulkUploadResult>("http://localhost:8000/api/upload-cv/", formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
         onUploadProgress: (progressEvent) => {
-          const progress = progressEvent.total 
+          const progress = progressEvent.total
             ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
             : 0;
           set({ uploadProgress: progress });
-        }
+        },
       });
-      
+
       // Mark all files as completed
       set((state) => ({
         uploadFiles: state.uploadFiles.map(f => ({
           ...f,
           status: 'completed' as const,
-          progress: 100
-        }))
+          progress: 100,
+        })),
       }));
-      
+
       await get().fetchCandidates();
-      
+
       set({ isUploading: false });
-      
+
       // Show success message
       if (result.data.successCount > 0) {
         toast.success(`Successfully processed ${result.data.successCount} files`);
       }
-      
+
       // Show error summary if any
       if (result.data.errorCount > 0) {
         toast.error(`${result.data.errorCount} files failed to process`);
       }
-      
+
       return result.data;
-      
+
     } catch (error) {
       set({ isUploading: false, uploadError: "Upload failed" });
-      
+
       // Mark all pending/processing files as error
       set((state) => ({
-        uploadFiles: state.uploadFiles.map(f => 
-          f.status === 'pending' || f.status === 'processing' 
+        uploadFiles: state.uploadFiles.map(f =>
+          f.status === 'pending' || f.status === 'processing'
             ? { ...f, status: 'error' as const, errorMessage: 'Upload failed' }
             : f
-        )
+        ),
       }));
-      
+
       if (axios.isAxiosError(error)) {
         const errorMsg = error.response?.data?.message || "Upload failed";
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }
-      
+
       toast.error("Upload failed");
       throw error;
     }
   },
+
+
   RejectCandidate: async (candidateId: any, jobId: any) => {
     try {
       await axios.post(`/api/recruiter/${jobId}/candidates/${candidateId}/reject`);
