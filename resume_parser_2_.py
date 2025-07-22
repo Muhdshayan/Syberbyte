@@ -12,6 +12,10 @@ import pathlib
 import requests
 import json
 from sentence_transformers import SentenceTransformer
+import re
+from docx import Document
+import fitz  # PyMuPDF for PDF link extraction
+
 # import openai
 
 # # IMPORTANT: For LM Studio compatibility, use openai==0.28.1
@@ -198,13 +202,53 @@ def extract_phone_number(text):
             return number
     return None
 
-def extract_email(text):
+# def extract_email(text):
+#     try:
+#         emails = re.findall(EMAIL_REG, text)
+#         return emails[0] if emails else None
+#     except Exception as e:
+#         print("[DEBUG] Email regex failed:", e)
+#         return None
+
+def extract_email(text, file_path=None):
+    # 1. Extract from visible text (regex)
     try:
         emails = re.findall(EMAIL_REG, text)
-        return emails[0] if emails else None
+        if emails:
+            return emails[0]
     except Exception as e:
         print("[DEBUG] Email regex failed:", e)
-        return None
+
+    # 2. Extract from DOCX embedded hyperlinks
+    if file_path and file_path.lower().endswith(".docx"):
+        try:
+            doc = Document(file_path)
+            for rel in doc.part.rels.values():
+                if "hyperlink" in rel.reltype:
+                    url = rel.target_ref.strip()
+                    if url.startswith("mailto:"):
+                        email = url.replace("mailto:", "").strip()
+                        if re.match(EMAIL_REG, email):
+                            return email
+        except Exception as e:
+            print("[DEBUG] Failed to extract email from DOCX hyperlinks:", e)
+
+    # 3. Extract from PDF embedded hyperlinks
+    if file_path and file_path.lower().endswith(".pdf"):
+        try:
+            doc = fitz.open(file_path)
+            for page in doc:
+                for link in page.get_links():
+                    uri = link.get("uri", "")
+                    if uri.startswith("mailto:"):
+                        email = uri.replace("mailto:", "").strip()
+                        if re.match(EMAIL_REG, email):
+                            return email
+        except Exception as e:
+            print("[DEBUG] Failed to extract email from PDF hyperlinks:", e)
+
+    return None
+
 
 def fix_broken_linkedin_urls(text):
     # Fix hyphenated line breaks specifically in LinkedIn usernames (e.g., muhammad-talha-\nnadeem)
@@ -222,14 +266,76 @@ def fix_broken_linkedin_urls(text):
 
     return text
 
-def extract_linkedin(text):
+# def extract_linkedin(text):
+#     text = fix_broken_linkedin_urls(text)
+
+#     LINKEDIN_REG = re.compile(
+#         r'(https?:\/\/)?(www\.)?linkedin\.com\/(in|pub|company)\/[a-zA-Z0-9\-]+(?:-[a-zA-Z0-9]+)*',
+#         re.IGNORECASE
+#     )
+
+#     matches = re.finditer(LINKEDIN_REG, text)
+#     for match in matches:
+#         url = match.group(0).strip().rstrip('.,);:')
+#         if not url.startswith("http"):
+#             url = "https://" + url
+#         return url
+
+#     return None
+
+# --- Fix common LinkedIn formatting issues in raw text ---
+def fix_broken_linkedin_urls(text):
+    text = re.sub(
+        r'(linkedin\.com\/(?:in|pub|company)\/[a-zA-Z0-9\-]+)-\s*\n\s*([a-zA-Z0-9\-]+)',
+        r'\1\2',
+        text,
+        flags=re.IGNORECASE
+    )
+    text = re.sub(r'www[\n\s]*\.?[\n\s]*linkedin', 'www.linkedin', text, flags=re.IGNORECASE)
+    text = re.sub(r'(linkedin\.com)[\n\s]*\/[\n\s]*', r'\1/', text, flags=re.IGNORECASE)
+    text = re.sub(r'(linkedin\.com\/[a-zA-Z0-9\-]+)[\n\s]*\/[\n\s]*', r'\1/', text)
+    return text
+
+# --- Extract hyperlinks from DOCX (e.g. embedded LinkedIn links) ---
+def extract_hyperlinks_from_docx(file_path):
+    try:
+        doc = Document(file_path)
+        links = []
+        for rel in doc.part.rels.values():
+            if "hyperlink" in rel.reltype:
+                url = rel.target_ref
+                if "linkedin.com" in url.lower():
+                    links.append(url.strip())
+        return links
+    except Exception as e:
+        print("[DEBUG] Failed to extract hyperlinks from DOCX:", e)
+        return []
+
+# --- Extract embedded links from PDF using PyMuPDF ---
+def extract_hyperlinks_from_pdf(file_path):
+    try:
+        links = []
+        doc = fitz.open(file_path)
+        for page in doc:
+            for link in page.get_links():
+                uri = link.get('uri', '')
+                if uri and "linkedin.com" in uri.lower():
+                    links.append(uri.strip())
+        return links
+    except Exception as e:
+        print("[DEBUG] Failed to extract hyperlinks from PDF:", e)
+        return []
+
+# --- FINAL: Robust LinkedIn Extractor ---
+def extract_linkedin(text, file_path=None):
+    # Step 1: Clean raw text
     text = fix_broken_linkedin_urls(text)
 
+    # Step 2: Regex match in visible text
     LINKEDIN_REG = re.compile(
         r'(https?:\/\/)?(www\.)?linkedin\.com\/(in|pub|company)\/[a-zA-Z0-9\-]+(?:-[a-zA-Z0-9]+)*',
         re.IGNORECASE
     )
-
     matches = re.finditer(LINKEDIN_REG, text)
     for match in matches:
         url = match.group(0).strip().rstrip('.,);:')
@@ -237,7 +343,20 @@ def extract_linkedin(text):
             url = "https://" + url
         return url
 
+    # Step 3: DOCX embedded hyperlinks
+    if file_path and file_path.lower().endswith(".docx"):
+        docx_links = extract_hyperlinks_from_docx(file_path)
+        if docx_links:
+            return docx_links[0]
+
+    # Step 4: PDF embedded hyperlinks
+    if file_path and file_path.lower().endswith(".pdf"):
+        pdf_links = extract_hyperlinks_from_pdf(file_path)
+        if pdf_links:
+            return pdf_links[0]
+
     return None
+
 
 def fix_broken_github_urls(text):
     # Fix hyphenated line breaks

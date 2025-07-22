@@ -21,7 +21,7 @@ if uploaded_file is not None:
         github = resume_parser_LLM_integeration.extract_github(text)
         linkedin = resume_parser_LLM_integeration.extract_linkedin(text)
         education = resume_parser_LLM_integeration.extract_education(text)
-        # work_experience = resume_parser_LLM_integeration.extract_work_experience(text)
+        # work_experience = resume_parser_LLM_integeration.extract_work_experience
         skills = resume_parser_LLM_integeration.extract_skills(text)
         years_of_experience = resume_parser_LLM_integeration.extract_years_of_experience(text)
     os.remove(temp_path)
@@ -43,7 +43,7 @@ if uploaded_file is not None:
         st.write(education)
     else:
         st.write("Not found")
-    
+
     # Display years of experience in Streamlit
     st.write(f"**Total Years of Experience:** {years_of_experience if years_of_experience is not None else 'Not found'}")
 
@@ -56,6 +56,7 @@ if uploaded_file is not None:
                 st.write(f"- {skill}: {score}")
         else:
             st.write("No technical skills found.")
+
         if skills.get('soft_skills'):
             st.write("*Soft Skills:*")
             for skill, score in skills['soft_skills'].items():
@@ -72,6 +73,7 @@ if uploaded_file is not None:
     #         print("Technical Skills:")
     #         for skill, score in skills['technical_skills'].items():
     #             print(f"  - {skill}: {score}")
+
     #     else:
     #         print("No technical skills found.")
     #     if skills.get('soft_skills'):
@@ -82,9 +84,7 @@ if uploaded_file is not None:
     #         print("No soft skills found.")
     # else:
     #     print("No skills found.")
-    
 
-    
     # st.write("**Total Work Experience (months):**")
     # if work_experience and isinstance(work_experience, int):
     #     st.write(f"{work_experience} months")
@@ -92,4 +92,4 @@ if uploaded_file is not None:
     #     st.write(work_experience)
     # else:
     #     st.write("Not found")
-
+    
