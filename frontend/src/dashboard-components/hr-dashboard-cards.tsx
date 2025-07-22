@@ -1,5 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { Briefcase, Users2, Target, Clock } from "lucide-react";
+import { useHrStore } from "../dashboard/HrDashboard/hr-store";
+import { useAuthStore } from "../Login/useAuthStore";
+import { useRecruiterStore } from "../dashboard/RecruiterDashboard/recruiter-store";
+import { useEffect } from "react";
+
 
 interface StatCardProps {
   label: string;
@@ -29,36 +34,66 @@ function StatCard({ label, icon, value, sub, bold }: StatCardProps) {
 interface HrDashboardCardsProps {
   activeJobs: { value: string | number; sub: string };
   totalCandidates: { value: string | number; sub: string };
-  interviewsScheduled: { value: string | number; sub: string };
-  timeToHire: { value: string | number; sub: string };
+  intialscreened: { value: string | number; sub: string };
+  finalscreened: { value: string | number; sub: string };
 }
 
-export default function HrDashboardCards(props: HrDashboardCardsProps) {
+export default function HrDashboardCards() {
+  const fetchCandidates = useRecruiterStore((state) => state.fetchCandidates);
+  const candidates = useRecruiterStore((state) => state.candidates);
+  const authUser = useAuthStore((state) => state.authUser);
+  const jobs = useHrStore((state) => state.jobs);
+  const fetchJobs = useHrStore((state) => state.fetchJobs);
+
+  useEffect(() => {
+    fetchJobs();
+    fetchCandidates();
+  }, [fetchJobs, fetchCandidates]);
+
+  const filteredJobs = authUser?.user_id
+    ? jobs.filter((job) => job.posted_by === authUser.user_id)
+    : [];
+
+  const jobIds = filteredJobs.map((job) => job.job_id);
+
+  const candidatesForMyJobs = candidates.filter((c) =>
+    jobIds.includes(c.jobId)
+  );
+
+  const activeJobsCount = filteredJobs.filter((job) => job.is_active).length;
+  const totalCandidatesCount = candidatesForMyJobs.length;
+  const initialScreenedCount = candidatesForMyJobs.filter(
+    (c) => c.status === "initial_screening"
+  ).length;
+  const finalScreenedCount = candidatesForMyJobs.filter(
+    (c) => c.status === "final_screening"
+  ).length;
+
   return (
-    <div className="flex md:flex-row flex-col justify-center items-center  w-full gap-4">
+    <div className="flex md:flex-row flex-col justify-center items-center w-full gap-4">
       <StatCard
         label="Active Jobs"
         icon={<Briefcase className="w-5 h-5 ml-2 text-muted-foreground" />}
-        value={props.activeJobs.value}
-        sub={props.activeJobs.sub}
+        value={activeJobsCount}
+        sub="active listings"
       />
       <StatCard
         label="Total Candidates"
         icon={<Users2 className="w-5 h-5 ml-2 text-muted-foreground" />}
-        value={props.totalCandidates.value}
-        sub={props.totalCandidates.sub}
+        value={totalCandidatesCount}
+        sub="across all jobs"
       />
       <StatCard
-        label="Interviews Scheduled"
+        label="Initial Screened"
         icon={<Target className="w-5 h-5 ml-2 text-muted-foreground" />}
-        value={props.interviewsScheduled.value}
-        sub={props.interviewsScheduled.sub}
+        value={initialScreenedCount}
+        sub="initial stage"
       />
       <StatCard
-        label="Time to Hire"
+        label="Final Screened"
         icon={<Clock className="w-5 h-5 ml-2 text-muted-foreground" />}
-        value={props.timeToHire.value}
-        sub={props.timeToHire.sub}
+        value={finalScreenedCount}
+        sub="final stage"
         bold
       />
     </div>

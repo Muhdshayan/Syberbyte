@@ -2,122 +2,6 @@ import { create } from "zustand";
 import axios from "axios";
 import { toast } from "sonner";
 
-const dummyJobs: Job[] = [
-  {
-    job_id: 1,
-    posted_by: 4,
-    assigned_to: 5,
-    date_posted: "2025-07-15T10:00:00Z",
-    description: "Build and maintain REST APIs using Django.",
-    education_level: "Bachelor's in Computer Science",
-    experience_level: "2+ years",
-    industry: "Information Technology",
-    is_active: true,
-    job_type: "Full-time",
-    location: "Remote",
-    role: "Backend Developer",
-    salary: "70000.00",
-    salary_currency: "USD",
-    salary_period: "year",
-    skills: "Python, Django, REST, PostgreSQL",
-  },
-];
-
-const dummyCandidates: Candidate[] = [
-  {
-    id: "1",
-    jobId: 1,
-    name: "1",
-    score: 92,
-    recommendation: "Strong hire - Excellent technical skills and cultural fit",
-    role: "Frontend Developer",
-    experience: "Mid-Level (2-4 years)",
-    breakdown: { technical: 98, experience: 95, cultural: 85 },
-    summary:
-      "Experienced Full Stack Developer with 4.5+ years of hands-on experience in designing, developing, and deploying scalable web applications. Proficient in both frontend and backend technologies with a strong focus on React.js, Node.js, and cloud-native solutions. Passionate about building user-centric products, improving performance, and collaborating in agile teams.",
-    skills: "Javascript, MongoDB, AWS, Reactjs, Nodejs",
-    experienceList: [
-      {
-        title: "Software Engineer",
-        company: "VibeTech Solutions",
-        duration: "June 2021 – Present",
-        location: "Karachi (Remote)",
-        description:
-          "Full Stack Developer with 4.5+ years of experience building scalable web applications using React.js, Node.js, and cloud technologies",
-      },
-    ],
-  },
-  {
-    id: "2",
-    jobId: 2,
-    name: "2",
-    score: 85,
-    recommendation: "Hire - Good technical background, needs minor upskilling.",
-    role: "Backend Developer",
-    experience: "Mid-Level (2-4 years)",
-    breakdown: { technical: 90, experience: 88, cultural: 80 },
-    summary:
-      "Backend developer with strong Node.js and SQL skills. Good at building APIs and optimizing performance.",
-    skills: "Node.js, SQL, Express, Docker",
-    experienceList: [
-      {
-        title: "Backend Developer",
-        company: "DataSoft",
-        duration: "Jan 2022 – Present",
-        location: "Remote",
-        description:
-          "Developed RESTful APIs and managed database integrations for multiple SaaS products.",
-      },
-    ],
-  },
-  {
-    id: "3",
-    jobId: 3,
-    name: "3",
-    score: 78,
-    recommendation: "Consider - Average skills, but shows potential for growth.",
-    role: "UI/UX Designer",
-    experience: "Junior (1-2 years)",
-    breakdown: { technical: 75, experience: 70, cultural: 80 },
-    summary:
-      "Creative UI/UX designer with a passion for user-centered design and improving digital experiences.",
-    skills: "Figma, Sketch, Adobe XD",
-    experienceList: [
-      {
-        title: "UI/UX Designer",
-        company: "Designify",
-        duration: "Mar 2023 – Present",
-        location: "Remote",
-        description:
-          "Worked on mobile and web UI projects for various clients, focusing on usability and accessibility.",
-      },
-    ],
-  },
-  {
-    id: "4",
-    jobId: 4,
-    name: "4",
-    score: 65,
-    recommendation: "Weak fit - Lacks some required skills, but good attitude.",
-    role: "QA Engineer",
-    experience: "Junior (1-2 years)",
-    breakdown: { technical: 60, experience: 65, cultural: 70 },
-    summary:
-      "QA Engineer with experience in manual and automated testing. Good attitude and eager to learn.",
-    skills: "Selenium, Jest, Cypress",
-    experienceList: [
-      {
-        title: "QA Engineer",
-        company: "Testify",
-        duration: "Feb 2023 – Present",
-        location: "Remote",
-        description:
-          "Performed manual and automated testing for web applications, ensuring quality releases.",
-      },
-    ],
-  },
-];
-
 export interface Job {
   job_id: number;
   posted_by: number,
@@ -140,6 +24,7 @@ export interface Job {
 export interface Candidate {
   id: any;
   jobId: any;
+  status:string
   name: string;
   score: number;
   recommendation: string;
@@ -197,13 +82,15 @@ interface RecruiterStore {
   uploadProgress: number;
   isUploading: boolean;
   uploadError: string | null;
+  hasUnsavedChanges: boolean;
+  changedCandidates: Set<string>;
 
   // Existing methods
   fetchJobs: () => Promise<void>;
   fetchCandidates: (jobId?: number) => Promise<void>;
-  RejectCandidate: (candidateId: string, jobId: number) => Promise<void>;
-  ReferToHr: (candidateId: string, jobId: number) => Promise<void>;
-
+   updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: string) => void;
+  saveChangesToServer: () => Promise<void>;
+  resetUnsavedChanges: () => void;
   // New bulk upload methods
   addUploadFiles: (files: UploadFile[]) => void;
   removeUploadFile: (fileId: string) => void;
@@ -212,6 +99,7 @@ interface RecruiterStore {
   updateFileStatus: (fileId: string, status: UploadFile['status'], errorMessage?: string) => void;
   processBulkUpload: (jobId: number) => Promise<BulkUploadResult>;
 }
+
 
 export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
   jobs: [],
@@ -224,6 +112,8 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
   uploadProgress: 0,
   isUploading: false,
   uploadError: null,
+    hasUnsavedChanges: false,
+  changedCandidates: new Set(),
 
   fetchJobs: async () => {
     set({ loading: true, error: null });
@@ -237,7 +127,15 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
         job_id: job.job_id,
         posted_by: job.posted_by,
         assigned_to: job.assigned_to,
-        date_posted: job.date_posted,
+        date_posted: new Date(job.date_posted).toLocaleString("en-GB", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                      timeZone: "UTC",
+                    }).replace(",", ""),
         description: job.description,
         education_level: job.education_level,
         experience_level: job.experience_level,
@@ -254,7 +152,7 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
       set({ jobs: mappedJobs, loading: false, error: null });
     } catch (err) {
       toast.error("Failed to fetch jobs");
-      set({ jobs: dummyJobs, loading: false, error: "Failed to fetch from API. Showing dummy data." });
+      set({ loading: false, error: "Failed to fetch from API. Showing dummy data." });
     }
   },
 
@@ -262,7 +160,6 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await axios.get<Candidate[]>("http://localhost:8000/api/jobapplication/");
-      console.log(res)
       if (!res.data || !Array.isArray(res.data)) {
         throw new Error("Invalid data format");
       }
@@ -270,6 +167,7 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
       const mappedCandidates = res.data.map((item: any) => ({
         id: item.candidate.candidate_id,
         jobId: item.job.job_id,
+        status: item.status,
         name: item.candidate.name,
         score: item.score ?? 0,
         recommendation: item.ai_recommendation ?? "",
@@ -290,12 +188,36 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
           description: exp.summary,
         })),
       }));
-
       set({ candidates: mappedCandidates, loading: false, error: null });
     } catch (err) {
-      set({ candidates: dummyCandidates, loading: false, error: "Failed to fetch candidates. Showing dummy data." });
+      set({loading: false, error: "Failed to fetch candidates. Showing dummy data." });
     }
   },
+
+  editCandidates: async (updatedCandidates: Candidate[]) => {
+  set({ loading: true, error: null });
+  try {
+    const payload = updatedCandidates.map(candidate => ({
+      application_id: candidate.id,
+      status: candidate.status,
+      score: candidate.score,
+      ai_recommendation: candidate.recommendation,
+      technical_score: candidate.breakdown.technical,
+      experience_score: candidate.breakdown.experience,
+      cultural_score: candidate.breakdown.cultural,
+    }));
+
+    const res = await axios.put("http://localhost:8000/api/jobapplication/update/", payload);
+
+    if (res.status === 200) {
+      set({ loading: false, error: null });
+    }
+  } catch (err) {
+    console.error(err);
+    set({ loading: false, error: "Failed to update candidates." });
+  }
+},
+
 
   // Bulk upload methods
   addUploadFiles: (files: UploadFile[]) => {
@@ -416,26 +338,77 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
       throw error;
     }
   },
+updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: string) => {
+  const state = get();
+  
+  console.log("Updating candidate locally:", { candidateId, jobId, newStatus }); // Debug log
+  
+  const updatedCandidates = state.candidates.map(candidate => {
+    // Convert candidateId to number if it's a string, or use === for exact match
+    const numericCandidateId = typeof candidateId === 'string' ? parseInt(candidateId) : candidateId;
+    
+    if (candidate.id === numericCandidateId && candidate.jobId === jobId) {
+      console.log("Found candidate to update:", candidate.name, "from", candidate.status, "to", newStatus); // Debug log
+      return { ...candidate, status: newStatus };
+    }
+    return candidate;
+  });
+  
+  const newChangedCandidates = new Set(state.changedCandidates);
+  newChangedCandidates.add(`${candidateId}-${jobId}`);
+  
+  console.log("Updated candidates:", updatedCandidates); // Debug log
+  console.log("Changed candidates:", newChangedCandidates); // Debug log
+  
+  set({ 
+    candidates: updatedCandidates,
+    hasUnsavedChanges: true,
+    changedCandidates: newChangedCandidates
+  });
 
+  // Add toast to confirm the change
+  toast.success(`Candidate status updated to ${newStatus}`);
+},
+  saveChangesToServer: async () => {
+    const state = get();
+    if (!state.hasUnsavedChanges) return;
 
-  RejectCandidate: async (candidateId: any, jobId: any) => {
+    set({ loading: true, error: null });
+    
     try {
-      await axios.post(`/api/recruiter/${jobId}/candidates/${candidateId}/reject`);
-      toast.success("Candidate rejected successfully");
-      await get().fetchCandidates(jobId);
-    } catch (error) {
-      toast.error("Failed to reject candidate");
-      console.error(error);
+      // Get only the changed candidates
+      const changedCandidates = state.candidates.filter(candidate => 
+        state.changedCandidates.has(`${candidate.id}-${candidate.jobId}`)
+      );
+
+      // Send batch update to server
+      const updatePromises = changedCandidates.map(candidate => 
+        axios.put(`http://localhost:8000/api/candidates/${candidate.id}/`, {
+          status: candidate.status,
+          job_id: candidate.jobId
+        })
+      );
+
+      await Promise.all(updatePromises);
+      
+      set({ 
+        loading: false, 
+        hasUnsavedChanges: false,
+        changedCandidates: new Set(),
+        error: null
+      });
+      toast.success("Changes saved successfully");
+    } catch (err) {
+      set({ loading: false, error: "Failed to save changes to server" });
+      toast.error("Failed to save changes");
     }
   },
-  ReferToHr: async (candidateId: any, jobId: any) => {
-    try {
-      await axios.post(`/api/recruiter/${jobId}/candidates/${candidateId}/refer-to-hr`);
-      toast.success("Candidate referred to HR successfully");
-      await get().fetchCandidates(jobId);
-    } catch (error) {
-      toast.error("Failed to refer candidate to HR");
-      console.error(error);
-    }
+
+  resetUnsavedChanges: () => {
+    set({ 
+      hasUnsavedChanges: false,
+      changedCandidates: new Set()
+    });
+    toast.success("Unsaved changes reset");
   },
 }));

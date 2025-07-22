@@ -2,26 +2,6 @@ import { create } from "zustand";
 import axios from "axios";
 import { toast } from "sonner";
 
-const dummyJobs: Job[] = [
-  {
-    job_id: 1,
-    posted_by: 4,
-    assigned_to: 5,
-    date_posted: "2025-07-15T10:00:00Z",
-    description: "Build and maintain REST APIs using Django.",
-    education_level: "Bachelor's in Computer Science",
-    experience_level: "2+ years",
-    industry: "Information Technology",
-    is_active: true,
-    job_type: "Full-time",
-    location: "Remote",
-    role: "Backend Developer",
-    salary: "70000.00",
-    salary_currency: "USD",
-    salary_period: "year",
-    skills: "Python, Django, REST, PostgreSQL",
-  },
-];
 
 export interface Job {
   job_id: number;
@@ -41,22 +21,48 @@ export interface Job {
   salary_period: string;
   skills: string;
 }
+export interface Candidate {
+  id: any;
+  jobId: any;
+  name: string;
+  score: number;
+  status: string;
+  recommendation: string;
+  role: string;
+  experience: string;
+  breakdown: {
+    technical: number;
+    experience: number;
+    cultural: number;
+  };
+  summary: string;
+  skills: string;
+  experienceList: {
+    title: string;
+    company: string;
+    duration: string;
+    location: string;
+    description: string;
+  }[];
+}
 
 interface hrStore {
     jobs: Job[];
+    candidates: Candidate[];
     loading: boolean;
     error: string | null;
     fetchJobs: () => Promise<void>;
     addJob: (job: Job) => void;
     updateJob: (id: number, updatedJob: Partial<Job>) => void;
     deleteJob: (id: number) => void;
+    fetchCandidates: () => Promise<void>;
 }
 
 export const useHrStore = create<hrStore>((set) => ({
   jobs: [],
   loading: false,
   error: null,
-
+  candidates: [],
   fetchJobs: async () => {
     set({ loading: true, error: null });
     try {
@@ -77,7 +83,7 @@ export const useHrStore = create<hrStore>((set) => ({
                       minute: "2-digit",
                       hour12: false,
                       timeZone: "UTC",
-                    }).replace(",", ""), // "14/07/2025 08:00"
+                    }).replace(",", ""),
         description: job.description,
         education_level: job.education_level,
         experience_level: job.experience_level,
@@ -91,10 +97,11 @@ export const useHrStore = create<hrStore>((set) => ({
         salary_period: job.salary_period,
         skills: job.skills,
       }));
+      console.log("hr store jobs:", res)
       set({ jobs: mappedJobs, loading: false, error: null });
     } catch (err) {
       toast.error("Failed to fetch jobs");
-      set({ jobs: dummyJobs, loading: false, error: "Failed to fetch from API. Showing dummy data." });
+      set({ loading: false, error: "Failed to fetch from API. Showing dummy data." });
     }
   },
 
@@ -117,5 +124,43 @@ export const useHrStore = create<hrStore>((set) => ({
       jobs: state.jobs.filter((job) => job.job_id !== id),
     }));
     toast.success("Job deleted successfully");
+  },
+   fetchCandidates: async () => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axios.get<Candidate[]>("http://localhost:8000/api/jobapplication/");
+      if (!res.data || !Array.isArray(res.data)) {
+        throw new Error("Invalid data format");
+      }
+      // Map API data to candidate interface
+      const mappedCandidates = res.data.map((item: any) => ({
+        id: item.candidate.candidate_id,
+        jobId: item.job.job_id,
+        status:item.status,
+        name: item.candidate.name,
+        score: item.score ?? 0,
+        recommendation: item.ai_recommendation ?? "",
+        role: item.job.role,
+        experience: "",
+        breakdown: {
+          technical: item.technical_score,
+          experience: item.experience_score,
+          cultural: item.cultural_score,
+        },
+        summary: item.candidate.summary,
+        skills: item.candidate.technical_skills + item.candidate.soft_skills,
+        experienceList: (item.candidate.work_experiences || []).map((exp: any) => ({
+          title: exp.role,
+          company: exp.company_name,
+          duration: `${exp.start_year} - ${exp.end_year ?? "Present"}`,
+          location: "",
+          description: exp.summary,
+        })),
+      }));
+      console.log("candidates:", res)
+      set({ candidates: mappedCandidates, loading: false, error: null });
+    } catch (err) {
+      set({loading: false, error: "Failed to fetch candidates. Showing dummy data." });
+    }
   },
 }));

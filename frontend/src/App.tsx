@@ -15,6 +15,9 @@ import { Route, Routes, Navigate } from "react-router-dom"
 import ManageInterview from "@/dashboard/RecruiterDashboard/manage-interview"
 import { Toaster } from "sonner";
 import { useAuthStore } from "@/Login/useAuthStore" // Update with your actual store path
+import FinalScreeningPage from "./dashboard/HrDashboard/final-screening"
+import AddJob from "./dashboard/HrDashboard/add-job"
+import Loading from "./dashboard-components/loading"
 
 // Protected Route Component
 function ProtectedRoute({ children, requiredPermission }: { children: React.ReactNode, requiredPermission: number }) {
@@ -56,6 +59,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Login/>} />
+        <Route path="/nothing-to-show" element={ <Loading />} />
         <Route path="/dashboard" element={<DashboardLayout/>}>
           {/* Default dashboard route - redirects based on permission */}
           <Route index element={<DashboardRedirect />} />
@@ -89,6 +93,16 @@ function App() {
             <Route index element={
               <ProtectedRoute requiredPermission={3}>
                 <ActiveJobs/>
+              </ProtectedRoute>
+            } />
+            <Route path="add-job" element={
+              <ProtectedRoute requiredPermission={3}>
+                <AddJob/>
+              </ProtectedRoute>
+            } />
+            <Route path=":jobId/final-screening" element={
+              <ProtectedRoute requiredPermission={3}>
+                <FinalScreeningPage/>
               </ProtectedRoute>
             } />
             <Route path="final-interview" element={
