@@ -88,9 +88,9 @@ interface RecruiterStore {
   // Existing methods
   fetchJobs: () => Promise<void>;
   fetchCandidates: (jobId?: number) => Promise<void>;
-   updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: string) => void;
-  saveChangesToServer: () => Promise<void>;
+  updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: string) => void;
   resetUnsavedChanges: () => void;
+  editCandidates: (updatedCandidates: Candidate[]) => Promise<void>;
   // New bulk upload methods
   addUploadFiles: (files: UploadFile[]) => void;
   removeUploadFile: (fileId: string) => void;
@@ -206,15 +206,19 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
       experience_score: candidate.breakdown.experience,
       cultural_score: candidate.breakdown.cultural,
     }));
+    console.log("Updating candidates with payload:", payload); // Debug log
 
     const res = await axios.put("http://localhost:8000/api/jobapplication/update/", payload);
-
     if (res.status === 200) {
       set({ loading: false, error: null });
+          toast.success("Candidates updated successfully");
+      console.log("Candidates updated successfully:", res);
     }
   } catch (err) {
     console.error(err);
     set({ loading: false, error: "Failed to update candidates." });
+    console.error("Error updating candidates:", err);
+    toast.error("Failed to update candidates");
   }
 },
 
@@ -369,46 +373,11 @@ updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: st
   // Add toast to confirm the change
   toast.success(`Candidate status updated to ${newStatus}`);
 },
-  saveChangesToServer: async () => {
-    const state = get();
-    if (!state.hasUnsavedChanges) return;
-
-    set({ loading: true, error: null });
-    
-    try {
-      // Get only the changed candidates
-      const changedCandidates = state.candidates.filter(candidate => 
-        state.changedCandidates.has(`${candidate.id}-${candidate.jobId}`)
-      );
-
-      // Send batch update to server
-      const updatePromises = changedCandidates.map(candidate => 
-        axios.put(`http://localhost:8000/api/candidates/${candidate.id}/`, {
-          status: candidate.status,
-          job_id: candidate.jobId
-        })
-      );
-
-      await Promise.all(updatePromises);
-      
-      set({ 
-        loading: false, 
-        hasUnsavedChanges: false,
-        changedCandidates: new Set(),
-        error: null
-      });
-      toast.success("Changes saved successfully");
-    } catch (err) {
-      set({ loading: false, error: "Failed to save changes to server" });
-      toast.error("Failed to save changes");
-    }
-  },
 
   resetUnsavedChanges: () => {
     set({ 
       hasUnsavedChanges: false,
       changedCandidates: new Set()
     });
-    toast.success("Unsaved changes reset");
   },
 }));

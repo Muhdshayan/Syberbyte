@@ -14,9 +14,10 @@ export default function InitialScreeningPage() {
     candidates, 
     fetchCandidates, 
     updateCandidateStatusLocally, 
-    saveChangesToServer, 
+    editCandidates,
     hasUnsavedChanges,
     changedCandidates,
+    resetUnsavedChanges
   } = useRecruiterStore();
   
   // Simple filtering: only candidates matching current job ID
@@ -44,8 +45,26 @@ export default function InitialScreeningPage() {
   };
 
   // Save all changes to server
-  const handleSaveChanges = async () => {
-    await saveChangesToServer();
+ const handleSaveChanges = async () => {
+    try {
+      // Get only the changed candidates
+      const changedCandidatesList = candidates.filter(candidate => 
+        changedCandidates.has(`${candidate.id}-${candidate.jobId}`)
+      );
+
+      console.log("Saving changed candidates:", changedCandidatesList);
+
+      // Call editCandidates with the changed candidates
+      await editCandidates(changedCandidatesList);
+      
+      // Reset unsaved changes after successful save
+      resetUnsavedChanges();
+      
+      toast.success(`Successfully saved ${changedCandidatesList.length} candidate updates`);
+    } catch (error) {
+      console.error("Error saving changes:", error);
+      toast.error("Failed to save changes. Please try again.");
+    }
   };
 
   return (
