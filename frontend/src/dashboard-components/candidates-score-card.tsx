@@ -33,6 +33,8 @@ export default function CandidatesScoreCard({
         return '!bg-green';
       case 'initial_screening':
         return '!bg-blue';
+      case 'rejected_by_hr':
+        return '!bg-red-600';
       default:
         return '!bg-secondary';
     }

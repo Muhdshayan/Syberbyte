@@ -12,7 +12,7 @@ export default function NoData({
   className = ""
 }: NoDataProps) {
   return (
-    <div className={`flex flex-col items-center justify-center h-screen ${className}`}>
+    <div className={`flex flex-col items-center justify-center w-full min-h-[calc(100vh-200px)] ${className}`}>
       <img
         src={imageSrc}
         alt={title}

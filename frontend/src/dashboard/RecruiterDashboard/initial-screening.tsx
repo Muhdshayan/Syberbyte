@@ -5,6 +5,8 @@ import { useRecruiterStore } from "./recruiter-store";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import NoData from "@/dashboard-components/no-jobs";
+import Loading from "@/dashboard-components/loading";
 
 export default function InitialScreeningPage() {
   const { JobId } = useParams();
@@ -17,12 +19,13 @@ export default function InitialScreeningPage() {
     editCandidates,
     hasUnsavedChanges,
     changedCandidates,
-    resetUnsavedChanges
+    resetUnsavedChanges,
+    loading
   } = useRecruiterStore();
   
   // Simple filtering: only candidates matching current job ID
   const jobCandidates = candidates.filter(candidate => 
-    candidate.jobId === Number(JobId)
+    candidate.jobId === Number(JobId) && candidate.status != "final_screening"
   );
   
   const selectedCandidate = jobCandidates.find(c => c.id === openProfile);
@@ -39,7 +42,7 @@ export default function InitialScreeningPage() {
   };
 
   const handleReferToHr = (candidateId: number, jobId: number) => {
-    updateCandidateStatusLocally(candidateId, jobId, "final_screening");
+    updateCandidateStatusLocally(candidateId, jobId, "initial_screening");
     toast.success("Candidate referred to HR for final screening");
     setOpenProfile(null);
   };
@@ -47,17 +50,12 @@ export default function InitialScreeningPage() {
   // Save all changes to server
  const handleSaveChanges = async () => {
     try {
-      // Get only the changed candidates
       const changedCandidatesList = candidates.filter(candidate => 
         changedCandidates.has(`${candidate.id}-${candidate.jobId}`)
       );
 
       console.log("Saving changed candidates:", changedCandidatesList);
-
-      // Call editCandidates with the changed candidates
       await editCandidates(changedCandidatesList);
-      
-      // Reset unsaved changes after successful save
       resetUnsavedChanges();
       
       toast.success(`Successfully saved ${changedCandidatesList.length} candidate updates`);
@@ -79,23 +77,32 @@ export default function InitialScreeningPage() {
         Save Changes {hasUnsavedChanges && changedCandidates ? `(${changedCandidates.size})` : ''}
       </Button>
       
-      <div className="flex flex-row justify-center w-full my-10 gap-4">
+     <div className="flex flex-row justify-center w-full my-10 gap-4 sticky bottom-7 z-10">
         {/* Score Cards */}
         <div
           className={`flex flex-col gap-4 items-start justify-start transition-all duration-300 ${
             openProfile !== null ? "md:w-1/2 w-[95%]" : "w-[95%]"
           }`}
         >
-          {jobCandidates.map((candidate) => (
-            <CandidatesScoreCard
-              key={`${candidate.id}-${candidate.status}`}
-              name={candidate.name}
-              status={candidate.status}
-              score={candidate.score}
-              recommendation={candidate.recommendation}
-              onViewProfile={() => setOpenProfile(candidate.id)}
-            />
-          ))}
+          {loading ? (
+            // Show Loading component when data is being fetched
+            <Loading />
+          ) : jobCandidates.length > 0 ? (
+            // Show candidates when data is available
+            jobCandidates.map((candidate) => (
+              <CandidatesScoreCard
+                key={`${candidate.id}-${candidate.status}`}
+                name={candidate.name}
+                status={candidate.status}
+                score={candidate.score}
+                recommendation={candidate.recommendation}
+                onViewProfile={() => setOpenProfile(candidate.id)}
+              />
+            ))
+          ) : (
+            // Show NoData component when no candidates found
+            <NoData title="No candidates assigned." />
+          )}
         </div>
         
         {/* Side Dialog */}

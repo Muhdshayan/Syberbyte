@@ -100,7 +100,7 @@ function App() {
                 <AddJob/>
               </ProtectedRoute>
             } />
-            <Route path=":jobId/final-screening" element={
+            <Route path=":JobId/final-screening" element={
               <ProtectedRoute requiredPermission={3}>
                 <FinalScreeningPage/>
               </ProtectedRoute>

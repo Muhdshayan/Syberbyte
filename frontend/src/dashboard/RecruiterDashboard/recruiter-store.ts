@@ -189,6 +189,7 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
         })),
       }));
       set({ candidates: mappedCandidates, loading: false, error: null });
+      console.log("candidates:", res);
     } catch (err) {
       set({loading: false, error: "Failed to fetch candidates. Showing dummy data." });
     }
@@ -209,11 +210,14 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
     console.log("Updating candidates with payload:", payload); // Debug log
 
     const res = await axios.put("http://localhost:8000/api/jobapplication/update/", payload);
-    if (res.status === 200) {
-      set({ loading: false, error: null });
-          toast.success("Candidates updated successfully");
-      console.log("Candidates updated successfully:", res);
-    }
+    if (res.status === 207) {
+            
+              set({ loading: false, error: null });
+              const results = res.data.results;
+    
+              toast.success("Candidates updated successfully");
+              console.log("Candidates updated successfully:", res);
+            }
   } catch (err) {
     console.error(err);
     set({ loading: false, error: "Failed to update candidates." });
