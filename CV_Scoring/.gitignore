@@ -1,3 +1,10 @@
 models/
 venv/
 chroma_db/
+penv/
+parsed/
+candidates/
+scores/
+jd/
+resumes/
+results/
