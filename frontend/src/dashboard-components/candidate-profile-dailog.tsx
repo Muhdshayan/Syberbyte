@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import type { Candidate } from "@/dashboard/RecruiterDashboard/recruiter-store"; // Adjust path as needed
 import { useAuthStore } from "@/Login/useAuthStore";
+import FeedbackDialog from "./feedback";
 
 interface CandidateProfileCardProps {
   open: boolean;
@@ -34,7 +35,7 @@ export default function CandidateProfileCard({
         <div>
           <div className="text-2xl font-poppins-semibold">{candidate.name}</div>
         </div>
-        <X className="w-5 h-5" onClick={() => onOpenChange(false)}/>
+        <X className="w-5 h-5 cursor-pointer hover:text-gray-600" onClick={() => onOpenChange(false)}/>
       </div>
       <div className="flex flex-col gap-1 mt-2">
         <div className="flex items-center gap-2">
@@ -106,10 +107,23 @@ export default function CandidateProfileCard({
           ))}
         </div>
       </div>
-      <div className="flex justify-between gap-2 mt-6">
+      <div className="flex justify-between items-center gap-2 mt-6">
         <Button className="!bg-red-500 !text-sm" onClick={onReject}>
           Reject
         </Button>
+        
+        {permission === 3 && (
+          <FeedbackDialog 
+            candidateId={candidate.id}
+            jobId={candidate.jobId}
+            candidateName={candidate.name}
+            currentScore={candidate.score}
+          >
+            <p className="text-sm text-gray-400 cursor-pointer hover:text-gray-600 hover:underline">
+              Not satisfied? Give feedback
+            </p>
+          </FeedbackDialog>
+        )}
         
         {permission === 1 ? (
           <Button className="!bg-blue !text-sm" onClick={referToHr}>

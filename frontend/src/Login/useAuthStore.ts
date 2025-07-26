@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { toast } from "sonner"; 
 
 export interface AuthUser {
   email: string;
@@ -10,8 +11,10 @@ export interface AuthUser {
 }
 
 interface AuthStore {
-    authUser: AuthUser | null;
-    setAuthUser: (user: AuthUser) => void;
+  authUser: AuthUser | null;
+  setAuthUser: (user: AuthUser) => void;
+  logout: () => void;
+  attemptLogin: (user: AuthUser) => boolean;
 }
 
 const getInitialAuthUser = (): AuthUser | null => {
@@ -23,10 +26,80 @@ const getInitialAuthUser = (): AuthUser | null => {
   }
 };
 
-export const useAuthStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set, get) => ({
   authUser: getInitialAuthUser(),
+  
   setAuthUser: (user) => {
     set({ authUser: user });
     localStorage.setItem("authUser", JSON.stringify(user));
   },
-}))
+  
+  logout: () => {
+    set({ authUser: null });
+    localStorage.removeItem("authUser");
+    toast.success("Logged out successfully");
+  },
+
+  attemptLogin: (newUser: AuthUser): boolean => {
+    // Always check fresh localStorage state
+    const currentStoredUser = getInitialAuthUser();
+    const currentStoreUser = get().authUser;
+    
+    console.log("Current stored user:", currentStoredUser);
+    console.log("Current store user:", currentStoreUser);
+    
+    // Check if there's already a logged-in user (prioritize localStorage)
+    const existingUser = currentStoredUser || currentStoreUser;
+    
+    if (existingUser) {
+      // If it's the same user, allow login
+      if (existingUser.user_id === newUser.user_id && existingUser.email === newUser.email) {
+        set({ authUser: newUser });
+        localStorage.setItem("authUser", JSON.stringify(newUser));
+        toast.success(`Welcome back, ${newUser.email}!`);
+        return true;
+      }
+      
+      // Different user trying to login - prevent it
+      toast.error(`Another user is already logged in. Please logout first.`);
+      return false;
+    }
+    
+    // No existing user - proceed with login
+    set({ authUser: newUser });
+    localStorage.setItem("authUser", JSON.stringify(newUser));
+    toast.success(`Welcome, ${newUser.email}!`);
+    return true;
+  },
+}));
+
+// Add cross-tab synchronization
+if (typeof window !== 'undefined') {
+  // Listen for localStorage changes from other tabs
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'authUser') {
+      const newUser = e.newValue ? JSON.parse(e.newValue) : null;
+      
+      // Update store state when localStorage changes from another tab
+      useAuthStore.setState({ authUser: newUser });
+      
+      if (!newUser) {
+        console.log("User logged out from another tab");
+      } else {
+        console.log("User logged in from another tab:", newUser.email);
+      }
+    }
+  });
+
+  // Sync state when tab becomes active
+  window.addEventListener('focus', () => {
+    const currentStoredUser = getInitialAuthUser();
+    const currentStoreUser = useAuthStore.getState().authUser;
+    
+    // Sync if there's a difference
+    if (JSON.stringify(currentStoredUser) !== JSON.stringify(currentStoreUser)) {
+      useAuthStore.setState({ authUser: currentStoredUser });
+      console.log("Synced state on focus:", currentStoredUser);
+    }
+  });
+}

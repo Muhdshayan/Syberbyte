@@ -22,11 +22,8 @@ export default function Login () {
           setPassword,
           loading,
           error,
-          selectedRole,
-          setSelectedRole,
           handleSubmit,
-        } = useLogin("HR");
-    const roles = ["HR", "Recruiter", "Admin"] as const;
+        } = useLogin();
     return (
        <div className="flex md:flex-row flex-col justify-center items-start md:h-screen h-[800px] w-full">
           <img

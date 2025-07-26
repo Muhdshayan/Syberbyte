@@ -61,6 +61,15 @@ interface hrStore {
     updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: string) => void;
     resetUnsavedChanges: () => void;
     editCandidates: (updatedCandidates: Candidate[]) => Promise<void>;
+    submitFeedback: (feedbackData: {
+      candidateId: number;
+      jobId: number;
+      feedback: string;
+      correctScore: number;
+      timestamp: string;
+    }) => Promise<void>;
+    generateExcelReport: (jobId?: number, reportType?: string) => Promise<void>
+
 }
 
 export const useHrStore = create<hrStore>((set, get) => ({
@@ -282,5 +291,71 @@ addJob: async (jobData) => {
         console.error("Error updating candidates:", err);
         toast.error("Failed to update candidates");
       }
+},
+  submitFeedback: async (feedbackData) => {
+  set({ loading: true, error: null });
+  try {
+    console.log("Submitting feedback with data:", feedbackData);
+    
+    const res = await axios.post("http://localhost:8000/api/feedback/", {
+      candidate_id: feedbackData.candidateId,
+      job_id: feedbackData.jobId,
+      feedback_text: feedbackData.feedback,
+      suggested_score: feedbackData.correctScore,
+    });
+    
+    if (res.status === 200 || res.status === 201) {
+      set({ loading: false, error: null });
+      toast.success("Feedback submitted successfully!");
+      console.log("Feedback submitted successfully:", res.data);
+    } else {
+      throw new Error(`Server responded with status: ${res.status}`);
+    }
+  } catch (err: any) {
+    console.error("Error submitting feedback:", err);
+    set({ loading: false, error: err});
+    toast.error(`Failed to submit feedback: ${err.message || "Unknown error"}`);
+  }
+},
+ generateExcelReport: async (jobId?: number) => {
+  set({ loading: true, error: null });
+  try {
+    console.log("Generating Excel report...");
+    
+    const response = await axios.get("http://localhost:8000/api/reports/excel/", {
+      params: jobId ? { job_id: jobId } : {},
+      responseType: 'blob', // This is crucial for binary file data
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+
+    // Create blob from response data
+    const blob = new Blob([response.data], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    });
+
+    // Create download link and trigger download
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `HR_Report_${jobId ? `Job${jobId}_` : ''}${Date.now()}.xlsx`;
+    
+    // Add to DOM, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Cleanup blob URL
+    window.URL.revokeObjectURL(url);
+
+    set({ loading: false });
+    toast.success("Excel report downloaded successfully!");
+    
+  } catch (err: any) {
+    console.error("Error generating Excel report:", err);
+    set({ loading: false, error: "Failed to generate report" });
+    toast.error("Failed to generate Excel report");
+  }
 },
 }));

@@ -37,6 +37,7 @@ function ProtectedRoute({ children, requiredPermission }: { children: React.Reac
 // Permission-based dashboard redirect
 function DashboardRedirect() {
   const { authUser } = useAuthStore();
+
   
   if (!authUser) {
     return <Navigate to="/" replace />;
@@ -72,17 +73,17 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="job-category-management" element={
-              <ProtectedRoute requiredPermission={7}>
+              <ProtectedRoute requiredPermission={5}>
                 <JobCategoryManagement/>
               </ProtectedRoute>
             } />
             <Route path="system-health-monitor" element={
-              <ProtectedRoute requiredPermission={10}>
+              <ProtectedRoute requiredPermission={7}>
                 <SystemHealthMonitor/>
               </ProtectedRoute>
             } />
             <Route path="ai-performance-metrics" element={
-              <ProtectedRoute requiredPermission={10}>
+              <ProtectedRoute requiredPermission={7}>
                 <AiPerformanceMetrics/>
               </ProtectedRoute>
             } />
