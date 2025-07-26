@@ -1,0 +1,327 @@
+[
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Allison Hill",
+      "email": "jillrhodes@miller.com",
+      "phone_number": "+8908386379",
+      "linkedin": "https://www.wolfe.com/",
+      "github": "http://www.garcia-james.com/",
+      "soft_skills": "time management, problem-solving, creativity",
+      "technical_skills": "SQL, Git, React, AWS",
+      "summary": "Experienced candidate with strong technical expertise in SQL, Git, React, and AWS, complemented by excellent time management, problem-solving, and creative skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Shannon Ray",
+      "email": "stanleykendra@wyatt.biz",
+      "phone_number": "+7525534192",
+      "linkedin": "https://mayo-bowman.net/",
+      "github": "http://perez.com/",
+      "soft_skills": "adaptability, communication, time management, problem-solving",
+      "technical_skills": "Kubernetes, Java, SQL, AWS, Docker",
+      "summary": "Versatile professional skilled in Kubernetes, Java, SQL, AWS, and Docker, with strong adaptability, communication, and problem-solving abilities."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Charles Mcgee",
+      "email": "zhurst@yahoo.com",
+      "phone_number": "+2871012269",
+      "linkedin": "http://carlson-mcdonald.com/",
+      "github": "http://www.dyer.com/",
+      "soft_skills": "communication, adaptability, time management",
+      "technical_skills": "AWS, Django, SQL, Java, Git",
+      "summary": "Proficient in AWS, Django, SQL, Java, and Git, with excellent communication, adaptability, and time management skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Elizabeth Fowler",
+      "email": "nathanielmartin@sellers.com",
+      "phone_number": "+4303911718",
+      "linkedin": "http://brennan.net/",
+      "github": "http://carney-santos.info/",
+      "soft_skills": "time management, adaptability, teamwork, communication",
+      "technical_skills": "Python, SQL, Docker, Kubernetes",
+      "summary": "Skilled in Python, SQL, Docker, and Kubernetes, with strong teamwork, communication, and time management capabilities."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Austin Johnson",
+      "email": "palmerjoshua@yahoo.com",
+      "phone_number": "+8299737631",
+      "linkedin": "http://henderson-owens.com/",
+      "github": "http://www.chandler-mcbride.com/",
+      "soft_skills": "teamwork, adaptability",
+      "technical_skills": "Django, Git, React, AWS",
+      "summary": "Experienced in Django, Git, React, and AWS, with a focus on teamwork and adaptability."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Amber Kidd",
+      "email": "housemelinda@russell.com",
+      "phone_number": "+0260647468",
+      "linkedin": "http://www.fitzgerald.com/",
+      "github": "https://www.yu.com/",
+      "soft_skills": "communication, time management, adaptability",
+      "technical_skills": "Git, Docker, Python",
+      "summary": "Proficient in Git, Docker, and Python, with strong communication, time management, and adaptability skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Krystal Stewart",
+      "email": "elizabethedwards@yahoo.com",
+      "phone_number": "+2475107991",
+      "linkedin": "https://www.ibarra-suarez.com/",
+      "github": "https://www.bass-warner.org/",
+      "soft_skills": "time management, creativity, problem-solving",
+      "technical_skills": "SQL, Git, Python, AWS, Django",
+      "summary": "Skilled in SQL, Git, Python, AWS, and Django, with strengths in time management, creativity, and problem-solving."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Natalie Moore",
+      "email": "jenniferharris@hotmail.com",
+      "phone_number": "+8740164005",
+      "linkedin": "https://smith.com/",
+      "github": "http://tran.com/",
+      "soft_skills": "time management, creativity",
+      "technical_skills": "Java, Django, Python, AWS",
+      "summary": "Experienced in Java, Django, Python, and AWS, with strong time management and creative skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Marc Moore",
+      "email": "theresacochran@johnson-doyle.com",
+      "phone_number": "+3421607337",
+      "linkedin": "http://ramirez-jones.com/",
+      "github": "https://zavala.com/",
+      "soft_skills": "time management, teamwork, problem-solving",
+      "technical_skills": "Python, Docker, React, AWS",
+      "summary": "Proficient in Python, Docker, React, and AWS, with strong teamwork, time management, and problem-solving skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Mrs. Stephanie Lee",
+      "email": "zsmith@mcdaniel.com",
+      "phone_number": "+6159514846",
+      "linkedin": "http://www.ortega-gray.com/",
+      "github": "https://bass.org/",
+      "soft_skills": "problem-solving, teamwork, adaptability, creativity",
+      "technical_skills": "SQL, AWS, Git, Kubernetes, Docker",
+      "summary": "Skilled in SQL, AWS, Git, Kubernetes, and Docker, with strengths in problem-solving, teamwork, adaptability, and creativity."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Matthew Harvey",
+      "email": "emilywalker@hernandez.com",
+      "phone_number": "+9176936763",
+      "linkedin": "http://www.holmes.com/",
+      "github": "https://www.contreras-travis.org/",
+      "soft_skills": "teamwork, creativity, adaptability",
+      "technical_skills": "Git, React, SQL, Java",
+      "summary": "Experienced in Git, React, SQL, and Java, with strong teamwork, creativity, and adaptability skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Joanna Walton",
+      "email": "rsims@yahoo.com",
+      "phone_number": "+4345581223",
+      "linkedin": "https://www.lewis.info/",
+      "github": "https://www.wall.org/",
+      "soft_skills": "time management, communication, problem-solving",
+      "technical_skills": "SQL, Git, Django, React",
+      "summary": "Proficient in SQL, Git, Django, and React, with excellent time management, communication, and problem-solving skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Kimberly Navarro",
+      "email": "brobinson@johnson-rogers.biz",
+      "phone_number": "+2729806990",
+      "linkedin": "http://www.gray-lewis.com/",
+      "github": "https://walton-decker.com/",
+      "soft_skills": "time management, adaptability, creativity, communication",
+      "technical_skills": "Git, Django, Python",
+      "summary": "Skilled in Git, Django, and Python, with strengths in time management, adaptability, creativity, and communication."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "David Combs",
+      "email": "davidcaldwell@gould.com",
+      "phone_number": "+9912419049",
+      "linkedin": "https://gonzalez.com/",
+      "github": "http://burke.com/",
+      "soft_skills": "adaptability, problem-solving",
+      "technical_skills": "React, AWS, Python, Git",
+      "summary": "Experienced in React, AWS, Python, and Git, with strong adaptability and problem-solving skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Sandra Zimmerman",
+      "email": "jessicasheppard@yahoo.com",
+      "phone_number": "+8776945314",
+      "linkedin": "https://snyder.com/",
+      "github": "https://www.salinas-peterson.org/",
+      "soft_skills": "creativity, teamwork, communication, time management",
+      "technical_skills": "Python, Kubernetes, SQL",
+      "summary": "Proficient in Python, Kubernetes, and SQL, with strengths in creativity, teamwork, communication, and time management."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Katherine Mcguire",
+      "email": "jeffrey34@perkins.biz",
+      "phone_number": "+8557444313",
+      "linkedin": "http://www.washington.net/",
+      "github": "https://www.phillips.com/",
+      "soft_skills": "teamwork, creativity, communication",
+      "technical_skills": "Python, Django, Git, Docker, Kubernetes",
+      "summary": "Skilled in Python, Django, Git, Docker, and Kubernetes, with strong teamwork, creativity, and communication skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Adam Mitchell",
+      "email": "dpeterson@yahoo.com",
+      "phone_number": "+1167190229",
+      "linkedin": "https://www.james.org/",
+      "github": "https://oliver.com/",
+      "soft_skills": "problem-solving, teamwork, communication",
+      "technical_skills": "SQL, Java, React, Kubernetes",
+      "summary": "Experienced in SQL, Java, React, and Kubernetes, with strengths in problem-solving, teamwork, and communication."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Dwayne Campbell",
+      "email": "mcdanielsandra@hotmail.com",
+      "phone_number": "+3618324210",
+      "linkedin": "http://curry.com/",
+      "github": "https://powell.info/",
+      "soft_skills": "communication, adaptability, teamwork",
+      "technical_skills": "Django, Python, Git, AWS, Docker",
+      "summary": "Proficient in Django, Python, Git, AWS, and Docker, with excellent communication, adaptability, and teamwork skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Yvonne Chambers",
+      "email": "hinesgregory@hotmail.com",
+      "phone_number": "+7429671756",
+      "linkedin": "https://simpson.net/",
+      "github": "http://edwards.com/",
+      "soft_skills": "time management, adaptability, problem-solving",
+      "technical_skills": "Docker, SQL, React, Java",
+      "summary": "Skilled in Docker, SQL, React, and Java, with strengths in time management, adaptability, and problem-solving."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Lori Wolf",
+      "email": "andrea47@washington.com",
+      "phone_number": "+2480861317",
+      "linkedin": "https://davenport-baird.com/",
+      "github": "https://www.lee-greene.com/",
+      "soft_skills": "time management, teamwork, creativity, adaptability",
+      "technical_skills": "Git, SQL, AWS, Django",
+      "summary": "Experienced in Git, SQL, AWS, and Django, with strong time management, teamwork, creativity, and adaptability skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Yvonne Burns",
+      "email": "wryan@arnold-daniels.info",
+      "phone_number": "+3396360576",
+      "linkedin": "https://www.garcia-lozano.com/",
+      "github": "http://booker.com/",
+      "soft_skills": "adaptability, creativity, problem-solving, time management",
+      "technical_skills": "AWS, React, Django, Kubernetes",
+      "summary": "Proficient in AWS, React, Django, and Kubernetes, with strengths in adaptability, creativity, problem-solving, and time management."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Shelia Johnson",
+      "email": "crystalmccall@francis.com",
+      "phone_number": "+1724005045",
+      "linkedin": "https://www.thompson.biz/",
+      "github": "http://thomas.com/",
+      "soft_skills": "creativity, time management, adaptability, teamwork",
+      "technical_skills": "SQL, Python, Git, Django",
+      "summary": "Skilled in SQL, Python, Git, and Django, with strengths in creativity, time management, adaptability, and teamwork."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Melissa Bryant",
+      "email": "yvonnecastaneda@gmail.com",
+      "phone_number": "+6959440640",
+      "linkedin": "http://parsons-hall.com/",
+      "github": "http://www.king.com/",
+      "soft_skills": "problem-solving, time management, teamwork",
+      "technical_skills": "React, Docker, Kubernetes, Python, Django",
+      "summary": "Experienced in React, Docker, Kubernetes, Python, and Django, with strong problem-solving, time management, and teamwork skills."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Casey Anderson",
+      "email": "maria47@yahoo.com",
+      "phone_number": "+5171236851",
+      "linkedin": "http://chambers-chambers.org/",
+      "github": "https://leonard.com/",
+      "soft_skills": "problem-solving, time management, teamwork",
+      "technical_skills": "Docker, SQL, Kubernetes",
+      "summary": "Proficient in Docker, SQL, and Kubernetes, with strengths in problem-solving, time management, and teamwork."
+    }
+  },
+  {
+    "model": "user.candidate",
+    "fields": {
+      "name": "Andrew Johnson",
+      "email": "davispaige@gmail.com",
+      "phone_number": "+7586926179",
+      "linkedin": "http://sampson-foley.com/",
+      "github": "https://sanders.com/",
+      "soft_skills": "time management, creativity, communication, teamwork",
+      "technical_skills": "Docker, Git, Python, React",
+      "summary": "Skilled in Docker, Git, Python, and React, with excellent time management, creativity, communication, and teamwork skills."
+    }
+  }
+]

@@ -1,0 +1,552 @@
+[
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 1,
+      "role": "Frontend Engineer",
+      "company_name": "IBM",
+      "start_year": 2017,
+      "end_year": 2020,
+      "summary": "Day stop never only spend do similar small other everyone worker would music sometimes body."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 1,
+      "role": "Data Analyst",
+      "company_name": "Netflix",
+      "start_year": 2019,
+      "end_year": 2022,
+      "summary": "Capital group small open administration enter camera."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 2,
+      "role": "Frontend Engineer",
+      "company_name": "Microsoft",
+      "start_year": 2021,
+      "end_year": null,
+      "summary": "Second live sing message board mean war analysis."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 2,
+      "role": "Data Analyst",
+      "company_name": "Netflix",
+      "start_year": 2022,
+      "end_year": 2024,
+      "summary": "Feeling poor all your suggest international blue Republican kitchen tonight focus chance call person one."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 3,
+      "role": "Data Analyst",
+      "company_name": "Salesforce",
+      "start_year": 2020,
+      "end_year": null,
+      "summary": "Far measure involve soldier boy pressure there necessary tend involve thousand including still human role."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 3,
+      "role": "AI Researcher",
+      "company_name": "Google",
+      "start_year": 2021,
+      "end_year": 2024,
+      "summary": "Interview professor hear check type attack story behavior benefit school speech news."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 4,
+      "role": "Data Analyst",
+      "company_name": "Amazon",
+      "start_year": 2022,
+      "end_year": 2025,
+      "summary": "Form business government program seek test return why outside goal official defense prevent difference board."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 4,
+      "role": "Data Analyst",
+      "company_name": "Amazon",
+      "start_year": 2017,
+      "end_year": null,
+      "summary": "Happen several off southern suddenly window stand party poor ago upon stop environment Congress reflect."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 5,
+      "role": "Backend Developer",
+      "company_name": "OpenAI",
+      "start_year": 2022,
+      "end_year": null,
+      "summary": "Consider century price attorney scientist will begin."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 5,
+      "role": "DevOps Engineer",
+      "company_name": "Netflix",
+      "start_year": 2017,
+      "end_year": 2019,
+      "summary": "Democrat information game have return since nothing be apply church pay purpose evening product magazine."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 6,
+      "role": "Data Analyst",
+      "company_name": "Microsoft",
+      "start_year": 2019,
+      "end_year": 2020,
+      "summary": "Democratic mention generation book question or money final determine worker area."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 6,
+      "role": "Frontend Engineer",
+      "company_name": "Amazon",
+      "start_year": 2016,
+      "end_year": 2017,
+      "summary": "Feeling deep case eight foreign account section compare herself region."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 7,
+      "role": "Backend Developer",
+      "company_name": "Amazon",
+      "start_year": 2018,
+      "end_year": 2021,
+      "summary": "Street south author technology amount affect TV television office of remember individual boy again foot."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 7,
+      "role": "Frontend Engineer",
+      "company_name": "Netflix",
+      "start_year": 2022,
+      "end_year": null,
+      "summary": "Least ready gun join black job hundred bad that second develop single baby plan most create."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 8,
+      "role": "DevOps Engineer",
+      "company_name": "Amazon",
+      "start_year": 2018,
+      "end_year": 2020,
+      "summary": "Road standard spring door chair culture own set pretty concern significant management."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 8,
+      "role": "Data Analyst",
+      "company_name": "Microsoft",
+      "start_year": 2021,
+      "end_year": 2023,
+      "summary": "Service large under north play person ten physical character attention kind field ever argue medical."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 9,
+      "role": "Frontend Engineer",
+      "company_name": "IBM",
+      "start_year": 2017,
+      "end_year": 2020,
+      "summary": "Also hard expert popular within bed order his oil west school American training occur."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 9,
+      "role": "DevOps Engineer",
+      "company_name": "Meta",
+      "start_year": 2021,
+      "end_year": 2023,
+      "summary": "Focus little character artist billion tonight gas research mean common."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 10,
+      "role": "Data Analyst",
+      "company_name": "Microsoft",
+      "start_year": 2022,
+      "end_year": null,
+      "summary": "Mission city health executive impact full our smile positive at behind question exist rich prevent."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 10,
+      "role": "DevOps Engineer",
+      "company_name": "Google",
+      "start_year": 2022,
+      "end_year": 2023,
+      "summary": "Their four old center glass whose recognize hot organization visit finally heavy social spend prove stock."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 11,
+      "role": "AI Researcher",
+      "company_name": "Salesforce",
+      "start_year": 2020,
+      "end_year": null,
+      "summary": "Position interest gun guy Congress degree way main."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 11,
+      "role": "Data Analyst",
+      "company_name": "Microsoft",
+      "start_year": 2022,
+      "end_year": 2024,
+      "summary": "Yourself choice fast small medical music school money product then."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 12,
+      "role": "AI Researcher",
+      "company_name": "Microsoft",
+      "start_year": 2022,
+      "end_year": 2025,
+      "summary": "Child Congress realize person total return analysis hair rest wide particular sell."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 12,
+      "role": "Frontend Engineer",
+      "company_name": "Google",
+      "start_year": 2020,
+      "end_year": 2021,
+      "summary": "Doctor dream whole six tough create question now key show sing me industry class."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 13,
+      "role": "DevOps Engineer",
+      "company_name": "Google",
+      "start_year": 2021,
+      "end_year": 2022,
+      "summary": "Their appear lose he various represent middle by base."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 13,
+      "role": "Data Analyst",
+      "company_name": "Microsoft",
+      "start_year": 2022,
+      "end_year": 2024,
+      "summary": "Evening town challenge join watch develop later glass ago."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 14,
+      "role": "Data Analyst",
+      "company_name": "Amazon",
+      "start_year": 2017,
+      "end_year": 2019,
+      "summary": "Hear history bank different five between research friend certainly although true line story serve."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 14,
+      "role": "Data Analyst",
+      "company_name": "Microsoft",
+      "start_year": 2022,
+      "end_year": 2023,
+      "summary": "Large accept bad eight strong nature road month book explain feeling answer information soldier."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 15,
+      "role": "DevOps Engineer",
+      "company_name": "IBM",
+      "start_year": 2021,
+      "end_year": 2023,
+      "summary": "Book toward others administration middle drop century investment."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 15,
+      "role": "DevOps Engineer",
+      "company_name": "OpenAI",
+      "start_year": 2021,
+      "end_year": 2024,
+      "summary": "Good number cost property model guess well name skill medical after them analysis hit health section."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 16,
+      "role": "DevOps Engineer",
+      "company_name": "Amazon",
+      "start_year": 2020,
+      "end_year": 2023,
+      "summary": "Drop price billion old series card good full poor store range wonder."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 16,
+      "role": "Data Analyst",
+      "company_name": "Microsoft",
+      "start_year": 2016,
+      "end_year": 2018,
+      "summary": "Place specific as simply leader fall analysis current among value middle writer myself education."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 17,
+      "role": "AI Researcher",
+      "company_name": "OpenAI",
+      "start_year": 2016,
+      "end_year": 2019,
+      "summary": "Television answer pretty event son join hundred keep what fund cost reality."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 17,
+      "role": "AI Researcher",
+      "company_name": "IBM",
+      "start_year": 2019,
+      "end_year": 2020,
+      "summary": "Under mind song risk bad own state nation fly bag produce fill."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 18,
+      "role": "DevOps Engineer",
+      "company_name": "Salesforce",
+      "start_year": 2020,
+      "end_year": 2022,
+      "summary": "Ready goal amount thank good your ever woman way."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 18,
+      "role": "Frontend Engineer",
+      "company_name": "Meta",
+      "start_year": 2021,
+      "end_year": 2024,
+      "summary": "Provide image message seek civil all support question."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 19,
+      "role": "DevOps Engineer",
+      "company_name": "Google",
+      "start_year": 2020,
+      "end_year": null,
+      "summary": "Door population gun we allow check last he."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 19,
+      "role": "Backend Developer",
+      "company_name": "OpenAI",
+      "start_year": 2016,
+      "end_year": 2018,
+      "summary": "Several off morning huge power economic box save material hit no energy employee."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 20,
+      "role": "Frontend Engineer",
+      "company_name": "Google",
+      "start_year": 2022,
+      "end_year": 2025,
+      "summary": "You experience trouble make but table later together knowledge because."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 20,
+      "role": "Backend Developer",
+      "company_name": "Salesforce",
+      "start_year": 2016,
+      "end_year": null,
+      "summary": "Property remember nearly face feel church remember record company gun difference world."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 21,
+      "role": "Data Analyst",
+      "company_name": "Microsoft",
+      "start_year": 2021,
+      "end_year": 2023,
+      "summary": "Guess occur level work candidate this assume."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 21,
+      "role": "Data Analyst",
+      "company_name": "Google",
+      "start_year": 2022,
+      "end_year": 2023,
+      "summary": "Yourself rest moment shoulder statement available win politics last quite general there sister."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 22,
+      "role": "Data Analyst",
+      "company_name": "Meta",
+      "start_year": 2016,
+      "end_year": 2017,
+      "summary": "Item treat area buy check clearly follow remember generation."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 22,
+      "role": "AI Researcher",
+      "company_name": "Google",
+      "start_year": 2021,
+      "end_year": 2022,
+      "summary": "Thus suffer economy play nearly by field move maybe collection walk child probably result painting."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 23,
+      "role": "Data Analyst",
+      "company_name": "Salesforce",
+      "start_year": 2019,
+      "end_year": null,
+      "summary": "Animal political officer prepare short indicate police marriage."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 23,
+      "role": "DevOps Engineer",
+      "company_name": "Microsoft",
+      "start_year": 2019,
+      "end_year": 2021,
+      "summary": "Nation politics few each southern image law read citizen indeed less future century technology floor write."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 24,
+      "role": "Backend Developer",
+      "company_name": "Microsoft",
+      "start_year": 2022,
+      "end_year": 2024,
+      "summary": "Candidate have no five letter environment easy best face his past eat tend."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 24,
+      "role": "AI Researcher",
+      "company_name": "IBM",
+      "start_year": 2016,
+      "end_year": 2018,
+      "summary": "Spend value return couple city you level these market."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 25,
+      "role": "AI Researcher",
+      "company_name": "Salesforce",
+      "start_year": 2020,
+      "end_year": null,
+      "summary": "Measure whom Democrat good anything manager think pressure like Mr suggest issue think."
+    }
+  },
+  {
+    "model": "user.workexperience",
+    "fields": {
+      "candidate": 25,
+      "role": "DevOps Engineer",
+      "company_name": "Amazon",
+      "start_year": 2021,
+      "end_year": 2022,
+      "summary": "Shake hand hundred now crime network available mean share evidence writer quite."
+    }
+  }
+]

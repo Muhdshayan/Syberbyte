@@ -22,11 +22,8 @@ export default function Login () {
           setPassword,
           loading,
           error,
-          selectedRole,
-          setSelectedRole,
           handleSubmit,
-        } = useLogin("HR");
-    const roles = ["HR", "Recruiter", "Admin"] as const;
+        } = useLogin();
     return (
        <div className="flex md:flex-row flex-col justify-center items-start md:h-screen h-[800px] w-full">
           <img
@@ -47,21 +44,7 @@ export default function Login () {
           </div>
           <div className=" flex flex-col md:w-[50%]  w-full items-center justify-center h-full z-3 md:pt-0 pt-5">
             <div className="flex flex-col md:items-start items-center justify-center">
-                <div className="w-auto p-2 bg-cream flex flex-row rounded-md font-inter-medium text-slate-700">
-                    {roles.map((role)=>(
-                        <div
-                            key={role}
-                            className={`cursor-pointer p-1 px-3 rounded-sm transition-colors duration-300 ${
-                                selectedRole === role
-                                    ? "bg-white text-slate-900"
-                                    : " text-slate-700"
-                            }`}
-                            onClick={() => setSelectedRole(role)}
-                        >
-                            {role}
-                        </div>
-                    ))}
-                </div>
+
                  <Card className=" md:w-[400px] w-full h-auto font-inter-regular mt-2">
                     <CardHeader className="">
                       <CardTitle className="md:text-left text-center font-poppins-semibold text-3xl">Login to your account</CardTitle>
@@ -78,6 +61,7 @@ export default function Login () {
                             <Label htmlFor="email">Email</Label>
                             <Input
                               id="email"
+                              className="!bg-white !text-primary"
                               type="email"
                               placeholder="m@example.com"
                               value={email}

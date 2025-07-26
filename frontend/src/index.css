@@ -9,7 +9,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #F9FAFB;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -51,14 +51,10 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
   text-decoration: inherit;
 }
-a:hover {
-  color: #535bf2;
-}
 
-body { @apply !min-w-screen; overflow-x: hidden;}
+body { @apply !max-w-screen; overflow-x: hidden; background: #F9FAFB;}
 
 h1 {
   font-size: 3.2em;
@@ -66,13 +62,6 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -83,6 +72,12 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -171,8 +166,9 @@ button:focus-visible {
 @theme{
   --color-green: #10B981;
   --color-blue: #2563EB;
-  --color-cream: #EFE7EB;
+  --color-cream: #F9FAFB;
   --color-primary: #111827;
+  --color-secondary: #4B5563;
   --font-inter-regular: 'Inter regular',  sans-serif;
   --font-inter-medium: 'Inter medium', sans-serif;
   --font-inter-semibold: 'Inter semibold', sans-serif;
@@ -218,7 +214,6 @@ button:focus-visible {
   src: url("/fonts/Poppins_18pt-SemiBold.ttf") format("truetype");
 }
 
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -226,4 +221,16 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important; /* background */
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  -webkit-text-fill-color: #222 !important; /* text color */
+  color: #222 !important;
+  caret-color: auto;
+  transition: background-color 9999s ease-in-out 0s;
 }

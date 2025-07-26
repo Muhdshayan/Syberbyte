@@ -1,49 +1,63 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";  // ✅ Import
+import { useNavigate } from "react-router-dom";
+import { useAuthStore} from "@/Login/useAuthStore";
 
-export default function useLogin(defaultRole: string) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [selectedRole, setSelectedRole] = useState(defaultRole);
-  const navigate = useNavigate();  // ✅ Initialize navigate()
+export default function useLogin() {
+  const navigate = useNavigate();
+  //const setAuthUser = useAuthStore((state) => state.setAuthUser);
+  const attemptLogin = useAuthStore((state) => state.attemptLogin);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      setError("Both fields are required.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
-    console.log("[DEBUG] Submitting login form");
-    console.log("[DEBUG] Email entered:", email);
-    console.log("[DEBUG] Password entered:", password);
-    console.log("[DEBUG] Role selected:", selectedRole);
-
     try {
-      const response = await fetch("http://localhost:8000/api/user/login/", {
+      const res = await fetch("http://localhost:8000/api/login/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email, password })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
-      console.log("[DEBUG] Server response:", data);
-
-      if (!response.ok) {
-        console.log("[DEBUG] Login failed. Server returned:", data.detail);
-        setError(data.detail || "Login failed");
-      } else {
-        console.log("[DEBUG] Login successful for:", data.email);
-
-        // ✅ Redirect based on role/permission/etc.
-        navigate("/admin/job-category-management");  // or /admin, /home, etc.
+      const data = await res.json();
+      
+      if (!res.ok) {
+        setError(data.message || "Login failed.");
+        console.log("Login error:", data);
+        setLoading(false);
+        return;
       }
-    } catch (err: any) {
-      console.log("[DEBUG] Network error:", err);
-      setError("Network error");
+
+      // Use attemptLogin instead of setAuthUser for security check
+      const loginSuccessful = attemptLogin(data);
+      
+      if (loginSuccessful) {
+        // Only navigate if login was successful
+        if (data.permission == 5 || data.permission == 10 || data.permission == 7) {
+          navigate("/dashboard/admin");
+        } else {
+          navigate(`/dashboard/${data.role}`);
+        }
+      } else {
+        // Login was blocked due to existing user session
+        // The toast error message is already shown by attemptLogin
+        setError("Another user is already logged in. Please logout from the previous session first.");
+      }
+      
+    } catch (err) {
+      setError("Network error. Please try again.");
+      console.error("Login network error:", err);
     } finally {
       setLoading(false);
     }
@@ -56,8 +70,6 @@ export default function useLogin(defaultRole: string) {
     setPassword,
     loading,
     error,
-    selectedRole,
-    setSelectedRole,
     handleSubmit,
   };
 }

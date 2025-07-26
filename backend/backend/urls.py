@@ -20,7 +20,6 @@ from django.urls import path , include
 from backend.views import hello_world
 
 urlpatterns = [
-    path('api/hello-world/', hello_world),
-    path('api/user/', include('user.urls')),
+    path('api/', include('user.urls')),
     path('admin/', admin.site.urls),
 ]
