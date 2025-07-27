@@ -1,0 +1,73 @@
+{
+  "job_title": "Marketing Manager",
+  "timestamp": "20250727_062554",
+  "feedback_enhanced": true,
+  "chromadb_enhanced": true,
+  "top_5_candidates": [
+    {
+      "candidate_name": "Farhan Khalid Ahmad",
+      "overall_score": 63.6,
+      "component_scores": {
+        "technical_score": 53.1,
+        "experience_score": 65.5,
+        "cultural_score": 83.2,
+        "education_score": 53.0,
+        "ai_enhanced_score": 62.2
+      },
+      "feedback_enhanced": true,
+      "chromadb_enhanced": true
+    },
+    {
+      "candidate_name": "Rabia Umair",
+      "overall_score": 63.1,
+      "component_scores": {
+        "technical_score": 34.7,
+        "experience_score": 84.0,
+        "cultural_score": 76.2,
+        "education_score": 95.0,
+        "ai_enhanced_score": 46.3
+      },
+      "feedback_enhanced": true,
+      "chromadb_enhanced": true
+    },
+    {
+      "candidate_name": "Malik Sameer Kamran",
+      "overall_score": 60.0,
+      "component_scores": {
+        "technical_score": 41.8,
+        "experience_score": 73.7,
+        "cultural_score": 76.2,
+        "education_score": 53.0,
+        "ai_enhanced_score": 56.8
+      },
+      "feedback_enhanced": true,
+      "chromadb_enhanced": true
+    },
+    {
+      "candidate_name": "Monazza Khatoon",
+      "overall_score": 53.5,
+      "component_scores": {
+        "technical_score": 21.3,
+        "experience_score": 73.7,
+        "cultural_score": 76.2,
+        "education_score": 53.0,
+        "ai_enhanced_score": 54.2
+      },
+      "feedback_enhanced": true,
+      "chromadb_enhanced": true
+    },
+    {
+      "candidate_name": "Samina Saddique",
+      "overall_score": 48.4,
+      "component_scores": {
+        "technical_score": 0.0,
+        "experience_score": 73.7,
+        "cultural_score": 76.2,
+        "education_score": 53.0,
+        "ai_enhanced_score": 63.2
+      },
+      "feedback_enhanced": true,
+      "chromadb_enhanced": true
+    }
+  ]
+}

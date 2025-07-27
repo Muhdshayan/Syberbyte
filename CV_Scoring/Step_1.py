@@ -480,7 +480,7 @@ def parse_resume(file_path):
     
     return resume_data
 
-def process_resume_directory(directory_path="./resumes", output_dir="./parsed", output_filename="parsed_resumes.json"):
+def process_resume_directory(directory_path="./resumes", output_dir="./candidates", output_filename="parsed_resumes.json"):
     """Process all resume files in a directory"""
     print(f"Scanning directory: {os.path.abspath(directory_path)}")
     
@@ -560,7 +560,7 @@ def main():
     
     # You can customize these paths
     resume_directory = "./resumes"
-    output_directory = "./parsed"
+    output_directory = "./candidates"
     output_filename = "parsed_resumes.json"
     
     process_resume_directory(resume_directory, output_directory, output_filename)

@@ -3,8 +3,5 @@ venv/
 chroma_db/
 penv/
 parsed/
-candidates/
-scores/
-jd/
 resumes/
-results/
+Step_w_chromadb.py

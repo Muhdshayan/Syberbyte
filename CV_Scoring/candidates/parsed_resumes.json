@@ -1,0 +1,219 @@
+[
+  {
+    "file": "Business_Farhan_s Resume Updated 1.pdf",
+    "name": "Farhan Khalid Ahmad",
+    "phone": "+923365295703",
+    "email": "fka7911@gmail.com",
+    "github": "Not found",
+    "linkedin": "https://linkedin.com/in/farhan-khalid-93720b210",
+    "education": {
+      "institute": "National University of Computer and Emerging Sciences (FAST-NUCES)",
+      "degree": "BS(Business Analytics)",
+      "year": "08/2021 - Present"
+    },
+    "skills": {
+      "technical_skills": {
+        "Python": 85,
+        "Data Science": 80,
+        "Data Visualization": 75,
+        "Business Intelligence": 75,
+        "MySQL": 60,
+        "Power BI": 75,
+        "Tableau": 75,
+        "Canva": 40,
+        "MS Office": 70
+      },
+      "soft_skills": {
+        "Leadership": 90,
+        "Communication": 75,
+        "Business Planning": 80,
+        "Event Planning": 85,
+        "Marketing": 80,
+        "Management": 80
+      }
+    },
+    "years_of_experience": 2.75
+  },
+  {
+    "file": "Business_Hasnain_Munawar.pdf",
+    "name": "Hasnain Munawar",
+    "phone": "03137745218",
+    "email": "hasnainbinmunawar@gmail.com",
+    "github": "Not found",
+    "linkedin": "Not found",
+    "education": {
+      "institute": "Foundation University School of Science and Technology",
+      "degree": "BSSE",
+      "year": "September 2021 — June 2025"
+    },
+    "skills": {
+      "technical_skills": {
+        "Python": 85,
+        "JavaScript": 70,
+        "TypeScript": 60,
+        "VueJs": 60,
+        "Nuxt Js": 60,
+        "Nest Js": 60,
+        "Next Js": 60,
+        "Rust": 50,
+        "SQL": 70,
+        "Git / Github": 85,
+        "Amazon web Services": 60
+      },
+      "soft_skills": {
+        "Leadership": 0,
+        "Communication": 75
+      }
+    },
+    "years_of_experience": 1.0
+  },
+  {
+    "file": "Business_Monazza Khatoon Resume.pdf",
+    "name": "Monazza Khatoon",
+    "phone": "03255315815",
+    "email": "monazzakhatoon766@gmail.com",
+    "github": "Not found",
+    "linkedin": "https://linkedin.com/in/monazza-khatoon",
+    "education": {
+      "institute": "Virtual University",
+      "degree": "BS in Computer Science",
+      "year": "Mar 2022"
+    },
+    "skills": {
+      "technical_skills": {
+        "Microsoft Office": {
+          "Excel": 85,
+          "Word": 80,
+          "PowerPoint": 80
+        }
+      },
+      "soft_skills": {
+        "Leadership": 70,
+        "Communication": 90,
+        "Networking": 60,
+        "Marketing": 65
+      }
+    },
+    "years_of_experience": 3.5
+  },
+  {
+    "file": "Business_Rabia Umair Resume.pdf",
+    "name": "Rabia Umair",
+    "phone": "+923442981144",
+    "email": "Rabiaumair334@gmail.com",
+    "github": "Not found",
+    "linkedin": "Not found",
+    "education": {
+      "institute": "Bahria University",
+      "degree": "Bachelor of Computer Science",
+      "year": "2018"
+    },
+    "skills": {
+      "technical_skills": {
+        "Python": 20,
+        "JavaScript": 0
+      },
+      "soft_skills": {
+        "Leadership": 90,
+        "Communication": 90
+      }
+    },
+    "years_of_experience": 4.5
+  },
+  {
+    "file": "Business_Resume - Muhammad Noman Gul.pdf",
+    "name": "M Noman Gul",
+    "phone": "00923335545232",
+    "email": "nomangul685@gmail.com",
+    "github": "Not found",
+    "linkedin": "https://www.linkedin.com/in/m-noman-gulb99028211",
+    "education": {
+      "institute": "Tikka House",
+      "degree": "CEO",
+      "year": "August 2023 - January 2024"
+    },
+    "skills": {
+      "technical_skills": {},
+      "soft_skills": {
+        "Leadership": 90,
+        "Communication": 85
+      }
+    },
+    "years_of_experience": 4.5
+  },
+  {
+    "file": "Business_Resume-Malik-Sameer-Kamran.pdf",
+    "name": "Malik Sameer Kamran",
+    "phone": "+923070810626",
+    "email": "sameerkamran4@live.com",
+    "github": "Not found",
+    "linkedin": "https://linkedin.com/in/malik-sameer-kamran-47790aa2",
+    "education": {
+      "institute": "Not mentioned in the resume text",
+      "degree": "International Relations",
+      "year": "Not mentioned"
+    },
+    "skills": {
+      "technical_skills": {
+        "Python": 0,
+        "JavaScript": 30,
+        "Digital Marketing": 85
+      },
+      "soft_skills": {
+        "Leadership": 60,
+        "Communication": 75,
+        "Mentorship": 80
+      }
+    },
+    "years_of_experience": 3.5
+  },
+  {
+    "file": "Business_Samina_s Resume-1.pdf",
+    "name": "Samina Saddique",
+    "phone": "03365956644",
+    "email": "saddiquesamina@yahoo.com",
+    "github": "Not found",
+    "linkedin": "Not found",
+    "education": {
+      "institute": "Fatima Jinaah Women University Rawalpindi",
+      "degree": "BS COMMERCE",
+      "year": "01/2019 - 05/2022"
+    },
+    "skills": {
+      "technical_skills": {
+        "Ecommerce Google Ads": 60,
+        "Proposal & Content Writing": 70
+      },
+      "soft_skills": {
+        "Leadership": 85,
+        "Communication": 90,
+        "Problem-solving & decision-making": 85
+      }
+    },
+    "years_of_experience": 3.5
+  },
+  {
+    "file": "Business_Wajeeha Obaid (CV).pdf",
+    "name": "Wajeeha Obaid",
+    "phone": "+923475891890",
+    "email": "wajihaobaid@gmail.com",
+    "github": "Not found",
+    "linkedin": "Not found",
+    "education": {
+      "institute": [
+        "Riphah International University",
+        "COMSATS University"
+      ],
+      "degree": [
+        "Masters of Science: Project Management",
+        "Bachelor of Science: Software Engineering"
+      ],
+      "year": [
+        "2022",
+        "2020"
+      ]
+    },
+    "skills": "Not found",
+    "years_of_experience": 3.5
+  }
+]
