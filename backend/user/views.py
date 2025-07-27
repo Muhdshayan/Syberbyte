@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status , generics
 from .serializers import LoginSerializer
-from .models import UserAccount, JobDetail, MediaUpload , Candidate , JobApplication
-from .serializers import UserAccountSerializer, JobDetailSerializer , CVUploadSerializer , CandidateSerializer,JobApplicationSerializer
+from .models import UserAccount, JobDetail, MediaUpload , Candidate , JobApplication , Feedback
+from .serializers import UserAccountSerializer, JobDetailSerializer , CVUploadSerializer , CandidateSerializer,JobApplicationSerializer,FeedbackSerializer
 from rest_framework.permissions import AllowAny
 from .tasks import parse_cv_task
 import logging
@@ -11,6 +11,9 @@ import pandas as pd
 from django.http import HttpResponse
 from io import BytesIO
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from rest_framework.decorators import api_view 
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -288,62 +291,95 @@ class JobDetailDetailView(generics.RetrieveUpdateDestroyAPIView):
         print("===== [DEBUG] Successfully Updated =====")
         return Response(serializer.data)
 
-class JobApplicationExportView(APIView):
-    def get(self, request):
+@api_view(['GET'])
+def export_job_applications(request):
+    try:
+        job_id = request.GET.get("job_id")
+        logger.info(f"Received job_id: {job_id}")
+
+        # Filter applications with optional job_id and required status
+        applications = JobApplication.objects.select_related('job', 'candidate').filter(
+            status="final_screening"
+        )
+        if job_id:
+            applications = applications.filter(job__job_id=job_id)
+
+        data = []
+        for app in applications:
+            application_date = app.application_date
+            if timezone.is_aware(application_date):
+                application_date = timezone.make_naive(application_date)
+
+            # Create a custom email template per candidate
+            email_template = (
+                f"Dear {app.candidate.name},\n\n"
+                f"You have been shortlisted for the final screening round for the role of "
+                f"'{app.job.role}'. Please be available for an interview call.\n\n"
+                f"Best regards,\nRecruitment Team"
+            )
+
+            data.append({
+                'Application ID': app.application_id,
+                'Job ID': app.job.job_id,
+                'Job Role': app.job.role,
+                'Candidate Name': app.candidate.name,
+                'Candidate Email': app.candidate.email,
+                'Application Date': application_date,
+                'Status': app.status,
+                'Score': app.score,
+                'AI Recommendation': app.ai_recommendation,
+                'Technical Score': app.technical_score,
+                'Experience Score': app.experience_score,
+                'Cultural Score': app.cultural_score,
+                'Email Template': email_template
+            })
+
+        df = pd.DataFrame(data)
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df.to_excel(writer, sheet_name='Job Applications', index=False)
+            worksheet = writer.sheets['Job Applications']
+            for idx, col in enumerate(df.columns):
+                max_len = max(df[col].astype(str).map(len).max(), len(col)) + 2
+                worksheet.set_column(idx, idx, max_len)
+
+        output.seek(0)
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename=job_applications.xlsx'
+
+        return response
+
+    except Exception as e:
+        logger.error(f"Error exporting job applications: {str(e)}")
+        return Response(
+            {"error": "Failed to generate Excel file"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    
+class FeedbackCreateView(generics.CreateAPIView):
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+
+    def post(self, request, *args, **kwargs):
         try:
-            # Fetch all JobApplication data
-            applications = JobApplication.objects.select_related('job', 'candidate').all()
-            
-            # Prepare data for Excel
-            data = []
-            for app in applications:
-                # Convert timezone-aware datetime to naive datetime
-                application_date = app.application_date
-                if timezone.is_aware(application_date):
-                    application_date = timezone.make_naive(application_date)
-                
-                data.append({
-                    'Application ID': app.application_id,
-                    'Job ID': app.job.job_id,
-                    'Job Role': app.job.role,
-                    'Candidate Name': app.candidate.name,
-                    'Candidate Email': app.candidate.email,
-                    'Application Date': application_date,
-                    'Status': app.status,
-                    'Score': app.score,
-                    'AI Recommendation': app.ai_recommendation,
-                    'Technical Score': app.technical_score,
-                    'Experience Score': app.experience_score,
-                    'Cultural Score': app.cultural_score
-                })
-            
-            # Create DataFrame
-            df = pd.DataFrame(data)
-            
-            # Create Excel file in memory
-            output = BytesIO()
-            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, sheet_name='Job Applications', index=False)
-                # Adjust column widths
-                worksheet = writer.sheets['Job Applications']
-                for idx, col in enumerate(df.columns):
-                    max_len = max(df[col].astype(str).map(len).max(), len(col)) + 2
-                    worksheet.set_column(idx, idx, max_len)
-            
-            # Prepare response
-            output.seek(0)
-            response = HttpResponse(
-                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                content=output.getvalue()
-            )
-            response['Content-Disposition'] = 'attachment; filename=job_applications.xlsx'
-            
-            logger.info("Successfully generated and sent job applications Excel file")
-            return response
-            
+            logger.info("=== Incoming Feedback POST ===")
+            logger.info("Raw data: %s", request.data)
+            logger.debug("Request headers: %s", dict(request.headers))
+            logger.debug("Request user: %s", request.user if request.user.is_authenticated else "Anonymous")
+
+            serializer = self.get_serializer(data=request.data)
+
+            if serializer.is_valid():
+                feedback = serializer.save()
+                logger.info("Feedback saved successfully: %s", serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            logger.warning("Feedback validation failed: %s", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         except Exception as e:
-            logger.error("Error generating Excel file: %s", str(e))
-            return Response(
-                {"error": "Failed to generate Excel file"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            logger.exception("Unexpected error during feedback creation: %s", str(e))
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LoginAPIView ,UserAccountListCreateView,UserAccountDetailView,JobDetailListCreateView,JobDetailDetailView,UploadCVView,CVListView,CandidateListCreateView,JobApplicationListCreateView ,ResetPasswordView,JobApplicationUpdateView,JobApplicationExportView
+from .views import LoginAPIView ,UserAccountListCreateView,UserAccountDetailView,JobDetailListCreateView,JobDetailDetailView,UploadCVView,CVListView,CandidateListCreateView,JobApplicationListCreateView ,ResetPasswordView,JobApplicationUpdateView,export_job_applications,FeedbackCreateView
 
 urlpatterns = [
     #Login
@@ -24,6 +24,7 @@ urlpatterns = [
     # to retrieve data for view Candidates 
     path('jobapplication/', JobApplicationListCreateView.as_view(), name='jobapplication-list-create'),
     path('jobapplication/update/', JobApplicationUpdateView.as_view()),
-    path('jobapplication/export/', JobApplicationExportView.as_view(), name='jobapplication-export'),
+    path('jobapplication/export/', export_job_applications, name='jobapplication-export'),
 
+    path('feedback/', FeedbackCreateView.as_view(), name='feedback-create'),
 ]

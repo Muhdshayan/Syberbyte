@@ -26,7 +26,7 @@ const getInitialAuthUser = (): AuthUser | null => {
   }
 };
 
-export const useAuthStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set, get) => ({
   authUser: getInitialAuthUser(),
   
   setAuthUser: (user) => {
@@ -41,7 +41,31 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
 
   attemptLogin: (newUser: AuthUser): boolean => {
-    // No restriction on existing user - proceed with login
+    // Always check fresh localStorage state
+    const currentStoredUser = getInitialAuthUser();
+    const currentStoreUser = get().authUser;
+    
+    console.log("Current stored user:", currentStoredUser);
+    console.log("Current store user:", currentStoreUser);
+    
+    // Check if there's already a logged-in user (prioritize localStorage)
+    const existingUser = currentStoredUser || currentStoreUser;
+    
+    if (existingUser) {
+      // If it's the same user, allow login
+      if (existingUser.user_id === newUser.user_id && existingUser.email === newUser.email) {
+        set({ authUser: newUser });
+        localStorage.setItem("authUser", JSON.stringify(newUser));
+        toast.success(`Welcome back, ${newUser.email}!`);
+        return true;
+      }
+      
+      // Different user trying to login - prevent it
+      toast.error(`Another user is already logged in. Please logout first.`);
+      return false;
+    }
+    
+    // No existing user - proceed with login
     set({ authUser: newUser });
     localStorage.setItem("authUser", JSON.stringify(newUser));
     toast.success(`Welcome, ${newUser.email}!`);

@@ -1,5 +1,6 @@
 
 from rest_framework import serializers
+from django.core.validators import MinValueValidator, MaxValueValidator
 from .models import (
     UserAccount,
     JobDetail,
@@ -7,7 +8,8 @@ from .models import (
     WorkExperience,
     Education,
     JobApplication,
-    MediaUpload
+    MediaUpload,
+    Feedback
 )
 
 
@@ -107,3 +109,34 @@ class JobApplicationSerializer(serializers.ModelSerializer):
             'application_id', 'job', 'candidate', 'candidate_id', 'job_id',
             'application_date', 'status', 'score', 'ai_recommendation','technical_score','experience_score','cultural_score'
         ]
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    candidate_id = serializers.PrimaryKeyRelatedField(
+        queryset=Candidate.objects.all(), source='candidate', write_only=True
+    )
+    job_id = serializers.PrimaryKeyRelatedField(
+        queryset=JobDetail.objects.all(), source='job', write_only=True
+    )
+    feedback_text = serializers.CharField(source='feedback', write_only=True)
+    suggested_score = serializers.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100)
+        ]
+    )
+    candidate = CandidateSerializer(read_only=True)
+    job = JobDetailSerializer(read_only=True)
+
+    class Meta:
+        model = Feedback
+        fields = [
+            'feedback_id', 'job', 'candidate', 'candidate_id', 'job_id',
+            'suggested_score', 'feedback_text', 'created_at'
+        ]
+
+    def validate(self, data):
+        candidate = data.get('candidate')
+        job = data.get('job')
+        if Feedback.objects.filter(candidate=candidate, job=job).exists():
+            raise serializers.ValidationError("Feedback for this candidate and job already exists.")
+        return data

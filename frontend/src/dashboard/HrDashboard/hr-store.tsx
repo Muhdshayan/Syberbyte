@@ -321,17 +321,16 @@ export const useHrStore = create<hrStore>((set, get) => ({
     }
   },
   generateExcelReport: async (jobId?: number) => {
+    console.log(jobId)
     set({ loading: true, error: null });
     try {
       console.log("Generating Excel report...");
 
-      const response = await axios.get("http://localhost:8000/api/reports/excel/", {
+      const response = await axios.get("http://localhost:8000/api/jobapplication/export/", {
         params: jobId ? { job_id: jobId } : {},
-        responseType: 'blob', // This is crucial for binary file data
-        headers: {
-          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        }
+        responseType: 'blob',
       });
+
 
       // Create blob from response data
       const blob = new Blob([response.data], {

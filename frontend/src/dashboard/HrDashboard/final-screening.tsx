@@ -273,7 +273,7 @@ const filteredCandidates = selectedFilter
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            onClick={() => generateExcelReport()}
+            onClick={() => generateExcelReport(parseInt(JobId ?? "0"))}
             disabled={loading}
             className="bg-green text-white font-inter-regular hover:scale-105 transition-all duration-200"
           >
