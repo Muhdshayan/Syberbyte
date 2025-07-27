@@ -1,6 +1,6 @@
 models/
 venv/
-chroma_db/
+chromadb/
 penv/
 parsed/
 resumes/
