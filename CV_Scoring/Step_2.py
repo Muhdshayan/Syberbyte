@@ -7,7 +7,6 @@ from collections import defaultdict
 import logging
 from dataclasses import dataclass, asdict
 from sentence_transformers import SentenceTransformer
-from llama_cpp import Llama
 import uuid
 import os
 import time
@@ -406,35 +405,53 @@ Please consider these insights when providing your assessment.
 """
 
 class DynamicSkillSynonymMapper:
-    def __init__(self, mistral_model=None, ollama_url: str = "http://localhost:11434", feedback_manager=None, chromadb_manager=None):
-        self.mistral_model = mistral_model
+    def __init__(self, ollama_url: str = "http://localhost:11434", feedback_manager=None, chromadb_manager=None):
         self.ollama_url = ollama_url
         self.synonym_cache = {}
         self.relevancy_cache = {}
         self.feedback_manager = feedback_manager
         self.chromadb_manager = chromadb_manager
         
-    def _call_ollama_api(self, prompt: str, model: str = "mistral") -> str:
-        try:
-            response = requests.post(
-                f"{self.ollama_url}/api/generate",
-                json={"model": model, "prompt": prompt, "stream": False, "options": {"temperature": 0.1, "top_p": 0.9, "num_predict": 200}},
-                timeout=30
-            )
-            if response.status_code == 200:
-                return response.json().get("response", "").strip()
-        except Exception as e:
-            logger.error(f"Ollama API call failed: {e}")
-            return self._fallback_to_local_model(prompt)
-        return ""
-    
-    def _fallback_to_local_model(self, prompt: str) -> str:
-        if self.mistral_model:
+    def _call_ollama_api(self, prompt: str, model: str = "mistral", timeout: int = 30, max_retries: int = 3) -> str:
+        """Call Ollama API with retry logic and better error handling"""
+        for attempt in range(max_retries):
             try:
-                response = self.mistral_model(prompt, max_tokens=200, temperature=0.1, stop=["</s>", "\n\n"])
-                return response['choices'][0]['text'].strip()
+                response = requests.post(
+                    f"{self.ollama_url}/api/generate",
+                    json={
+                        "model": model, 
+                        "prompt": prompt, 
+                        "stream": False, 
+                        "options": {
+                            "temperature": 0.1, 
+                            "top_p": 0.9, 
+                            "num_predict": 200
+                        }
+                    },
+                    timeout=timeout
+                )
+                
+                if response.status_code == 200:
+                    result = response.json().get("response", "").strip()
+                    if result:  # Only return if we got a valid response
+                        return result
+                    else:
+                        logger.warning(f"Empty response from Ollama on attempt {attempt + 1}")
+                else:
+                    logger.warning(f"Ollama API returned status {response.status_code} on attempt {attempt + 1}")
+                    
+            except requests.exceptions.ConnectionError:
+                logger.error(f"Cannot connect to Ollama server at {self.ollama_url} on attempt {attempt + 1}")
+            except requests.exceptions.Timeout:
+                logger.error(f"Ollama API timeout on attempt {attempt + 1}")
             except Exception as e:
-                logger.error(f"Local model fallback failed: {e}")
+                logger.error(f"Ollama API call failed on attempt {attempt + 1}: {e}")
+            
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)  # Exponential backoff
+        
+        # If all retries failed, return basic fallback
+        logger.error(f"All {max_retries} attempts to call Ollama API failed. Using basic fallback.")
         return ""
     
     def get_career_field_from_job(self, job_description: Dict) -> str:
@@ -522,7 +539,13 @@ Variations (comma-separated):"""
 
         response = self._call_ollama_api(prompt)
         if not response:
-            basic_variations = [skill.lower(), skill.lower().replace(" ", ""), skill.lower().replace(" ", "-"), skill.lower().replace(" ", "_")]
+            # Basic fallback variations
+            basic_variations = [
+                skill.lower(), 
+                skill.lower().replace(" ", ""), 
+                skill.lower().replace(" ", "-"), 
+                skill.lower().replace(" ", "_")
+            ]
             self.synonym_cache[cache_key] = basic_variations
             return basic_variations
         
@@ -621,95 +644,23 @@ Cultural fit score:"""
         return len(candidate_soft.intersection(job_soft)) / len(job_soft)
 
 class ModelManager:
-    def __init__(self, models_dir: str = "./models"):
-        self.models_dir = models_dir
-        self.mistral_model = None
+    def __init__(self):
         self.embedding_model = None
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.gpu_layers = self._calculate_optimal_gpu_layers()
-        
-    def _calculate_optimal_gpu_layers(self):
-        if self.device == "cpu": return 0
-        try:
-            gpu_memory = torch.cuda.get_device_properties(0).total_memory / 1024**3
-            if gpu_memory <= 4.5: return 15
-            elif gpu_memory <= 6.5: return 25
-            else: return 30
-        except: return 15
         
     def load_models(self):
+        """Load only the embedding model"""
         if self.device == "cuda": 
             torch.cuda.empty_cache()
-        
-        try:
-            # Calculate optimal context size based on available memory
-            optimal_ctx = self._calculate_optimal_context_size()
-            
-            self.mistral_model = Llama(
-                model_path=f"{self.models_dir}/mistral-7b-instruct-v0.2.Q4_K_M.gguf",
-                n_ctx=optimal_ctx,
-                n_gpu_layers=self.gpu_layers, 
-                n_batch=512,  # Increased for better performance
-                n_threads=4,
-                use_mmap=True, 
-                use_mlock=False, 
-                verbose=False,
-                # Modern llama-cpp-python settings to avoid backward compatibility
-                flash_attn=True,  # Enable flash attention if supported
-                split_mode=1,     # Enable tensor parallelism if multiple GPUs
-                tensor_split=None,
-                rope_scaling_type=0,  # Use default RoPE scaling
-                rope_freq_base=0.0,
-                rope_freq_scale=0.0,
-                kv_overrides={}
-            )
-        except Exception as e:
-            logger.error(f"Failed to load Mistral model: {e}")
-            # Fallback with basic settings
-            try:
-                self.mistral_model = Llama(
-                    model_path=f"{self.models_dir}/mistral-7b-instruct-v0.2.Q4_K_M.gguf",
-                    n_ctx=2048,  # Safer fallback
-                    n_gpu_layers=self.gpu_layers,
-                    verbose=False
-                )
-            except:
-                self.mistral_model = None
         
         try:
             self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
             if self.device == "cuda": 
                 self.embedding_model = self.embedding_model.to('cuda')
+            logger.info(f"Embedding model loaded successfully on {self.device}")
         except Exception as e:
             logger.error(f"Failed to load embedding model: {e}")
             self.embedding_model = None
-    
-    def _calculate_optimal_context_size(self) -> int:
-        """Calculate optimal context size based on available memory"""
-        if self.device == "cpu":
-            # CPU mode - conservative context size
-            import psutil
-            available_ram_gb = psutil.virtual_memory().available / (1024**3)
-            if available_ram_gb >= 32:
-                return 8192
-            elif available_ram_gb >= 16:
-                return 4096
-            else:
-                return 2048
-        else:
-            # GPU mode - check VRAM
-            try:
-                total_vram = torch.cuda.get_device_properties(0).total_memory / (1024**3)
-                if total_vram >= 20:  # RTX 3090/4090 class
-                    return 16384  # Half of max context, safe for large models
-                elif total_vram >= 12:  # RTX 3080/4070 class  
-                    return 8192
-                elif total_vram >= 8:   # RTX 3070/4060 class
-                    return 4096
-                else:
-                    return 2048
-            except:
-                return 2048
 
 class SmartRecruitMatcher:
     def __init__(self, ollama_url: str = "http://localhost:11434", feedback_dir: str = "./feedback", chromadb_dir: str = "./chromadb"):
@@ -720,13 +671,33 @@ class SmartRecruitMatcher:
         self.chromadb_manager = ChromaDBManager(chromadb_dir)
         
     def initialize(self):
+        """Initialize the matcher with simplified model loading"""
+        # Test Ollama connection first
+        self._test_ollama_connection()
+        
+        # Load only the embedding model
         self.model_manager.load_models()
+        
+        # Initialize the skill mapper
         self.skill_mapper = DynamicSkillSynonymMapper(
-            mistral_model=self.model_manager.mistral_model,
             ollama_url=self.ollama_url,
             feedback_manager=self.feedback_manager,
             chromadb_manager=self.chromadb_manager
         )
+    
+    def _test_ollama_connection(self):
+        """Test connection to Ollama server"""
+        try:
+            response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
+            if response.status_code == 200:
+                logger.info("Successfully connected to Ollama server")
+            else:
+                logger.warning(f"Ollama server responded with status {response.status_code}")
+        except requests.exceptions.ConnectionError:
+            logger.error(f"Cannot connect to Ollama server at {self.ollama_url}")
+            logger.error("Please ensure Ollama is running and accessible")
+        except Exception as e:
+            logger.error(f"Error testing Ollama connection: {e}")
     
     def _get_candidate_technical_skills(self, candidate: Dict) -> Dict[str, int]:
         skills = candidate.get('skills', {})
@@ -1077,6 +1048,7 @@ class SmartRecruitMatcher:
                 "important_skill_coverage": self._get_important_skill_coverage(candidate, job, job_career_field),
                 "feedback_enhanced": bool(self.feedback_manager.feedback_cache.get('general')),
                 "chromadb_enhanced": self.chromadb_manager.client is not None,
+                "ollama_enhanced": True,  # Since we're using Ollama exclusively
                 "scoring_weights": {"technical": "30%", "cultural": "20%", "experience": "25%", "education": "10%", "ai_enhanced": "15%"}
             }
         )
@@ -1278,7 +1250,8 @@ def save_scores(job_results: Dict, timestamp: str):
                         "ai_enhanced_score": result.ai_enhanced_score
                     },
                     "feedback_enhanced": result.detailed_breakdown.get("feedback_enhanced", False),
-                    "chromadb_enhanced": result.detailed_breakdown.get("chromadb_enhanced", False)
+                    "chromadb_enhanced": result.detailed_breakdown.get("chromadb_enhanced", False),
+                    "ollama_enhanced": result.detailed_breakdown.get("ollama_enhanced", False)
                 })
         
         job_score_data = {
@@ -1286,6 +1259,7 @@ def save_scores(job_results: Dict, timestamp: str):
             "timestamp": timestamp,
             "feedback_enhanced": any(r.get("feedback_enhanced", False) for r in simplified_results),
             "chromadb_enhanced": any(r.get("chromadb_enhanced", False) for r in simplified_results),
+            "ollama_enhanced": any(r.get("ollama_enhanced", False) for r in simplified_results),
             "top_5_candidates": simplified_results[:5]
         }
         
@@ -1296,24 +1270,31 @@ def save_scores(job_results: Dict, timestamp: str):
             logger.error(f"Error saving scores to {filename}: {e}")
 
 def main():
-    matcher = SmartRecruitMatcher(ollama_url="http://localhost:11434", feedback_dir="./feedback", chromadb_dir="./chromadb")
+    matcher = SmartRecruitMatcher(
+        ollama_url="http://localhost:11434", 
+        feedback_dir="./feedback", 
+        chromadb_dir="./chromadb"
+    )
     start_time = time.time()
     
     try: 
         matcher.initialize()
     except Exception as e:
         logger.error(f"Failed to initialize matcher: {e}")
+        return False
     
     candidates, jobs = load_json_data()
     if not candidates or not jobs: 
         logger.warning("No candidates or jobs found")
         return False
     
+    logger.info(f"Loaded {len(candidates)} candidates and {len(jobs)} jobs")
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     job_results = {}
     
     for i, job in enumerate(jobs, 1):
         try:
+            logger.info(f"Processing job {i}/{len(jobs)}: {job.get('title', f'Job_{i}')}")
             top_candidates = matcher.find_top_candidates_for_job(job, candidates, top_n=5)
             job_results[job.get('title', f'Job_{i}')] = top_candidates
         except Exception as e:
@@ -1329,6 +1310,8 @@ def main():
     except Exception as e:
         logger.error(f"Error during cleanup: {e}")
     
+    end_time = time.time()
+    logger.info(f"Matching process completed in {end_time - start_time:.2f} seconds")
     return True
 
 if __name__ == "__main__":
@@ -1338,19 +1321,41 @@ if __name__ == "__main__":
         
         if not candidate_files or not job_files:
             logger.warning("No candidate or job files found. Please ensure files exist in ./candidates/ and ./jd/ directories")
+            print("Missing files:")
+            if not candidate_files:
+                print("  - No candidate files found in ./candidates/")
+            if not job_files:
+                print("  - No job files found in ./jd/")
         else:
+            print("Starting AI-powered recruitment matching...")
+            print("Requirements:")
+            print("  - Ollama server running at http://localhost:11434")
+            print("  - Mistral model available in Ollama")
+            print("  - Candidate files in ./candidates/")
+            print("  - Job description files in ./jd/")
+            print()
+            
             success = main()
             if success:
-                logger.info("Matching process completed successfully")
+                print("Matching process completed successfully")
+                print("Results saved in ./scores/ directory")
             else:
-                logger.error("Matching process failed")
+                print("Matching process failed")
                 
             # Clean up GPU memory if available
             if torch.cuda.is_available(): 
                 torch.cuda.empty_cache()
                 
+    except KeyboardInterrupt:
+        print("\nProcess interrupted by user")
+        try:
+            if torch.cuda.is_available(): 
+                torch.cuda.empty_cache()
+        except: 
+            pass
     except Exception as e:
         logger.error(f"Error in main execution: {e}")
+        print(f"Fatal error: {e}")
         try:
             if torch.cuda.is_available(): 
                 torch.cuda.empty_cache()

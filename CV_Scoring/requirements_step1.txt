@@ -1,6 +1,0 @@
-docx2txt==0.8
-pdfminer.six==20221105
-python-docx==0.8.11
-PyMuPDF==1.23.26
-requests==2.31.0
-spacy==3.7.2

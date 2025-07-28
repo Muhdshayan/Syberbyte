@@ -7,32 +7,33 @@
     "github": "Not found",
     "linkedin": "https://linkedin.com/in/farhan-khalid-93720b210",
     "education": {
-      "institute": "National University of Computer and Emerging Sciences (FAST-NUCES)",
+      "institute": "National University of Computer and Emerging Sciences(FAST-NUCES)",
       "degree": "BS(Business Analytics)",
       "year": "08/2021 - Present"
     },
     "skills": {
       "technical_skills": {
-        "Python": 85,
+        "Python": 75,
         "Data Science": 80,
-        "Data Visualization": 75,
-        "Business Intelligence": 75,
-        "MySQL": 60,
-        "Power BI": 75,
-        "Tableau": 75,
-        "Canva": 40,
-        "MS Office": 70
+        "Data Visualization": 80,
+        "Business Intelligence": 80,
+        "MySQL": 70,
+        "Power BI": 80,
+        "Tableau": 80,
+        "Canva": 70,
+        "SQL": 70,
+        "Marketing Automation Tools (Microsoft Office, Power BI, Tableau)": 85
       },
       "soft_skills": {
         "Leadership": 90,
-        "Communication": 75,
         "Business Planning": 80,
-        "Event Planning": 85,
-        "Marketing": 80,
-        "Management": 80
+        "Event Planning": 90,
+        "Marketing": 85,
+        "Management": 85,
+        "Accounting/ Finance": 75
       }
     },
-    "years_of_experience": 2.75
+    "years_of_experience": 2.5
   },
   {
     "file": "Business_Hasnain_Munawar.pdf",
@@ -42,30 +43,24 @@
     "github": "Not found",
     "linkedin": "Not found",
     "education": {
-      "institute": "Foundation University School of Science and Technology",
-      "degree": "BSSE",
-      "year": "September 2021 — June 2025"
+      "institute": [
+        "Foundation University School of Science and Technology",
+        "Askaria College Boys wing Saddar Rawalpindi",
+        "F G Sir Syed Boys Secondary High School Rawalpindi Cantt"
+      ],
+      "degree": [
+        "BSSE",
+        "ICS",
+        "Matric"
+      ],
+      "year": [
+        "September 2021 — June 2025",
+        "September 2019 — July 2021",
+        "March 2009 — June 2019"
+      ]
     },
-    "skills": {
-      "technical_skills": {
-        "Python": 85,
-        "JavaScript": 70,
-        "TypeScript": 60,
-        "VueJs": 60,
-        "Nuxt Js": 60,
-        "Nest Js": 60,
-        "Next Js": 60,
-        "Rust": 50,
-        "SQL": 70,
-        "Git / Github": 85,
-        "Amazon web Services": 60
-      },
-      "soft_skills": {
-        "Leadership": 0,
-        "Communication": 75
-      }
-    },
-    "years_of_experience": 1.0
+    "skills": "Not found",
+    "years_of_experience": 2021.0
   },
   {
     "file": "Business_Monazza Khatoon Resume.pdf",
@@ -79,22 +74,8 @@
       "degree": "BS in Computer Science",
       "year": "Mar 2022"
     },
-    "skills": {
-      "technical_skills": {
-        "Microsoft Office": {
-          "Excel": 85,
-          "Word": 80,
-          "PowerPoint": 80
-        }
-      },
-      "soft_skills": {
-        "Leadership": 70,
-        "Communication": 90,
-        "Networking": 60,
-        "Marketing": 65
-      }
-    },
-    "years_of_experience": 3.5
+    "skills": "Not found",
+    "years_of_experience": 1.0
   },
   {
     "file": "Business_Rabia Umair Resume.pdf",
@@ -104,20 +85,19 @@
     "github": "Not found",
     "linkedin": "Not found",
     "education": {
-      "institute": "Bahria University",
-      "degree": "Bachelor of Computer Science",
-      "year": "2018"
+      "institute": [
+        "Bahria University",
+        "Defence Authority Collage For Women (D.C.W)"
+      ],
+      "degree": [
+        "Bachelor of Computer Science"
+      ],
+      "year": [
+        "2018",
+        "2014"
+      ]
     },
-    "skills": {
-      "technical_skills": {
-        "Python": 20,
-        "JavaScript": 0
-      },
-      "soft_skills": {
-        "Leadership": 90,
-        "Communication": 90
-      }
-    },
+    "skills": "Not found",
     "years_of_experience": 4.5
   },
   {
@@ -128,18 +108,27 @@
     "github": "Not found",
     "linkedin": "https://www.linkedin.com/in/m-noman-gulb99028211",
     "education": {
-      "institute": "Tikka House",
-      "degree": "CEO",
-      "year": "August 2023 - January 2024"
+      "institute": [
+        "Arid Agriculture University",
+        "University of the Punjab",
+        "Federal Board of Intermediate and Secondary Education, Islamabad",
+        "Board of Intermediate and Secondary Education, Lahore"
+      ],
+      "degree": [
+        "Master of Business Administration - MBA, Marketing",
+        "Bachelor of Commerce - BCom, Business/Commerce, General",
+        "Intermediate in Commerce - ICom, Business/Commerce, General",
+        "Metriculation, Computer Science"
+      ],
+      "year": [
+        "2015-2019",
+        "2013-2014",
+        "2011-2012",
+        "2009-2010"
+      ]
     },
-    "skills": {
-      "technical_skills": {},
-      "soft_skills": {
-        "Leadership": 90,
-        "Communication": 85
-      }
-    },
-    "years_of_experience": 4.5
+    "skills": "Not found",
+    "years_of_experience": 4.0
   },
   {
     "file": "Business_Resume-Malik-Sameer-Kamran.pdf",
@@ -148,24 +137,9 @@
     "email": "sameerkamran4@live.com",
     "github": "Not found",
     "linkedin": "https://linkedin.com/in/malik-sameer-kamran-47790aa2",
-    "education": {
-      "institute": "Not mentioned in the resume text",
-      "degree": "International Relations",
-      "year": "Not mentioned"
-    },
-    "skills": {
-      "technical_skills": {
-        "Python": 0,
-        "JavaScript": 30,
-        "Digital Marketing": 85
-      },
-      "soft_skills": {
-        "Leadership": 60,
-        "Communication": 75,
-        "Mentorship": 80
-      }
-    },
-    "years_of_experience": 3.5
+    "education": "Not found",
+    "skills": "Not found",
+    "years_of_experience": 2.0
   },
   {
     "file": "Business_Samina_s Resume-1.pdf",
@@ -179,18 +153,8 @@
       "degree": "BS COMMERCE",
       "year": "01/2019 - 05/2022"
     },
-    "skills": {
-      "technical_skills": {
-        "Ecommerce Google Ads": 60,
-        "Proposal & Content Writing": 70
-      },
-      "soft_skills": {
-        "Leadership": 85,
-        "Communication": 90,
-        "Problem-solving & decision-making": 85
-      }
-    },
-    "years_of_experience": 3.5
+    "skills": "Not found",
+    "years_of_experience": 2.5
   },
   {
     "file": "Business_Wajeeha Obaid (CV).pdf",
@@ -200,20 +164,11 @@
     "github": "Not found",
     "linkedin": "Not found",
     "education": {
-      "institute": [
-        "Riphah International University",
-        "COMSATS University"
-      ],
-      "degree": [
-        "Masters of Science: Project Management",
-        "Bachelor of Science: Software Engineering"
-      ],
-      "year": [
-        "2022",
-        "2020"
-      ]
+      "institute": "Riphah International University",
+      "degree": "Masters of Science: Project Management",
+      "year": "2020-2022"
     },
     "skills": "Not found",
-    "years_of_experience": 3.5
+    "years_of_experience": 1.25
   }
 ]
