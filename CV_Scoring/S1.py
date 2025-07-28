@@ -14,7 +14,6 @@ import glob
 # Ollama API endpoint
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "mistral:latest"
-
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
 matcher = Matcher(nlp.vocab)
