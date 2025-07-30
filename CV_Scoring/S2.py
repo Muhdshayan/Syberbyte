@@ -412,7 +412,7 @@ class DynamicSkillSynonymMapper:
         self.feedback_manager = feedback_manager
         self.chromadb_manager = chromadb_manager
         
-    def _call_ollama_api(self, prompt: str, model: str = "mistral", timeout: int = 30, max_retries: int = 3) -> str:
+    def _call_ollama_api(self, prompt: str, model: str = "mistral", timeout: int = 400, max_retries: int = 3) -> str:
         """Call Ollama API with retry logic and better error handling"""
         for attempt in range(max_retries):
             try:
@@ -1155,49 +1155,101 @@ def load_json_data():
     os.makedirs("./jd", exist_ok=True)
     os.makedirs("./scores", exist_ok=True)
     os.makedirs("./feedback", exist_ok=True)
-    
+
     candidates = []
     jobs = []
-    
+    job_ids_used_by_candidates = set()
+    job_ids_found_in_filesystem = set()
+
+    print("🔍 Scanning ./candidates/*.json")
     for file_path in glob.glob("./candidates/*.json"):
+        print(f"📄 Reading candidate file: {file_path}")
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 file_content = json.load(f)
-                
+                print(f"✅ Parsed content: {file_content}")
+
                 if isinstance(file_content, list):
                     for candidate_data in file_content:
                         if validate_candidate_data(candidate_data):
                             candidates.append(candidate_data)
+                            filename = candidate_data.get("file") or ""
+                            job_id = filename.split("_")[0]
+                            if job_id.isdigit():
+                                job_ids_used_by_candidates.add(job_id)
+                        else:
+                            print(f"⚠️ Invalid candidate skipped: {candidate_data}")
+
                 elif isinstance(file_content, dict):
                     if 'candidates' in file_content and isinstance(file_content['candidates'], list):
                         for candidate_data in file_content['candidates']:
                             if validate_candidate_data(candidate_data):
                                 candidates.append(candidate_data)
+                                filename = candidate_data.get("file") or ""
+                                job_id = filename.split("_")[0]
+                                if job_id.isdigit():
+                                    job_ids_used_by_candidates.add(job_id)
+                            else:
+                                print(f"⚠️ Invalid candidate skipped: {candidate_data}")
                     elif validate_candidate_data(file_content):
                         candidates.append(file_content)
+                        filename = file_content.get("file") or ""
+                        job_id = filename.split("_")[0]
+                        if job_id.isdigit():
+                            job_ids_used_by_candidates.add(job_id)
+                    else:
+                        print(f"⚠️ Unrecognized candidate JSON structure: {file_content}")
+
         except Exception as e:
-            logger.error(f"Error loading candidate file {file_path}: {e}")
-    
+            print(f"❌ Error loading candidate file {file_path}: {e}")
+
+    print("🔍 Scanning ./jd/*.json")
     for file_path in glob.glob("./jd/*.json"):
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                file_content = json.load(f)
-                
-                if isinstance(file_content, list):
-                    for job_data in file_content:
-                        if validate_job_data(job_data):
-                            jobs.append(job_data)
-                elif isinstance(file_content, dict):
-                    if 'jobs' in file_content and isinstance(file_content['jobs'], list):
-                        for job_data in file_content['jobs']:
+        file_name = os.path.basename(file_path)
+        job_id = os.path.splitext(file_name)[0]
+        print(f"🔍 Checking JD file: {file_name} with job_id: {job_id}")
+
+        if job_id in job_ids_used_by_candidates:
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    file_content = json.load(f)
+                    print(f"✅ JD file loaded: {file_content}")
+
+                    if isinstance(file_content, list):
+                        for job_data in file_content:
                             if validate_job_data(job_data):
                                 jobs.append(job_data)
-                    elif validate_job_data(file_content):
-                        jobs.append(file_content)
-        except Exception as e:
-            logger.error(f"Error loading job file {file_path}: {e}")
-    
+                            else:
+                                print(f"❌ Invalid job data skipped in list: {job_data}")
+                    elif isinstance(file_content, dict):
+                        if 'jobs' in file_content and isinstance(file_content['jobs'], list):
+                            for job_data in file_content['jobs']:
+                                if validate_job_data(job_data):
+                                    jobs.append(job_data)
+                                else:
+                                    print(f"❌ Invalid job entry in 'jobs': {job_data}")
+                        elif validate_job_data(file_content):
+                            jobs.append(file_content)
+                        else:
+                            print(f"❌ Unrecognized JD structure: {file_content}")
+
+                job_ids_found_in_filesystem.add(job_id)
+
+            except Exception as e:
+                print(f"❌ Error loading job file {file_path}: {e}")
+        else:
+            print(f"⏭️ Skipping JD {file_name} — no matching candidate filename jobId")
+
+    missing_job_ids = job_ids_used_by_candidates - job_ids_found_in_filesystem
+    if missing_job_ids:
+        error_message = f"❌ Missing job files for job_id(s): {', '.join(sorted(missing_job_ids))}"
+        print(error_message)
+        raise FileNotFoundError(error_message)
+
+    print(f"✅ Collected candidates: {len(candidates)}")
+    print(f"✅ Collected jobs: {len(jobs)} → {jobs}")
     return candidates, jobs
+
 
 def validate_candidate_data(candidate: Dict) -> bool:
     if not isinstance(candidate, dict) or 'name' not in candidate: return False
@@ -1212,20 +1264,49 @@ def validate_candidate_data(candidate: Dict) -> bool:
         except: return False
     return True
 
+import re
+
 def validate_job_data(job: Dict) -> bool:
-    if not isinstance(job, dict) or 'title' not in job: return False
+    if not isinstance(job, dict) or 'title' not in job:
+        print("❌ Missing or invalid job 'title'")
+        return False
+
     if 'required_skills' in job:
         required_skills = job['required_skills']
-        if not isinstance(required_skills, dict): return False
-        if 'technical_skills' in required_skills and not isinstance(required_skills['technical_skills'], dict): return False
-        if 'soft_skills' in required_skills and not isinstance(required_skills['soft_skills'], dict): return False
-    if 'important_skills' in job and not isinstance(job['important_skills'], list): return False
+        if not isinstance(required_skills, dict):
+            print("❌ 'required_skills' is not a dictionary")
+            return False
+        if 'technical_skills' in required_skills and not isinstance(required_skills['technical_skills'], dict):
+            print("❌ 'technical_skills' is not a dictionary")
+            return False
+        if 'soft_skills' in required_skills and not isinstance(required_skills['soft_skills'], dict):
+            print("❌ 'soft_skills' is not a dictionary")
+            return False
+
+    if 'important_skills' in job and not isinstance(job['important_skills'], list):
+        print("❌ 'important_skills' is not a list")
+        return False
+
     if 'experience' in job:
-        try: float(job['experience'])
-        except: return False
+        experience_str = str(job['experience'])
+        match = re.search(r'\d+(\.\d+)?', experience_str)
+        if not match:
+            print(f"❌ 'experience' not a valid float: {job['experience']}")
+            return False
+        try:
+            float(match.group())
+        except:
+            print(f"❌ 'experience' still failed to convert: {job['experience']}")
+            return False
+
     if 'level' in job:
+        level_value = job['level'].lower()
         valid_levels = ['entry', 'junior', 'intermediate', 'senior', 'lead', 'expert']
-        if job['level'].lower() not in valid_levels: return False
+        if level_value not in valid_levels:
+            if not any(char.isdigit() for char in level_value):
+                print(f"❌ Unrecognized job level: {job['level']}")
+                return False
+
     return True
 
 def save_scores(job_results: Dict, timestamp: str):
@@ -1276,22 +1357,22 @@ def main():
         chromadb_dir="./chromadb"
     )
     start_time = time.time()
-    
     try: 
         matcher.initialize()
     except Exception as e:
         logger.error(f"Failed to initialize matcher: {e}")
         return False
     
+
     candidates, jobs = load_json_data()
+    
     if not candidates or not jobs: 
         logger.warning("No candidates or jobs found")
         return False
-    
+
     logger.info(f"Loaded {len(candidates)} candidates and {len(jobs)} jobs")
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     job_results = {}
-    
     for i, job in enumerate(jobs, 1):
         try:
             logger.info(f"Processing job {i}/{len(jobs)}: {job.get('title', f'Job_{i}')}")

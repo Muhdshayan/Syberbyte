@@ -316,7 +316,7 @@ def call_ollama_api(prompt, model_name=MODEL_NAME):
     
     try:
         print(f"[DEBUG] Calling Ollama API with model: {model_name}")
-        response = requests.post(OLLAMA_URL, json=payload, timeout=30)
+        response = requests.post(OLLAMA_URL, json=payload, timeout=300)
         response.raise_for_status()
         result = response.json()
         api_response = result.get("response", "")
@@ -513,7 +513,8 @@ def process_resume_directory(directory_path="./resumes", output_dir="./candidate
         try:
             result = parse_resume(file_path)
             all_results.append(result)
-            
+            os.remove(file_path)
+            print("File deleted successfully.")
             # Print summary for each file
             print(f"\nResults for {result['file']}:")
             print(f"  Name: {result['name']}")

@@ -1,0 +1,23 @@
+{
+  "job_title": "Marketing Manager",
+  "timestamp": "20250729_211616",
+  "feedback_enhanced": true,
+  "chromadb_enhanced": true,
+  "ollama_enhanced": true,
+  "top_5_candidates": [
+    {
+      "candidate_name": "Abdul Rehman Shahid",
+      "overall_score": 57.2,
+      "component_scores": {
+        "technical_score": 56.0,
+        "experience_score": 60.0,
+        "cultural_score": 53.6,
+        "education_score": 53.0,
+        "ai_enhanced_score": 62.7
+      },
+      "feedback_enhanced": true,
+      "chromadb_enhanced": true,
+      "ollama_enhanced": true
+    }
+  ]
+}

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ollama:
     image: ollama/ollama:latest
@@ -13,14 +11,29 @@ services:
       - OLLAMA_HOST=0.0.0.0
       - OLLAMA_ORIGINS=*
     restart: unless-stopped
-    # For GPU support (if you want to use GPU in Docker)
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+    networks:
+      - syberbyte-network
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./resumes:/app/resumes
+      - ./jd:/app/jd
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    networks:
+      - syberbyte-network
 
 volumes:
   ollama_data:
+
+networks:
+       syberbyte-network:
+         external: true 

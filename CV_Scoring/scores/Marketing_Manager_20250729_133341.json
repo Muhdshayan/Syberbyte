@@ -1,0 +1,23 @@
+{
+  "job_title": "Marketing Manager",
+  "timestamp": "20250729_133341",
+  "feedback_enhanced": true,
+  "chromadb_enhanced": true,
+  "ollama_enhanced": true,
+  "top_5_candidates": [
+    {
+      "candidate_name": "Muhammad Hamza Nadeem",
+      "overall_score": 60.0,
+      "component_scores": {
+        "technical_score": 42.4,
+        "experience_score": 65.0,
+        "cultural_score": 70.2,
+        "education_score": 95.0,
+        "ai_enhanced_score": 49.8
+      },
+      "feedback_enhanced": true,
+      "chromadb_enhanced": true,
+      "ollama_enhanced": true
+    }
+  ]
+}

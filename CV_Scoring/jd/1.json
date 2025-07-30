@@ -1,0 +1,31 @@
+[
+    {
+        "title": "Backend Developer",
+        "level": "intermediate",
+        "employment_type": "Full-time",
+        "location": "Remote",
+        "location_type": "Remote",
+        "required_skills": {
+            "technical_skills": {
+                "Python": 3,
+                "Django": 3,
+                "REST": 3,
+                "PostgreSQL": 3
+            },
+            "soft_skills": {
+                "Communication": 5,
+                "Creativity": 4,
+                "Leadership": 4,
+                "Strategic Thinking": 4
+            }
+        },
+        "experience": "2+ years",
+        "education_level": "Bachelor's in Computer Science",
+        "salary_range": "USD 70000.00",
+        "important_skills": [
+            "Python",
+            "Django",
+            "REST"
+        ]
+    }
+]
