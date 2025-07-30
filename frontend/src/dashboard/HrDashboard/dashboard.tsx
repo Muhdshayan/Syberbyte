@@ -27,13 +27,13 @@ export default function ActiveJobs() {
     return (
         <div className="flex flex-col mt-5 justify-start items-center w-full ">
             <HrDashboardCards/>
-            <div className="flex md:w-[95%] w-[90%] items-center justify-between md:my-10 pt-10">
+            <div className="flex md:w-[98%] w-[90%] items-center justify-between py-4">
                 <h2 className="text-3xl font-poppins-semibold">Active Jobs</h2>
                 <Button
                     onClick={() => navigate("/dashboard/hr_manager/add-job")}
                     className="!bg-blue !text-sm">Add Job <Plus /></Button>
             </div>
-            <div className="w-[95%] md:my-10 my-2 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
+            <div className="w-[98%] md:mb-3 mb-2 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
                 {loading ? (
                     // Show Loading component when data is being fetched
                     <div className="col-span-full">

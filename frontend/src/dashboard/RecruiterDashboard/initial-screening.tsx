@@ -42,7 +42,7 @@ type CandidateStatus = 'initial_screening' | 'not_selected' | 'rejected' | strin
 
 // Filter candidates for this job and exclude final_screening/rejected_by_hr
 const jobCandidates = candidates.filter(candidate => 
-  candidate.jobId === Number(JobId) && candidate.status != "final_screening" && candidate.status != "rejected_by_hr"
+  candidate.jobId == JobId && candidate.status != "final_screening" && candidate.status != "rejected_by_hr"
 );
 
 // Reusable sorting function
@@ -107,13 +107,11 @@ const selectedCandidate = filteredCandidates.find(c => c.id === openProfile);
     setOpenProfile(null);
   };
 
-  // Save all changes to server
- const handleSaveChanges = async () => {
+  const handleSaveChanges = async () => {
     try {
       const changedCandidatesList = candidates.filter(candidate => 
         changedCandidates.has(`${candidate.id}-${candidate.jobId}`)
       );
-
       console.log("Saving changed candidates:", changedCandidatesList);
       await editCandidates(changedCandidatesList);
       resetUnsavedChanges();
@@ -127,7 +125,7 @@ const selectedCandidate = filteredCandidates.find(c => c.id === openProfile);
 
   return (
     <div className="flex flex-col items-end justify-center w-full h-full p-4">
-      <div className="flex flex-row justify-between w-full mt-3 gap-4">
+      <div className="flex flex-row justify-between w-full gap-4">
         {/* Filter Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -173,11 +171,11 @@ const selectedCandidate = filteredCandidates.find(c => c.id === openProfile);
         </Button>
       </div>
       
-     <div className="flex flex-row justify-center w-full mb-10 mt-3 gap-4 sticky bottom-7">
+     <div className="flex flex-row justify-center w-full mt-3">
         {/* Score Cards */}
         <div
-          className={`flex flex-col gap-4 items-start justify-start transition-all duration-300 ${
-            openProfile !== null ? "w-[50%] " : "w-full"
+          className={`flex flex-col gap-2 px-2 items-start justify-start transition-all duration-300 ${
+            openProfile !== null ? "w-[50%] h-[90vh] overflow-y-scroll  pb-4 pt-2" : "w-full"
           }`}
         >
           {loading ? (
@@ -205,7 +203,7 @@ const selectedCandidate = filteredCandidates.find(c => c.id === openProfile);
         {openProfile !== null && selectedCandidate && (
           <>
             {/* Desktop: Side Card */}
-            <div className="hidden sm:flex w-[60%] items-start justify-center">
+            <div className="hidden sm:flex overflow-y-scroll h-[90vh] pt-2 w-[60%] items-start justify-center  pb-4">
               <CandidateProfileDialog
                 open={openProfile !== null}
                 onOpenChange={(open) => !open && setOpenProfile(null)}

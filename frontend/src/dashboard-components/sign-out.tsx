@@ -44,7 +44,7 @@ export default function SignOutDialog({ children }: SignOutDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children || (
-          <Button variant="ghost" className="flex items-center gap-2">
+          <Button variant="destructive" className="flex items-center gap-2 !bg-red-600">
             <LogOut className="w-4 h-4" />
             Sign Out
           </Button>
@@ -67,7 +67,7 @@ export default function SignOutDialog({ children }: SignOutDialogProps) {
           <Button 
             variant="destructive" 
             onClick={handleSignOut}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 !bg-red-600"
           >
             <LogOut className="w-4 h-4" />
             Sign Out

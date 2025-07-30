@@ -42,7 +42,7 @@ export default function UserTable({ users }: UserTableProps) {
 
   return (
     <div className="w-full flex items-center justify-start">
-      <Card className="md:h-[400px] md:w-full w-[95%] p-5 font-inter-regular justify-between">
+      <Card className=" md:w-full w-[95%] p-5 font-inter-regular justify-between h-[400px]">
         <div className="flex flex-col gap-4">
         <CardHeader>
           <CardTitle className="text-2xl font-poppins-semibold text-left text-primary">

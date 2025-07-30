@@ -19,7 +19,10 @@ export default function CandidatesScoreCard({
 }: CandidateScoreCardProps) {
 
 
-  function formatStatus(status: string) {
+function formatStatus(status: string) {
+    if (status.toLowerCase() === "initial_screening") {
+      return "Suggested by Recruiter";
+    }
     return status
       .replace(/_/g, " ") // replace underscores with spaces
       .replace(/\b\w/g, (char) => char.toUpperCase()); // capitalize first letter of each word

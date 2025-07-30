@@ -12,9 +12,23 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import useLogin from "./useLogin";
 import CircularProgress from '@mui/material/CircularProgress';
+import {useAuthStore} from "./useAuthStore"
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 
 export default function Login () {
+  const permission = useAuthStore((state) => state.authUser?.permission)
+  const navigate = useNavigate();
+    useEffect(() => {
+    if (permission === 5 || permission === 10 || permission === 7) {
+      navigate("/dashboard/admin");
+    } else if (permission === 3) {
+      navigate("/dashboard/hr_manager");
+    } else if (permission === 1) {
+      navigate("/dashboard/recruiter");
+    }
+  }, [permission, navigate]); 
         const {
           email,
           setEmail,
@@ -45,7 +59,7 @@ export default function Login () {
           <div className=" flex flex-col md:w-[50%]  w-full items-center justify-center h-full z-3 md:pt-0 pt-5">
             <div className="flex flex-col md:items-start items-center justify-center">
 
-                 <Card className=" md:w-[400px] w-full h-auto font-inter-regular mt-2">
+                 <Card className=" md:w-[400px] w-[90%] h-auto font-inter-regular mt-2">
                     <CardHeader className="">
                       <CardTitle className="md:text-left text-center font-poppins-semibold text-3xl">Login to your account</CardTitle>
                       <h2 className="md:text-left text-center mt-3">Login to Continue</h2>

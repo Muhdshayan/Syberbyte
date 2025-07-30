@@ -23,6 +23,7 @@ export interface Job {
 
 export interface Candidate {
   id: any;
+  application_id: any;
   jobId: any;
   status:string
   name: string;
@@ -166,6 +167,7 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
       // Map API data to candidate interface
       const mappedCandidates = res.data.map((item: any) => ({
         id: item.candidate.candidate_id,
+        application_id: item.application_id,
         jobId: item.job.job_id,
         status: item.status,
         name: item.candidate.name,
@@ -195,36 +197,26 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
     }
   },
 
-  editCandidates: async (updatedCandidates: Candidate[]) => {
-  set({ loading: true, error: null });
-  try {
-    const payload = updatedCandidates.map(candidate => ({
-      application_id: candidate.id,
-      status: candidate.status,
-      score: candidate.score,
-      ai_recommendation: candidate.recommendation,
-      technical_score: candidate.breakdown.technical,
-      experience_score: candidate.breakdown.experience,
-      cultural_score: candidate.breakdown.cultural,
-    }));
-    console.log("Updating candidates with payload:", payload); // Debug log
-
-    const res = await axios.put("http://localhost:8000/api/jobapplication/update/", payload);
-    if (res.status === 207) {
-            
-              set({ loading: false, error: null });
-              const results = res.data.results;
-    
-              toast.success("Candidates updated successfully");
-              console.log("Candidates updated successfully:", res);
-            }
-  } catch (err) {
-    console.error(err);
-    set({ loading: false, error: "Failed to update candidates." });
-    console.error("Error updating candidates:", err);
-    toast.error("Failed to update candidates");
-  }
-},
+    editCandidates: async (updatedCandidates: Candidate[]) => {
+      set({ loading: true, error: null });
+      try {
+        const res = await axios.put("http://localhost:8000/api/jobapplication/update/", updatedCandidates);
+        console.log(updatedCandidates);
+        if (res.status === 200 || res.status === 207) {
+  
+          set({ loading: false, error: null });
+          const results = res.data.results;
+  
+          toast.success("Candidates updated successfully");
+          console.log("Candidates updated successfully:", results);
+        }
+      } catch (err) {
+        console.error(err);
+        set({ loading: false, error: "Failed to update candidates." });
+        console.error("Error updating candidates:", err);
+        toast.error("Failed to update candidates");
+      }
+    },
 
 
   // Bulk upload methods

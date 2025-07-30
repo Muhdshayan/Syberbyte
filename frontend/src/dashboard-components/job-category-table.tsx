@@ -11,6 +11,7 @@ import DeleteJobCategoryDialog from "@/dashboard-components/delete-job-category"
 import JobCategoryMobTable from "./job-category-mob-table";
 import { useAdminStore } from "@/dashboard/adminDashboard/admin-store";
 import type { JobCategory } from "@/dashboard/adminDashboard/admin-store";
+import { useAuthStore } from "@/Login/useAuthStore";
 
 
 export default function JobCategoryTable({ categories }: { categories: JobCategory[] }) {
@@ -19,8 +20,10 @@ export default function JobCategoryTable({ categories }: { categories: JobCatego
   const [editJob, setEditJob] = useState<JobCategory | null>(null);
   const [deleteJob, setDeleteJob] = useState<JobCategory | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const categoriesPerPage = 4;
+  const categoriesPerPage = 5;
   const fetchJobCategories = useAdminStore((state) => state.fetchJobCategories);
+  const permission = useAuthStore((state) => state.authUser?.permission);
+
 
   useEffect(() => {
     fetchJobCategories();
@@ -29,7 +32,8 @@ export default function JobCategoryTable({ categories }: { categories: JobCatego
     useEffect(() => {
     setCurrentPage(1);
   }, [categories]);
-
+  console.log()
+console.log("Job Categories:", categories);
 
   // Use the passed-in categories prop for pagination
   const indexOfLastCategory = currentPage * categoriesPerPage;
@@ -40,7 +44,7 @@ export default function JobCategoryTable({ categories }: { categories: JobCatego
   const totalPages = Math.ceil(categories.length / categoriesPerPage);
 
   return (
-    <Card className="w-[99%] min-h-[750px] justify-between !font-inter-regular my-5">
+    <Card className="w-[99%] md:h-[825px] h-full justify-between !font-inter-regular my-5">
       <div className="flex flex-col gap-4">
         <CardHeader>
           <CardTitle className="text-2xl font-poppins-semibold text-left">Job Category Management</CardTitle>
@@ -61,7 +65,9 @@ export default function JobCategoryTable({ categories }: { categories: JobCatego
                   <TableHead className="w-[10%]">Job Type</TableHead>
                   <TableHead className="w-[10%]">Status</TableHead>
                   <TableHead className="w-[10%]">Location</TableHead>
-                  <TableHead className="w-[10%]">Actions</TableHead>
+                  {permission === 10 && (
+                    <TableHead className="w-[10%]">Actions</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -88,7 +94,8 @@ export default function JobCategoryTable({ categories }: { categories: JobCatego
                       </Badge>
                     </TableCell>
                     <TableCell align="left" className="max-w-[100px] break-words whitespace-normal">{cat.location}</TableCell>
-                    <TableCell align="center" className="truncate max-w-[100px]">
+                    { permission === 10 && (
+                      <TableCell align="center" className="truncate max-w-[100px]">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <MoreVertical className="w-5 h-5" />
@@ -109,6 +116,8 @@ export default function JobCategoryTable({ categories }: { categories: JobCatego
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
+                    )}
+                    
                   </TableRow>
                 ))}
               </TableBody>

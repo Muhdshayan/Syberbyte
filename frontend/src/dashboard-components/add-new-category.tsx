@@ -3,10 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAdminStore } from "@/dashboard/adminDashboard/admin-store";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-
 
 export default function AddCategory() {
   const [description, setDescription] = useState("");
@@ -19,8 +18,23 @@ export default function AddCategory() {
   const [role, setRole] = useState("");
   const [salary, setSalary] = useState("");
   const [skills, setSkills] = useState("");
+  const [assignTo, setAssignTo] = useState("");
+  
   const addJobCategory = useAdminStore((state) => state.addCategory);
+  const users = useAdminStore((state) => state.users); // Get users from admin store
+  const fetchUsers = useAdminStore((state) => state.fetchUsers); // Get fetchUsers function
   const [loading, setLoading] = useState(false);
+
+  // Fetch users when component mounts
+  useEffect(() => {
+    if (!users || users.length === 0) {
+      fetchUsers();
+    }
+  }, [users, fetchUsers]);
+
+  // Filter users to get only recruiters
+  const recruiters = users?.filter(user => user.role === "Recruiter") || [];
+  console.log("Recruiters:", recruiters);
 
   const handleAddCategory = async () => {
     if (
@@ -32,15 +46,16 @@ export default function AddCategory() {
       !location ||
       !role ||
       !salary ||
-      !skills
+      !skills ||
+      !assignTo
     )
       return;
     setLoading(true);
     const currentDate = new Date().toISOString().split("T")[0]; // Format as YYYY-MM-DD
     await addJobCategory({
-      job_id: 1, // Set as undefined to satisfy interface while letting backend handle it
+      job_id: 1,
       posted_by: 4,
-      assigned_to: 5,
+      assigned_to: parseInt(assignTo), // Convert assignTo to number since it's user_id
       date_posted: currentDate,
       description,
       education_level: educationLevel,
@@ -65,6 +80,7 @@ export default function AddCategory() {
     setRole("");
     setSalary("");
     setSkills("");
+    setAssignTo("");
     setLoading(false);
   };
 
@@ -129,22 +145,52 @@ export default function AddCategory() {
               <SelectValue placeholder="Select Job Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="onsite">Onsite</SelectItem>
-              <SelectItem value="remote">Remote</SelectItem>
+              <SelectItem value="Contract">Contract</SelectItem>
+              <SelectItem value="Full-time">Full Time</SelectItem>
+              <SelectItem value="Part-time">Part Time</SelectItem>
             </SelectContent>
           </Select>
         </div>
         {/* Location */}
         <div>
           <Label htmlFor="location">Location</Label>
-          <Input
-            id="location"
-            placeholder="Enter Location"
-            className="w-full mt-2 bg-white"
+          <Select
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
+            onValueChange={setLocation}>
+            <SelectTrigger id="location" className="w-full mt-2 !bg-white !border-gray-200 !text-primary !text-sm">
+              <SelectValue placeholder="Select Location" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Remote">Remote</SelectItem>
+              <SelectItem value="On-site">On-site</SelectItem>
+            </SelectContent>
+            </Select>
           </div>
+          
+          {/* Assign to - Updated to show recruiters from admin store */}
+          <div>
+            <Label htmlFor="assignTo">Assign To</Label>
+            <Select
+              value={assignTo}
+              onValueChange={setAssignTo}
+            >
+              <SelectTrigger id="assignTo" className="w-full mt-2 !bg-white !border-gray-200 !text-primary !text-sm">
+                <SelectValue placeholder="Select Recruiter" />
+              </SelectTrigger>
+              <SelectContent>
+                {recruiters.length > 0 ? (
+                  recruiters.map((recruiter) => (
+                    <SelectItem key={recruiter.id} value={recruiter.id.toString()}>
+                      {recruiter.name}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="no recruiters" disabled>No recruiters found</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+          
         {/* Role */}
         <div>
           <Label htmlFor="role">Role</Label>

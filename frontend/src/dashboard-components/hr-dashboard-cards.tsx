@@ -31,13 +31,6 @@ function StatCard({ label, icon, value, sub, bold }: StatCardProps) {
   );
 }
 
-interface HrDashboardCardsProps {
-  activeJobs: { value: string | number; sub: string };
-  totalCandidates: { value: string | number; sub: string };
-  intialscreened: { value: string | number; sub: string };
-  finalscreened: { value: string | number; sub: string };
-}
-
 export default function HrDashboardCards() {
   const fetchCandidates = useRecruiterStore((state) => state.fetchCandidates);
   const candidates = useRecruiterStore((state) => state.candidates);
@@ -70,7 +63,7 @@ export default function HrDashboardCards() {
   ).length;
 
   return (
-    <div className="flex md:flex-row flex-col justify-center items-center w-full gap-4 ">
+    <div className="flex md:flex-row flex-col justify-center items-center w-[98%] gap-4 ">
       <StatCard
         label="Active Jobs"
         icon={<Briefcase className="w-5 h-5 ml-2 text-muted-foreground" />}

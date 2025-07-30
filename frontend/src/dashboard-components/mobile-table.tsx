@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Edit, Trash2, Key } from "lucide-react";
 import type {User} from "@/dashboard/adminDashboard/admin-store"
+import { useAuthStore } from "@/Login/useAuthStore";
 
 
 interface MobileTableProps {
@@ -20,6 +21,7 @@ interface MobileTableProps {
 }
 
 export default function MobileTable({ users, onEditUser, onResetUser, onDeleteUser }: MobileTableProps) {
+  const permission = useAuthStore((state) => state.authUser?.permission);
   return (
        <>
       {users.map(user => (
@@ -40,7 +42,8 @@ export default function MobileTable({ users, onEditUser, onResetUser, onDeleteUs
                 <p className="text-xs text-left text-muted-foreground">{user.email}</p>
               </div>
             </div>
-            <DropdownMenu>
+            {permission === 10 && (
+              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <MoreVertical className="w-5 h-5 cursor-pointer" />
               </DropdownMenuTrigger>
@@ -65,6 +68,8 @@ export default function MobileTable({ users, onEditUser, onResetUser, onDeleteUs
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            )}
+            
           </div>
           <div className="flex flex-col justify-center items-center w-full">
             <div className="flex flex-row justify-between w-full">

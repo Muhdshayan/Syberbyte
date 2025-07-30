@@ -296,11 +296,10 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       toast.success("Category deleted!");
     } catch (err) {
       // Fallback to dummy delete
-      set((state) => ({
-        jobCategories: state.jobCategories.filter((cat) => cat.job_id !== job_id),
+      set({
         loading: false,
         error: "Failed to delete category on server. Dummy data updated.",
-      }));
+      });
       toast.error("Failed to delete category on server. Dummy data updated.");
     }
   },
