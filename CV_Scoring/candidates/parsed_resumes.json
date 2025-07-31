@@ -1,15 +1,15 @@
 [
   {
-    "file": "1_137_20250729_173631_895318.pdf",
+    "file": "1_3_20250731_011520_366561.pdf",
     "name": "Abdul Rehman Shahid",
     "phone": "03334256116",
-    "email": "1abdulrehmanshahidu580@gmail.com",
+    "email": "abdulrehmanshahidu580@gmail.com",
     "github": "Not found",
     "linkedin": "https://www.linkedin.com/in/abdul-rehman-042129248/",
     "education": {
       "institute": "Lahore School Of Economics",
       "degree": "BBA",
-      "year": "Present"
+      "year": "September 2023 – Present"
     },
     "skills": {
       "technical_skills": {
@@ -22,146 +22,11 @@
         "Leadership": 0,
         "Communication": 80,
         "Customer Service": 80,
-        "Analytical Thinking": 90,
-        "Teamwork": 70
+        "Data Analysis": 80,
+        "Teamwork": 80
       }
     },
-    "years_of_experience": 2.5
-  },
-  {
-    "file": "1_138_20250729_173631_941573.pdf",
-    "name": "Abdul Rauf Rufi",
-    "phone": "+923485550957",
-    "email": "1Tayyab66612@gmail.com",
-    "github": "Not found",
-    "linkedin": "Not found",
-    "education": {
-      "institute": "Virtual Assistant Solutions",
-      "degree": "Lead Generation Specialist",
-      "year": "Mar 2022"
-    },
-    "skills": "Not found",
-    "years_of_experience": 3.5
-  },
-  {
-    "file": "1_139_20250729_173632_009135.pdf",
-    "name": "Name Not Found",
-    "phone": "Not found",
-    "email": "Not found",
-    "github": "Not found",
-    "linkedin": "Not found",
-    "education": {
-      "institute": "Massachusetts Institute of Technology (MIT)",
-      "degree": "Bachelor of Science in Electrical Engineering and Computer Science",
-      "year": "2018"
-    },
-    "skills": {
-      "technical_skills": {
-        "Python": 85,
-        "JavaScript": 90
-      },
-      "soft_skills": {
-        "Leadership": 75,
-        "Communication": 85
-      }
-    },
-    "years_of_experience": 4.5
-  },
-  {
-    "file": "1_140_20250729_173632_103204.pdf",
-    "name": "Bakhtawar Mazhar",
-    "phone": "+923001195717",
-    "email": "1bakhtawarmazharr@gmail.com",
-    "github": "Not found",
-    "linkedin": "https://www.linkedin.com/in/bakhtawar-mazhar-784747276",
-    "education": {
-      "institute": "Lahore University of Management Sciences",
-      "degree": "BS Economics & Mathematics",
-      "year": "August 2022 - Present"
-    },
-    "skills": {
-      "technical_skills": {
-        "Python": 50,
-        "JavaScript": 0,
-        "SEO and analytics tools": 80,
-        "Excel": 80
-      },
-      "soft_skills": {
-        "Leadership": 90,
-        "Communication": 85
-      }
-    },
-    "years_of_experience": 1.5
-  },
-  {
-    "file": "1_141_20250729_173632_150892.pdf",
-    "name": "Personal Strengths",
-    "phone": "03463422928",
-    "email": "1bareera.additise@gmail.com",
-    "github": "Not found",
-    "linkedin": "Not found",
-    "education": {
-      "institute": "BISE Sargodha",
-      "degree": [
-        "MATRICULATION",
-        "F.A"
-      ],
-      "year": [
-        "2020",
-        "2022"
-      ]
-    },
-    "skills": {
-      "technical_skills": {
-        "Python": 0,
-        "JavaScript": 0
-      },
-      "soft_skills": {
-        "Leadership": 40,
-        "Communication": 65
-      }
-    },
-    "years_of_experience": 2
-  },
-  {
-    "file": "1_142_20250729_173632_204616.pdf",
-    "name": "Iqra Zulﬁqar",
-    "phone": "+923466333576",
-    "email": "1iqraz1031@gmail.com",
-    "github": "Not found",
-    "linkedin": "Not found",
-    "education": {
-      "institute": "University of veterinary and animal science",
-      "degree": "Bachelors in Biotechnology",
-      "year": "2016-2020"
-    },
-    "skills": "Not found",
-    "years_of_experience": 1.5
-  },
-  {
-    "file": "1_143_20250729_173632_286707.pdf",
-    "name": "Muhammad Hamza Nadeem",
-    "phone": "+923035386655",
-    "email": "1hamzaatwork2000@gmail.com",
-    "github": "Not found",
-    "linkedin": "https://linkedin.com/in/hamza-nadeem2000",
-    "education": {
-      "institute": "FAST NUCES",
-      "degree": "Bachelor of Science in Computer Science",
-      "year": "Aug. 2022 –Present"
-    },
-    "skills": {
-      "technical_skills": {
-        "Python": 75,
-        "JavaScript": 80,
-        "C++": 65
-      },
-      "soft_skills": {
-        "Leadership": 70,
-        "Communication": 75,
-        "Teamwork": 85
-      }
-    },
-    "years_of_experience": 2.5
+    "years_of_experience": 2.5,
+    "media_id": "3"
   }
 ]

@@ -464,7 +464,7 @@ def parse_resume(file_path):
     education = extract_education(text)
     skills = extract_skills(text)
     years_of_experience = extract_years_of_experience(text)
-    
+    media_id = file_path[12]
     resume_data = {
         "file": os.path.basename(file_path),
         "name": name if name else 'Not found',
@@ -474,7 +474,8 @@ def parse_resume(file_path):
         "linkedin": linkedin if linkedin else 'Not found',
         "education": education if education else 'Not found',
         "skills": skills if skills else 'Not found',
-        "years_of_experience": years_of_experience if years_of_experience is not None else 'Not found'
+        "years_of_experience": years_of_experience if years_of_experience is not None else 'Not found',
+        "media_id" : media_id
     }
     
     return resume_data

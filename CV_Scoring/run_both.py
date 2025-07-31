@@ -8,6 +8,8 @@ from datetime import datetime
 # Import main functions from both scripts
 from S1 import main as s1_main
 from S2 import main as s2_main
+import threading
+from resume import main as resume_main
 
 # Global flag to control the loop
 running = True
@@ -22,6 +24,14 @@ def get_resume_file_count(resume_dir="./resumes"):
 def run_sequential():
     """Run S1.py main() followed by S2.py main()"""
     try:
+        # Start resume.py in a separate thread
+        print(f"[{datetime.now()}] Starting resume.py main() in background")
+        resume_thread = threading.Thread(target=resume_main, daemon=True)
+        resume_thread.start()
+
+        # Wait a few seconds to let resume watcher start
+        time.sleep(3)
+
         print(f"[{datetime.now()}] Starting S1.py main()")
         s1_main()
         print(f"[{datetime.now()}] S1.py main() completed")
@@ -29,6 +39,9 @@ def run_sequential():
         print(f"[{datetime.now()}] Starting S2.py main()")
         s2_main()
         print(f"[{datetime.now()}] S2.py main() completed")
+
+        print(f"[{datetime.now()}] All processes complete. Resume watcher is still running in background...")
+
     except Exception as e:
         print(f"[{datetime.now()}] Error in sequential execution: {e}")
 

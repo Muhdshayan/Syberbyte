@@ -1169,36 +1169,26 @@ def load_json_data():
                 file_content = json.load(f)
                 print(f"✅ Parsed content: {file_content}")
 
+                def process_candidate(candidate_data):
+                    if validate_candidate_data(candidate_data):
+                        filename = candidate_data.get("file", "")
+                        job_id = filename.split("_")[0]
+                        if job_id.isdigit():
+                            candidate_data["job_id"] = job_id 
+                            job_ids_used_by_candidates.add(job_id)
+                        candidates.append(candidate_data)
+                    else:
+                        print(f"⚠️ Invalid candidate skipped: {candidate_data}")
+
                 if isinstance(file_content, list):
                     for candidate_data in file_content:
-                        if validate_candidate_data(candidate_data):
-                            candidates.append(candidate_data)
-                            filename = candidate_data.get("file") or ""
-                            job_id = filename.split("_")[0]
-                            if job_id.isdigit():
-                                job_ids_used_by_candidates.add(job_id)
-                        else:
-                            print(f"⚠️ Invalid candidate skipped: {candidate_data}")
-
+                        process_candidate(candidate_data)
                 elif isinstance(file_content, dict):
                     if 'candidates' in file_content and isinstance(file_content['candidates'], list):
                         for candidate_data in file_content['candidates']:
-                            if validate_candidate_data(candidate_data):
-                                candidates.append(candidate_data)
-                                filename = candidate_data.get("file") or ""
-                                job_id = filename.split("_")[0]
-                                if job_id.isdigit():
-                                    job_ids_used_by_candidates.add(job_id)
-                            else:
-                                print(f"⚠️ Invalid candidate skipped: {candidate_data}")
-                    elif validate_candidate_data(file_content):
-                        candidates.append(file_content)
-                        filename = file_content.get("file") or ""
-                        job_id = filename.split("_")[0]
-                        if job_id.isdigit():
-                            job_ids_used_by_candidates.add(job_id)
+                            process_candidate(candidate_data)
                     else:
-                        print(f"⚠️ Unrecognized candidate JSON structure: {file_content}")
+                        process_candidate(file_content)
 
         except Exception as e:
             print(f"❌ Error loading candidate file {file_path}: {e}")
@@ -1215,23 +1205,21 @@ def load_json_data():
                     file_content = json.load(f)
                     print(f"✅ JD file loaded: {file_content}")
 
+                    def process_job(job_data):
+                        if validate_job_data(job_data):
+                            jobs.append(job_data)
+                        else:
+                            print(f"❌ Invalid job data skipped: {job_data}")
+
                     if isinstance(file_content, list):
                         for job_data in file_content:
-                            if validate_job_data(job_data):
-                                jobs.append(job_data)
-                            else:
-                                print(f"❌ Invalid job data skipped in list: {job_data}")
+                            process_job(job_data)
                     elif isinstance(file_content, dict):
                         if 'jobs' in file_content and isinstance(file_content['jobs'], list):
                             for job_data in file_content['jobs']:
-                                if validate_job_data(job_data):
-                                    jobs.append(job_data)
-                                else:
-                                    print(f"❌ Invalid job entry in 'jobs': {job_data}")
-                        elif validate_job_data(file_content):
-                            jobs.append(file_content)
+                                process_job(job_data)
                         else:
-                            print(f"❌ Unrecognized JD structure: {file_content}")
+                            process_job(file_content)
 
                 job_ids_found_in_filesystem.add(job_id)
 
@@ -1309,9 +1297,16 @@ def validate_job_data(job: Dict) -> bool:
 
     return True
 
-def save_scores(job_results: Dict, timestamp: str):
+def save_scores(job_results: Dict, timestamp: str , candidates: list):
     os.makedirs("./scores", exist_ok=True)
     
+    print("=== Full job_results ===")
+    for job_title, results in job_results.items():
+        print(f"\nJob Title: {job_title}")
+        for i, result in enumerate(results, start=1):
+            print(f"  Candidate {i}: {result.__dict__ if hasattr(result, '__dict__') else result}")
+    
+
     for job_title, results in job_results.items():
         safe_job_title = re.sub(r'[^\w\s-]', '', job_title).strip()
         safe_job_title = re.sub(r'[-\s]+', '_', safe_job_title)
@@ -1320,8 +1315,14 @@ def save_scores(job_results: Dict, timestamp: str):
         simplified_results = []
         for result in results:
             if isinstance(result, MatchingResult):
+                matched_candidate = next((c for c in candidates if c.get("name") == result.candidate_name), {})
+                media_id = matched_candidate.get("media_id", None)
+                job_id = matched_candidate.get("job_id",None)
+
                 simplified_results.append({
                     "candidate_name": result.candidate_name,
+                    "media_id": media_id,
+                    "job_id": job_id,
                     "overall_score": result.overall_score,
                     "component_scores": {
                         "technical_score": result.technical_score,
@@ -1364,8 +1365,8 @@ def main():
         return False
     
 
-    candidates, jobs = load_json_data()
-    
+    candidates, jobs= load_json_data()
+
     if not candidates or not jobs: 
         logger.warning("No candidates or jobs found")
         return False
@@ -1382,7 +1383,7 @@ def main():
             logger.error(f"Error processing job {job.get('title', f'Job_{i}')}: {e}")
             job_results[job.get('title', f'Job_{i}')] = []
     
-    save_scores(job_results, timestamp)
+    save_scores(job_results, timestamp, candidates)
     
     # Optional: Clean up old ChromaDB entries periodically
     try:

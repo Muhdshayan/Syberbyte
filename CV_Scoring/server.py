@@ -6,12 +6,43 @@ from typing import List
 from datetime import datetime
 import json
 
-JD_DIR = "./jd"
 
 app = FastAPI(title="Resume Upload API")
-
-# Directory to store uploaded resumes
 RESUME_DIR = "./resumes"
+FEEDBACK_DIR = "./feedback"
+JD_DIR = "./jd"
+
+@app.post("/feedback", summary="Upload feedback JSON")
+async def upload_feedback(feedback_text: str = Body(..., embed=False)):
+    """
+    Append a single string feedback (sent as raw JSON string) to ./feedback/general_feedback.json.
+    Expected format:
+        "This is a feedback line"
+    """
+    try:
+        os.makedirs(FEEDBACK_DIR, exist_ok=True)
+        feedback_file = os.path.join(FEEDBACK_DIR, "general_feedback.json")
+
+        # Load existing feedback
+        if os.path.exists(feedback_file):
+            with open(feedback_file, "r", encoding="utf-8") as f:
+                existing_data = json.load(f)
+        else:
+            existing_data = {"feedback": []}
+
+        # Append new feedback string
+        existing_data["feedback"].append(feedback_text)
+
+        # Save updated feedback
+        with open(feedback_file, "w", encoding="utf-8") as f:
+            json.dump(existing_data, f, indent=4, ensure_ascii=False)
+
+        return {"status": "success", "message": "Feedback appended."}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 @app.on_event("startup")
 async def startup_event():
