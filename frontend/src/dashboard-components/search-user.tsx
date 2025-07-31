@@ -16,7 +16,7 @@ export default function SearchUser() {
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
   const searchUser = useAdminStore((state) => state.searchUser);
   const allUsers = useAdminStore((state) => state.users);
-
+ 
 
   // Filtered users by search and role
   const filteredUsers = searchUser(query).filter(u =>
@@ -30,14 +30,14 @@ export default function SearchUser() {
   return (
     <div className="flex flex-col md:items-start items-center mt-5  justify-start md:w-full w-screen !font-inter-regular">
       <Card className="md:w-[99%] w-[95%] p-3 flex md:flex-row flex-col justify-between">
-        <div className="flex gap-2 flex-1 min-w-[200px]">
-          <div className="relative z-1 flex-grow">
+        <div className="flex gap-2">
+          <div className="relative z-1">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <Search className="h-5 w-5" />
             </span>
             <Input
               placeholder="Search by name or email"
-              className="pl-10 w-full"
+              className="pl-10"
               value={query}
               onChange={e => setQuery(e.target.value)}
             />
@@ -53,7 +53,7 @@ export default function SearchUser() {
           </div>
         </div>
         <div className="flex flex-wrap md:gap-2 gap-1 md:w-auto w-full">
-          <Select
+         <Select
             value={roleFilter || ""}
             onValueChange={(value) => {
               setRoleFilter(value);
@@ -70,26 +70,26 @@ export default function SearchUser() {
               <SelectItem value="Full Admin">Full Admin</SelectItem>
             </SelectContent>
           </Select>
-          <Button
-            className={`!text-sm !font-inter-regular !px-2 ${roleFilter === "Recruiter" ? "!bg-white !text-blue-700 border border-blue-200" : "!bg-blue !text-white"}`}
-            onClick={() => {
-              setRoleFilter("Recruiter");
+            <Button
+              className={`!text-sm !font-inter-regular !px-2 ${roleFilter === "Recruiter" ? "!bg-white !text-blue-700 border border-blue-200" : "!bg-blue !text-white"}`}
+              onClick={() => {
+                setRoleFilter("Recruiter");
 
-            }}
-          >
-            Recruiter
-          </Button>
-          <Button
-            className={`!text-sm !font-inter-regular !px-2 ${roleFilter === "HR Manager" ? "!bg-white !text-blue-700 border border-blue-200" : "!bg-blue !text-white"}`}
-            onClick={() => {
-              setRoleFilter("HR Manager");
-            }}
-          >
-            Hr Manager
-          </Button>
-          <Button className="!bg-green" onClick={() => { setRoleFilter(null); }}>
-            <X />
-          </Button>
+              }}
+            >
+              Recruiter
+            </Button>
+            <Button
+              className={`!text-sm !font-inter-regular !px-2 ${roleFilter === "HR Manager" ? "!bg-white !text-blue-700 border border-blue-200" : "!bg-blue !text-white"}`}
+              onClick={() => {
+                setRoleFilter("HR Manager");
+              }}
+            >
+              Hr Manager
+            </Button>
+            <Button className="!bg-green" onClick={() => { setRoleFilter(null); }}>
+                <X />
+            </Button>
         </div>
       </Card>
       <>

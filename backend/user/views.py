@@ -14,9 +14,32 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework.decorators import api_view 
+import subprocess
+import os
+from django.core.files import File
+from django.core.cache import cache
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
+def convert_to_pdf(original_file_path):
+    try:
+        # Run libreoffice to convert file to PDF in the same directory
+        subprocess.run([
+            'libreoffice',
+            '--headless',
+            '--convert-to', 'pdf',
+            '--outdir', os.path.dirname(original_file_path),
+            original_file_path
+        ], check=True)
+
+        base = os.path.splitext(original_file_path)[0]
+        pdf_path = f"{base}.pdf"
+        if os.path.exists(pdf_path):
+            return pdf_path
+    except Exception as e:
+        print(f"Conversion failed: {e}")
+    return None
 
 class LoginAPIView(APIView):
     def post(self, request):
@@ -74,35 +97,43 @@ class UploadCVView(APIView):
 
         for file, file_type in zip(files, file_types):
             data = {
-                'cv': file,
                 'job_id': job_id,
-                'file_type': file_type
+                'file_type': file_type,
+                'cv': file
             }
 
             serializer = self.serializer_class(data=data)
             if serializer.is_valid():
                 media = serializer.save()
 
-                # Trigger Celery task
-                parse_cv_task.delay(media.id)
+                ext = os.path.splitext(media.cv.path)[1].lower()
+                if ext in ['.doc', '.docx']:
+                    converted_path = convert_to_pdf(media.cv.path)
+                    if converted_path:
+                        with open(converted_path, 'rb') as f:
+                            media.cv.save(os.path.basename(converted_path), File(f), save=True)
+                        os.remove(converted_path)  
+                        os.remove(media.cv.path)  
 
                 success_files.append({
-                    "id": media.id,
+                    "id": media.media_id,
                     "url": media.cv.url,
                     "uploaded_at": media.uploaded_at,
                     "file_type": media.file_type
                 })
-                # Optionally add to newCandidates if you link to Candidate model
-                # new_candidates.append(candidate_data)
             else:
                 error_entries.append({
                     "fileName": file.name,
                     "error": serializer.errors
-                })
+                })  
 
         total = len(files)
         success_count = len(success_files)
         error_count = len(error_entries)
+
+          # Trigger Celery task
+        if success_files:
+            parse_cv_task.delay()
 
         return Response(
             {
@@ -126,11 +157,81 @@ class CandidateListCreateView(generics.ListCreateAPIView):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
 
+    def create(self, request, *args, **kwargs):
+        logger.info("=== Raw Request Data ===")
+        logger.info("Request method: %s", request.method)
+        logger.info("Request path: %s", request.path)
+        logger.info("request.data: %s", request.data)
+        logger.info("request.FILES: %s", request.FILES)
 
+        # Handle duplicate requests
+        request_id = request.data.get('request_id')
+        if request_id and cache.get(f"request_{request_id}"):
+            logger.warning("Duplicate request detected: %s", request_id)
+            return Response({"error": "Duplicate request"}, status=status.HTTP_400_BAD_REQUEST)
+        if request_id:
+            cache.set(f"request_{request_id}", True, timeout=60)
+
+        # Check for existing candidate by email
+        email = request.data.get('email')
+        if email and email != 'Not found' and Candidate.objects.filter(email=email).exists():
+            logger.warning("Candidate with email %s already exists", email)
+            existing_candidate = Candidate.objects.get(email=email)
+            return Response(
+                {
+                    "email": f"Candidate with email {email} already exists",
+                    "candidate_id": str(existing_candidate.candidate_id)
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            logger.error("❌ Validation errors:")
+            logger.error("Serializer errors: %s", serializer.errors)
+            for field, errors in serializer.errors.items():
+                logger.error("Field '%s' errors: %s", field, errors)
+                logger.error("Raw value for '%s': %s", field, request.data.get(field))
+            logger.error("Partially validated data: %s", serializer.validated_data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        logger.info("✅ Validation successful, saving data")
+        self.perform_create(serializer)
+        logger.info("Created candidate: %s", serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 class JobApplicationListCreateView(generics.ListCreateAPIView):
     queryset = JobApplication.objects.all()
-    serializer_class = JobApplicationSerializer    
+    serializer_class = JobApplicationSerializer
 
+    def create(self, request, *args, **kwargs):
+        print("=== JobApplication Raw Request Data ===")
+        print("Request method: %s", request.method)
+        print("Request path: %s", request.path)
+        print("request.data: %s", request.data)
+        print("request.FILES: %s", request.FILES)
+        print("media_id in request.data: %s", request.data.get('media_id'))
+        print("Type of media_id: %s", type(request.data.get('media_id')))
+        print("All keys in request.data: %s", list(request.data.keys()))
+
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print("❌ Validation errors:")
+            print("Serializer errors: %s", serializer.errors)
+            print("Partially validated data: %s", serializer.validated_data)
+            print("media_id in partially validated data: %s", serializer.validated_data.get('media_id'))
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        print("✅ Validation successful, saving data")
+        print("Validated data: %s", serializer.validated_data)
+        print("media_id in validated_data: %s", serializer.validated_data.get('media_id'))
+        print("Type of media_id in validated_data: %s", type(serializer.validated_data.get('media_id')))
+
+        self.perform_create(serializer)
+        print("Created job application: %s", serializer.data)
+        print("media_id in created object: %s", serializer.data.get('media_id'))
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 class JobApplicationUpdateView(APIView):
     def put(self, request, *args, **kwargs):
         data = request.data  # Should be a list of job application dicts
@@ -192,7 +293,7 @@ class UserAccountListCreateView(generics.ListCreateAPIView):
 class UserAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserAccount.objects.all()
     serializer_class = UserAccountSerializer
-    lookup_field = 'user_id'  # Make sure your frontend sends `user_id`, not `id`
+    lookup_field = 'user_id'  
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)

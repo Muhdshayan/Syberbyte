@@ -74,13 +74,11 @@ export function getUserStats(users: User[]) {
 
 export function getCategoryStats(categories: JobCategory[]) {
   const total = categories.length;
-  const active = categories.filter(cat => cat.is_active).length
   const roles = categories.map(c => c.role);
   const uniqueRoles = Array.from(new Set(roles));
   return {
     total,
     uniqueRoles,
-    active
   };
 }
 
@@ -152,7 +150,6 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     }
   },
   editUser: async (updatedUser) => {
-
     try {
       const roleMap: { [key: string]: string } = {
         "Full Admin": "full_admin",
@@ -162,10 +159,9 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         "Recruiter": "recruiter",
       };
 
-      // Ensure correct role value is sent
       const payload = {
         ...updatedUser,
-        role: roleMap[updatedUser.role] || updatedUser.role, // fallback to original if not found
+        role: roleMap[updatedUser.role] || updatedUser.role, 
       };
 
       const res = await axios.put(`http://localhost:8000/api/useraccounts/${payload.id}/`, payload);
@@ -289,21 +285,19 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     }
   },
   deleteCategory: async (job_id: number) => {
-    console.log(job_id)
     set({ loading: true, error: null });
     try {
       const res = await axios.delete(`http://localhost:8000/api/jobdetails/${job_id}/`); // Ensure the endpoint uses job_id
-      if (res.status !== 204) throw new Error("Failed to delete category");
+      if (res.status !== 200) throw new Error("Failed to delete category");
 
       await get().fetchJobCategories();
       toast.success("Category deleted!");
     } catch (err) {
       // Fallback to dummy delete
-      set((state) => ({
-        jobCategories: state.jobCategories.filter((cat) => cat.job_id !== job_id),
+      set({
         loading: false,
         error: "Failed to delete category on server. Dummy data updated.",
-      }));
+      });
       toast.error("Failed to delete category on server. Dummy data updated.");
     }
   },

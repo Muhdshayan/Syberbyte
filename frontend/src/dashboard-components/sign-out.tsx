@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useAuthStore } from "@/Login/useAuthStore";
-import { toast } from "sonner";
 
 interface SignOutDialogProps {
   children?: React.ReactNode;
@@ -31,9 +30,6 @@ export default function SignOutDialog({ children }: SignOutDialogProps) {
     localStorage.removeItem('authToken');
     sessionStorage.clear();
     
-    // Show success message
-    toast.success("Signed out successfully");
-    
     // Redirect to login page
     navigate("/");
     
@@ -44,7 +40,7 @@ export default function SignOutDialog({ children }: SignOutDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children || (
-          <Button variant="ghost" className="flex items-center gap-2">
+          <Button variant="destructive" className="flex items-center gap-2 !bg-red-600">
             <LogOut className="w-4 h-4" />
             Sign Out
           </Button>
@@ -67,7 +63,7 @@ export default function SignOutDialog({ children }: SignOutDialogProps) {
           <Button 
             variant="destructive" 
             onClick={handleSignOut}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 !bg-red-600"
           >
             <LogOut className="w-4 h-4" />
             Sign Out

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Edit, Trash2 } from "lucide-react";
 import type { JobCategory } from "@/dashboard/adminDashboard/admin-store";
+import { useAuthStore } from "@/Login/useAuthStore";
 
 interface JobCategoryMobTableProps {
   jobs: JobCategory[];
@@ -11,12 +12,13 @@ interface JobCategoryMobTableProps {
 }
 
 export default function JobCategoryMobTable({ jobs, onEdit, onDelete }: JobCategoryMobTableProps) {
+  const permission = useAuthStore((state) => state.authUser?.permission);
   return (
     <>
       {jobs.map((item, idx) => (
-        <Card key={idx} className="p-4 w-full flex flex-col gap-2 shadow-md relative">
+        <Card key={idx} className="p-4 w-full mb-4 flex flex-col gap-2 shadow-md relative">
           <div className="flex justify-between items-center mb-2">
-           
+           {permission === 10 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <MoreVertical className="w-5 h-5 cursor-pointer" />
@@ -30,6 +32,8 @@ export default function JobCategoryMobTable({ jobs, onEdit, onDelete }: JobCateg
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+           )}
+            
           </div>
            <div className="flex w-full justify-between items-center">
               <span className="block text-xs text-muted-foreground">Industry</span>

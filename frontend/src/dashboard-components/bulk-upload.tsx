@@ -29,6 +29,7 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
     updateFileProgress,
     updateFileStatus,
     processBulkUpload,
+    error
   } = useRecruiterStore()
 
   // Clear upload files when component mounts
@@ -55,33 +56,44 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
   }, [])
 
   const getFileType = (fileName: string): "pdf" | "docx" | "doc" => {
-    const lowerName = fileName.toLowerCase();
-    if (lowerName.endsWith(".pdf")) return "pdf";
-    if (lowerName.endsWith(".docx")) return "docx";
-    if (lowerName.endsWith(".doc")) return "doc";
-    throw new Error("Unsupported file type");
-  };
+  const lowerName = fileName.toLowerCase();
+  if (lowerName.endsWith(".pdf")) return "pdf";
+  if (lowerName.endsWith(".docx")) return "docx";
+  if (lowerName.endsWith(".doc")) return "doc";
+  
+  // Show toast for unsupported file type
+  toast.error(`This format is not accepted: ${fileName}. Please upload PDF or Word documents only.`);
+  throw new Error("Unsupported file type");
+};
 
+const isValidFileType = (file: File): boolean => {
+  const validTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ];
+  const validExtensions = [".pdf", ".doc", ".docx"];
+  
+  return validTypes.includes(file.type) || 
+         validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+};
 
-  const processItems = async (items: DataTransferItem[]) => {
-    const newFiles: UploadFile[] = []
+const processItems = async (items: DataTransferItem[]) => {
+  const newFiles: UploadFile[] = []
+  let hasInvalidFiles = false
 
-    for (const item of items) {
-      if (item.kind === "file") {
-        const file = item.getAsFile()
-        if (
-          file &&
-          (file.type === "application/pdf" ||
-            file.type === "application/msword" ||
-            file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-            file.type === "application/vnd.ms-excel" ||
-            file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-            file.name.endsWith(".doc") ||
-            file.name.endsWith(".docx") ||
-            file.name.endsWith(".xlsx") ||
-            file.name.endsWith(".xls") ||
-            file.name.endsWith(".pdf"))
-        ) {
+  for (const item of items) {
+    if (item.kind === "file") {
+      const file = item.getAsFile()
+      if (file) {
+        if (!isValidFileType(file)) {
+          // Show toast for each invalid file
+          toast.error(`This format is not accepted: ${file.name}. Please upload PDF or Word documents only.`);
+          hasInvalidFiles = true
+          continue
+        }
+
+        try {
           newFiles.push({
             id: Math.random().toString(36),
             name: file.name,
@@ -89,46 +101,60 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
             status: "pending",
             progress: 0,
             type: getFileType(file.name),
-            file: file, // Store the actual file
+            file: file,
           })
+        } catch (error) {
+          // Error already handled in getFileType with toast
+          hasInvalidFiles = true
         }
       }
     }
-
-    if (newFiles.length > 0) {
-      addUploadFiles(newFiles)
-    }
   }
 
-  const processFileList = (files: FileList) => {
-    const newFiles: UploadFile[] = Array.from(files)
-      .filter(
-        (file) =>
-          file.type === "application/pdf" ||
-          file.type === "application/msword" ||
-          file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-          file.type === "application/vnd.ms-excel" ||
-          file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-          file.name.endsWith(".doc") ||
-          file.name.endsWith(".docx") ||
-          file.name.endsWith(".xlsx") ||
-          file.name.endsWith(".xls") ||
-          file.name.endsWith(".pdf")
-      )
-      .map((file) => ({
+  if (newFiles.length > 0) {
+    addUploadFiles(newFiles)
+    toast.success(`${newFiles.length} valid files added`)
+  } else if (hasInvalidFiles) {
+    toast.error("No valid files found. Please select PDF or Word documents only.")
+  }
+}
+
+const processFileList = (files: FileList) => {
+  const newFiles: UploadFile[] = []
+  let hasInvalidFiles = false
+
+  Array.from(files).forEach((file) => {
+    if (!isValidFileType(file)) {
+      // Show toast for each invalid file
+      toast.error(`This format is not accepted: ${file.name}. Please upload PDF or Word documents only.`);
+      hasInvalidFiles = true
+      return
+    }
+
+    try {
+      newFiles.push({
         id: Math.random().toString(36),
         name: file.webkitRelativePath || file.name,
         size: file.size,
         status: "pending" as const,
         progress: 0,
         type: getFileType(file.name),
-        file: file, // Store the actual file
-      }))
-
-    if (newFiles.length > 0) {
-      addUploadFiles(newFiles)
+        file: file,
+      })
+    } catch (error) {
+      // Error already handled in getFileType with toast
+      hasInvalidFiles = true
     }
+  })
+
+  if (newFiles.length > 0) {
+    addUploadFiles(newFiles)
+    toast.success(`${newFiles.length} valid files added`)
+  } else if (hasInvalidFiles) {
+    toast.error("No valid files found. Please select PDF or Word documents only.")
   }
+}
+
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files
@@ -230,7 +256,7 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
 
   return (
     <div
-      className="fixed inset-0 font-inter-regular bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 font-inter-regular bg-black flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-lg w-full max-w-6xl h-[85vh] flex flex-col shadow-2xl">
@@ -296,6 +322,10 @@ export function BulkUpload({ onClose, jobId }: BulkUploadProps) {
                     Select Folder
                   </Button>
                 </div>
+                {error && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {error}
+                  </p>)}
 
                 <input
                   id="file-input"

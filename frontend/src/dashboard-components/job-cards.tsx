@@ -15,6 +15,8 @@ import { Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import EditJobCategoryDialog from "./edit-job-category";
 import DeleteJobCategoryDialog from "./delete-job-category";
+import { useHrStore } from "@/dashboard/HrDashboard/hr-store";
+
 
 
 type JobCardProps = Job & {
@@ -27,6 +29,8 @@ export default function JobCards({ permission, ...props }: JobCardProps) {
     const [open, setOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const deleteJob = useHrStore((state) => state.deleteJob);
+    const updateJob= useHrStore((state) => state.updateJob);
 
     const skillsArray = Array.isArray(props.skills)
         ? props.skills
@@ -58,7 +62,7 @@ export default function JobCards({ permission, ...props }: JobCardProps) {
                     <div className="flex gap-2 mt-2">
                         <button
                             type="button"
-                            className="transition-all bg-blue cursor-pointer rounded-lg hover:bg-blue-700 hover:scale-105 text-white p-2"
+                            className="transition-all !bg-blue cursor-pointer rounded-lg hover:bg-blue-700 hover:scale-105 text-white p-2"
                             title="Edit"
                             onClick={() => setEditDialogOpen(true)}
                         >
@@ -66,7 +70,7 @@ export default function JobCards({ permission, ...props }: JobCardProps) {
                         </button>
                         <button
                             type="button"
-                            className="transition-all bg-blue cursor-pointer rounded-lg hover:bg-blue-700 hover:scale-105 text-white p-2"
+                            className="transition-all !bg-blue cursor-pointer rounded-lg hover:bg-blue-700 hover:scale-105 text-white p-2"
                             title="Delete"
                             onClick={() => setDeleteDialogOpen(true)}
                         >
@@ -77,14 +81,18 @@ export default function JobCards({ permission, ...props }: JobCardProps) {
                             open={editDialogOpen}
                             onOpenChange={setEditDialogOpen}
                             job={props}
-                            onSave={() => setEditDialogOpen(false)}
+                            onSave={(updatedJob) => {
+                               updateJob(updatedJob);
+                             }}
                         />
                         {/* Delete Dialog */}
                         <DeleteJobCategoryDialog
                             open={deleteDialogOpen}
                             onOpenChange={setDeleteDialogOpen}
-                            jobId={props.job_id}
-                            onDelete={() => setDeleteDialogOpen(false)}
+                            onDelete={() => {
+                               deleteJob(props.job_id);
+                               console.log("props job id", props.job_id)
+                             }}
                         />
                     </div>
                 )}

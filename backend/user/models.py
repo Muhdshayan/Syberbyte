@@ -82,29 +82,56 @@ class JobDetail(models.Model):
         return self.role
     
 
-class WorkExperience(models.Model):
-    work_experience_id = models.AutoField(primary_key=True)
-    candidate = models.ForeignKey('Candidate', on_delete=models.CASCADE, related_name='work_experiences')
-    role = models.CharField(max_length=255, help_text="Job title or role")
-    company_name = models.CharField(max_length=255, help_text="Name of the company")
-    start_year = models.PositiveIntegerField(help_text="Start year of employment")
-    end_year = models.PositiveIntegerField(null=True, blank=True, help_text="End year of employment (null if current)")
-    summary = models.TextField(help_text="Summary of responsibilities and achievements")
-
-    def __str__(self):
-        return f"{self.role} at {self.company_name} ({self.start_year} - {self.end_year or 'Present'})"
-
 class Education(models.Model):
     education_id = models.AutoField(primary_key=True)
     candidate = models.ForeignKey('Candidate', on_delete=models.CASCADE, related_name='educations')
-    degree_name = models.CharField(max_length=255, help_text="Name of the degree (e.g., Bachelor's in Computer Science)")
-    university_name = models.CharField(max_length=255, help_text="Name of the university or institution")
-    start_year = models.PositiveIntegerField(help_text="Start year of education")
-    end_year = models.PositiveIntegerField(null=True, blank=True, help_text="End year of education (null if ongoing)")
+    degree_name = models.CharField(max_length=255, blank=True, help_text="Name of the degree (e.g., Bachelor's in Computer Science)")
+    university_name = models.CharField(max_length=255, blank=True, help_text="Name of the university or institution")
+    start_year = models.CharField(max_length=50, blank=True, help_text="Start year of education (e.g., '2020' or 'Present')")
+    end_year = models.CharField(max_length=50, blank=True, null=True, help_text="End year of education (e.g., '2024' or 'Ongoing')")
 
     def __str__(self):
         return f"{self.degree_name} at {self.university_name} ({self.start_year} - {self.end_year or 'Ongoing'})"
-       
+    
+
+def cv_upload_path(instance, filename):
+    import logging
+    logger = logging.getLogger(__name__)
+
+    logger.info(f"[cv_upload_path] Raw filename: {filename} (type: {type(filename)})")
+
+    if callable(filename):
+        logger.warning(f"[cv_upload_path] filename is callable. Converting to string.")
+        filename = str(filename())
+
+    if not isinstance(filename, str):
+        logger.warning(f"[cv_upload_path] filename is not a string. Forcing to str.")
+        filename = str(filename)
+
+    try:
+        job = JobDetail.objects.get(job_id=instance.job_id)
+        title_slug = slugify(job.role)
+    except JobDetail.DoesNotExist:
+        logger.warning(f"[cv_upload_path] JobDetail with job_id={instance.job_id} not found. Using 'unknown'")
+        title_slug = "unknown"
+
+    path = os.path.join('cvs', title_slug, filename)
+    logger.info(f"[cv_upload_path] Final upload path: {path}")
+    return path
+
+
+class MediaUpload(models.Model):
+    media_id = models.AutoField(primary_key=True)
+    job_id = models.CharField(max_length=100)
+    cv = models.FileField(upload_to=cv_upload_path) 
+    file_type = models.CharField(max_length=10)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    processed = models.BooleanField(default=False) 
+
+    def __str__(self):
+        return f"{self.cv.name} for Job {self.job_id}"
+
+
 class Candidate(models.Model):
     candidate_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -126,7 +153,7 @@ class Candidate(models.Model):
     soft_skills = models.TextField(help_text="Communication skills")  
     technical_skills = models.TextField(help_text="Technical skills")  
     summary = models.TextField(help_text="Introduction of Candidate")
-
+    years_of_experience = models.FloatField(default=0.0, help_text="Total years of professional experience")
     def __str__(self):
         return self.name
     
@@ -134,6 +161,7 @@ class JobApplication(models.Model):
     application_id = models.AutoField(primary_key=True)
     job = models.ForeignKey(JobDetail, on_delete=models.CASCADE, related_name='applications')
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='applications')
+    media_id = models.IntegerField()
     application_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=20,
@@ -159,25 +187,6 @@ class JobApplication(models.Model):
     def __str__(self):
         return f"{self.candidate.name} - {self.job.role} ({self.status})"    
 
-def cv_upload_path(instance, filename):
-    try:
-        # Look up the job title
-        job = JobDetail.objects.get(job_id=instance.job_id)
-        title_slug = slugify(job.role)
-        return os.path.join('cvs', title_slug, filename)
-    except JobDetail.DoesNotExist:
-        # Fallback to generic path
-        return os.path.join('cvs', 'unknown', filename)
-
-class MediaUpload(models.Model):
-    job_id = models.CharField(max_length=100)
-    cv = models.FileField(upload_to=cv_upload_path)  # <- updated here
-    file_type = models.CharField(max_length=10)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.cv.name} for Job {self.job_id}"
-
 class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     job = models.ForeignKey(JobDetail, on_delete=models.CASCADE, related_name='feedback')
@@ -185,6 +194,7 @@ class Feedback(models.Model):
     suggested_score = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     feedback = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    processed = models.BooleanField(default=False)   #1
 
     class Meta:
         unique_together = ('job', 'candidate')

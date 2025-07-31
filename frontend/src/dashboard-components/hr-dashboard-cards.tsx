@@ -16,10 +16,11 @@ interface StatCardProps {
 
 function StatCard({ label, icon, value, sub, bold }: StatCardProps) {
   return (
-    <Card className="font-inter-regular w-[95%] md:min-w-[210px] flex-1 p-5 rounded-lg shadow-sm flex flex-col justify-between">      <div className="flex items-center justify-between mb-2">
-      <span className="font-poppins-semibold text-base">{label}</span>
-      {icon}
-    </div>
+    <Card className="font-inter-regular w-[95%] md:min-w-[210px] flex-1 p-5 rounded-lg shadow-sm flex flex-col justify-between">
+      <div className="flex items-center justify-between mb-2">
+        <span className="font-poppins-semibold text-base">{label}</span>
+        {icon}
+      </div>
       <div className="flex items-end justify-between">
         <span className={`text-2xl font-poppins-semibold ${bold ? "font-bold" : ""}`}>
           {value}
@@ -29,13 +30,6 @@ function StatCard({ label, icon, value, sub, bold }: StatCardProps) {
     </Card>
   );
 }
-
-// interface HrDashboardCardsProps {
-//   activeJobs: { value: string | number; sub: string };
-//   totalCandidates: { value: string | number; sub: string };
-//   intialscreened: { value: string | number; sub: string };
-//   finalscreened: { value: string | number; sub: string };
-// }
 
 export default function HrDashboardCards() {
   const fetchCandidates = useRecruiterStore((state) => state.fetchCandidates);
@@ -69,7 +63,7 @@ export default function HrDashboardCards() {
   ).length;
 
   return (
-    <div className="flex md:flex-row flex-col justify-center items-center w-full gap-4">
+    <div className="flex md:flex-row flex-col justify-center items-center w-[98%] gap-4 ">
       <StatCard
         label="Active Jobs"
         icon={<Briefcase className="w-5 h-5 ml-2 text-muted-foreground" />}

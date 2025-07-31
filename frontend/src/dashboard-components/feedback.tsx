@@ -35,9 +35,9 @@ export default function FeedbackDialog({
   const [open, setOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [correctScore, setCorrectScore] = useState(currentScore?.toString() || "");
+  const [loading, setLoading] = useState(false); // Local loading state
   
   const submitFeedback = useHrStore((state) => state.submitFeedback);
-  const loading = useHrStore((state) => state.loading);
 
   const handleSubmit = async () => {
     // Validation
@@ -51,6 +51,8 @@ export default function FeedbackDialog({
       return;
     }
 
+    setLoading(true); // Set local loading to true
+    
     try {
       await submitFeedback({
         candidateId,
@@ -64,9 +66,13 @@ export default function FeedbackDialog({
       setOpen(false);
       setFeedback("");
       setCorrectScore(currentScore?.toString() || "");
+      toast.success("Feedback submitted successfully!");
+      
     } catch (error) {
-      // Error is already handled in the store with toast
       console.error("Error submitting feedback:", error);
+      toast.error("Failed to submit feedback");
+    } finally {
+      setLoading(false); // Always reset loading state
     }
   };
 
@@ -74,10 +80,21 @@ export default function FeedbackDialog({
     setOpen(false);
     setFeedback("");
     setCorrectScore(currentScore?.toString() || "");
+    setLoading(false); // Reset loading on cancel
+  };
+
+  // Reset form when dialog closes
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      setFeedback("");
+      setCorrectScore(currentScore?.toString() || "");
+      setLoading(false);
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {children || (
           <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
@@ -109,6 +126,7 @@ export default function FeedbackDialog({
               onChange={(e) => setFeedback(e.target.value)}
               rows={4}
               className="resize-none"
+              disabled={loading} // Disable when loading
             />
           </div>
 
@@ -123,6 +141,7 @@ export default function FeedbackDialog({
               placeholder="Enter score (0-100)"
               value={correctScore}
               onChange={(e) => setCorrectScore(e.target.value)}
+              disabled={loading} // Disable when loading
             />
             {currentScore && (
               <div className="text-xs text-gray-500">
@@ -136,18 +155,19 @@ export default function FeedbackDialog({
           <Button 
             variant="outline" 
             onClick={handleCancel}
-            disabled={loading}
+            disabled={loading} // Disable when loading
           >
             Cancel
           </Button>
           <Button 
             onClick={handleSubmit}
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
+            disabled={loading || !feedback.trim() || !correctScore} // Better disabled state
+            className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 min-w-[120px]"
           >
             {loading ? (
               <>
-                submitting <CircularProgress size={16} sx={{ color: 'white' }} />
+                <CircularProgress size={16} sx={{ color: 'white' }} />
+                Submitting...
               </>
             ) : (
               "Send Feedback"

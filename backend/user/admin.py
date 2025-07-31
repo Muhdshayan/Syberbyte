@@ -1,11 +1,7 @@
 from django.contrib import admin
-from .models import UserAccount, JobDetail, Candidate, WorkExperience, Education, JobApplication , MediaUpload ,Feedback
+from .models import UserAccount, JobDetail, Candidate, Education, JobApplication , MediaUpload ,Feedback
 
-class WorkExperienceInline(admin.TabularInline):
-    model = WorkExperience
-    extra = 1
-    fields = ('role', 'company_name', 'start_year', 'end_year', 'summary')
-    ordering = ('-start_year',)
+
 
 class EducationInline(admin.TabularInline):
     model = Education
@@ -34,7 +30,7 @@ class JobDetailAdmin(admin.ModelAdmin):
     
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'phone_number', 'display_work_experiences', 'display_educations')
+    list_display = ('name', 'email', 'phone_number','display_educations','years_of_experience')
     search_fields = ('name', 'email', 'phone_number', 'soft_skills', 'technical_skills')
     fieldsets = (
         (None, {
@@ -44,22 +40,14 @@ class CandidateAdmin(admin.ModelAdmin):
             'fields': ('soft_skills', 'technical_skills')
         }),
     )
-    inlines = [WorkExperienceInline, EducationInline]
+    inlines = [EducationInline]
 
-    def display_work_experiences(self, obj):
-        return ", ".join([f"{exp.role} at {exp.company_name} ({exp.start_year}-{exp.end_year or 'Present'})" for exp in obj.work_experiences.all()])
-    display_work_experiences.short_description = 'Work Experiences'
 
     def display_educations(self, obj):
         return ", ".join([f"{edu.degree_name} at {edu.university_name} ({edu.start_year}-{edu.end_year or 'Ongoing'})" for edu in obj.educations.all()])
     display_educations.short_description = 'Educations'
 
     
-@admin.register(WorkExperience)
-class WorkExperienceAdmin(admin.ModelAdmin):
-    list_display = ('role', 'company_name', 'candidate', 'start_year', 'end_year')
-    list_filter = ('start_year', 'end_year')
-    search_fields = ('role', 'company_name', 'candidate__name')
 
 @admin.register(Education)
 class EducationAdmin(admin.ModelAdmin):
@@ -74,6 +62,7 @@ class JobApplicationAdmin(admin.ModelAdmin):
         'candidate_id', 
         'job_role', 
         'job_id', 
+        'media_id',
         'application_date', 
         'status',
         'score',
@@ -116,9 +105,9 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 @admin.register(MediaUpload)
 class MediaUploadAdmin(admin.ModelAdmin):
-    list_display = ('id', 'job_id', 'file_name', 'file_type', 'uploaded_at')
-    list_filter = ('file_type', 'uploaded_at')
-    search_fields = ('job_id', 'cv')
+    list_display = ('media_id', 'job_id', 'file_name', 'file_type', 'uploaded_at' ,'processed')
+    list_filter = ('file_type', 'uploaded_at', 'processed')
+    search_fields = ('job_id', 'cv' , 'processed')
     ordering = ('-uploaded_at',)
 
     def file_name(self, obj):
@@ -128,8 +117,8 @@ class MediaUploadAdmin(admin.ModelAdmin):
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ('feedback_id', 'job_role', 'candidate_name', 'suggested_score', 'created_at')
-    list_filter = ('suggested_score', 'created_at')
+    list_display = ('feedback_id', 'job_role', 'candidate_name', 'suggested_score', 'created_at' , 'processed')
+    list_filter = ('suggested_score', 'created_at' , 'processed')
     search_fields = ('job__role', 'candidate__name', 'feedback')
     ordering = ('-created_at',)
 

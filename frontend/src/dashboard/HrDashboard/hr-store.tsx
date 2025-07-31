@@ -46,6 +46,15 @@ export interface Candidate {
     description: string;
   }[];
 }
+export type UserStatus = "Active" | "Suspended";
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: UserStatus;
+  lastActive: string;
+}
 
 interface hrStore {
   jobs: Job[];
@@ -54,9 +63,11 @@ interface hrStore {
   error: string | null;
   hasUnsavedChanges: boolean;
   changedCandidates: Set<string>;
+  recruiters?: User[];
+  fetchRecruiters: () => Promise<void>;
   fetchJobs: () => Promise<void>;
   addJob: (job: Job) => void;
-  updateJob: (id: number, updatedJob: Partial<Job>) => void;
+  updateJob: (updatedJob: Job) => void;
   deleteJob: (job_id: number) => Promise<void>;
   fetchCandidates: () => Promise<void>;
   updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: string) => void;
@@ -151,13 +162,10 @@ export const useHrStore = create<hrStore>((set, get) => ({
         }));
 
         toast.success("Job added successfully!");
-        console.log("Job added successfully:", res.data);
       } else {
         throw new Error(`Server responded with status: ${res.status}`);
       }
     } catch (err: any) {
-      console.error("Error adding job:", err);
-
       const errorMessage = err.response?.data?.message ||
         err.response?.data?.error ||
         err.message ||
@@ -171,31 +179,47 @@ export const useHrStore = create<hrStore>((set, get) => ({
     }
   },
 
-  updateJob: (id, updatedJob) => {
-    set((state) => ({
-      jobs: state.jobs.map((job) =>
-        job.job_id === id ? { ...job, ...updatedJob } : job
-      ),
-    }));
-    toast.success("Job updated successfully");
+  updateJob: async (updatedCategory: Job) => {
+    set({ loading: true, error: null });
+ try {
+      const payload = {
+        ...updatedCategory,
+        skills: Array.isArray(updatedCategory.skills)
+          ? updatedCategory.skills.join(', ')
+          : updatedCategory.skills,
+      };
+      const res = await axios.put(`http://localhost:8000/api/jobdetails/${payload.job_id}/`, payload);
+      if (!res.data || res.status !== 200) throw new Error("Failed to update category");
+
+      await get().fetchJobs();
+      toast.success("Category updated!");
+    } catch (err) {
+      set({
+        loading: false,
+        error: "Failed to update category on server. Dummy data updated.",
+      });
+      toast.error("Failed to update category on server. Dummy data updated.");
+    }
   },
 
   deleteJob: async (job_id: number) => {
     set({ loading: true, error: null });
     try {
       const res = await axios.delete(`http://localhost:8000/api/jobdetails/${job_id}/`); // Ensure the endpoint uses job_id
-      if (res.status !== 200) throw new Error("Failed to delete category");
-
-      await get().fetchJobs();
-      toast.success("Category deleted!");
+      if (res.status !== 200 && res.status !== 204){
+        throw new Error("Failed to delete job");
+      } 
+      if (res.status == 200 || res.status == 204) {
+        toast.success("Job Deleted Successfully")
+        await get().fetchJobs();
+      }
     } catch (err) {
       // Fallback to dummy delete
-      set((state) => ({
-        job: state.jobs.filter((cat) => cat.job_id !== job_id),
+      set({
         loading: false,
-        error: "Failed to delete category on server. Dummy data updated.",
-      }));
-      toast.error("Failed to delete category on server. Dummy data updated.");
+        error: "Failed to delete category on server",
+      });
+      toast.error("Failed to delete category on server.");
     }
   },
 
@@ -296,7 +320,6 @@ export const useHrStore = create<hrStore>((set, get) => ({
     }
   },
   submitFeedback: async (feedbackData) => {
-    set({ loading: true, error: null });
     try {
       console.log("Submitting feedback with data:", feedbackData);
 
@@ -306,9 +329,9 @@ export const useHrStore = create<hrStore>((set, get) => ({
         feedback_text: feedbackData.feedback,
         suggested_score: feedbackData.correctScore,
       });
+      console.log("response:",res)
 
       if (res.status === 200 || res.status === 201) {
-        set({ loading: false, error: null });
         toast.success("Feedback submitted successfully!");
         console.log("Feedback submitted successfully:", res.data);
       } else {
@@ -360,4 +383,27 @@ export const useHrStore = create<hrStore>((set, get) => ({
       toast.error("Failed to generate Excel report");
     }
   },
+  fetchRecruiters: async () => {
+  set({ loading: true, error: null });
+  try {
+    const res = await axios.get<User[]>("http://localhost:8000/api/useraccounts/");
+    
+    // Filter and map API data to get only recruiters
+    const recruiters = res.data
+      .filter((item: any) => item.role === "recruiter")
+      .map((item: any) => ({
+         id: item.user_id,
+        name: item.name,
+        email: item.email,
+        role: item.role,
+        status: item.status,
+        lastActive: item.time
+      }));
+    console.log("Fetched recruiters:", recruiters);
+    set({ recruiters: recruiters, loading: false, error: null });
+  } catch (err: any) {
+    set({ loading: false, error: "Failed to fetch recruiters." });
+    toast.error("Failed to fetch recruiters.");
+  }
+},
 }));

@@ -22,10 +22,11 @@ export interface Job {
 }
 
 export interface Candidate {
+  id: any;
   application_id: any;
-  candidate_id: any;
   jobId: any;
-  status: string
+  cv:string;
+  status:string
   name: string;
   score: number;
   recommendation: string;
@@ -113,7 +114,7 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
   uploadProgress: 0,
   isUploading: false,
   uploadError: null,
-  hasUnsavedChanges: false,
+    hasUnsavedChanges: false,
   changedCandidates: new Set(),
 
   fetchJobs: async () => {
@@ -129,14 +130,14 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
         posted_by: job.posted_by,
         assigned_to: job.assigned_to,
         date_posted: new Date(job.date_posted).toLocaleString("en-GB", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-          timeZone: "UTC",
-        }).replace(",", ""),
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                      timeZone: "UTC",
+                    }).replace(",", ""),
         description: job.description,
         education_level: job.education_level,
         experience_level: job.experience_level,
@@ -161,14 +162,16 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await axios.get<Candidate[]>("http://localhost:8000/api/jobapplication/");
+      console.log(res)
       if (!res.data || !Array.isArray(res.data)) {
         throw new Error("Invalid data format");
       }
       // Map API data to candidate interface
       const mappedCandidates = res.data.map((item: any) => ({
-        candidate_id: item.candidate.candidate_id,
+        id: item.candidate.candidate_id,
         application_id: item.application_id,
         jobId: item.job.job_id,
+        cv:item.cv,
         status: item.status,
         name: item.candidate.name,
         score: item.score ?? 0,
@@ -193,30 +196,30 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
       set({ candidates: mappedCandidates, loading: false, error: null });
       console.log("candidates:", res);
     } catch (err) {
-      set({ loading: false, error: "Failed to fetch candidates. Showing dummy data." });
+      set({loading: false, error: "Failed to fetch candidates. Showing dummy data." });
     }
   },
 
-  editCandidates: async (updatedCandidates: Candidate[]) => {
-    set({ loading: true, error: null });
-    try {
-
-      const res = await axios.put("http://localhost:8000/api/jobapplication/update/", updatedCandidates);
-      if (res.status === 200) {
-
-        set({ loading: false, error: null });
-        const results = res.data.results;
-
-        toast.success("Candidates updated successfully");
-        console.log("Candidates updated successfully:", results);
+    editCandidates: async (updatedCandidates: Candidate[]) => {
+      set({ loading: true, error: null });
+      try {
+        const res = await axios.put("http://localhost:8000/api/jobapplication/update/", updatedCandidates);
+        console.log(updatedCandidates);
+        if (res.status === 200 || res.status === 207) {
+  
+          set({ loading: false, error: null });
+          const results = res.data.results;
+  
+          toast.success("Candidates updated successfully");
+          console.log("Candidates updated successfully:", results);
+        }
+      } catch (err) {
+        console.error(err);
+        set({ loading: false, error: "Failed to update candidates." });
+        console.error("Error updating candidates:", err);
+        toast.error("Failed to update candidates");
       }
-    } catch (err) {
-      console.error(err);
-      set({ loading: false, error: "Failed to update candidates." });
-      console.error("Error updating candidates:", err);
-      toast.error("Failed to update candidates");
-    }
-  },
+    },
 
 
   // Bulk upload methods
@@ -338,40 +341,40 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
       throw error;
     }
   },
-  updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: string) => {
-    const state = get();
+updateCandidateStatusLocally: (candidateId: number, jobId: number, newStatus: string) => {
+  const state = get();
+  
+  console.log("Updating candidate locally:", { candidateId, jobId, newStatus }); // Debug log
+  
+  const updatedCandidates = state.candidates.map(candidate => {
+    // Convert candidateId to number if it's a string, or use === for exact match
+    const numericCandidateId = typeof candidateId === 'string' ? parseInt(candidateId) : candidateId;
+    
+    if (candidate.id === numericCandidateId && candidate.jobId === jobId) {
+      console.log("Found candidate to update:", candidate.name, "from", candidate.status, "to", newStatus); // Debug log
+      return { ...candidate, status: newStatus };
+    }
+    return candidate;
+  });
+  
+  const newChangedCandidates = new Set(state.changedCandidates);
+  newChangedCandidates.add(`${candidateId}-${jobId}`);
+  
+  console.log("Updated candidates:", updatedCandidates); // Debug log
+  console.log("Changed candidates:", newChangedCandidates); // Debug log
+  
+  set({ 
+    candidates: updatedCandidates,
+    hasUnsavedChanges: true,
+    changedCandidates: newChangedCandidates
+  });
 
-    console.log("Updating candidate locally:", { candidateId, jobId, newStatus }); // Debug log
-
-    const updatedCandidates = state.candidates.map(candidate => {
-      // Convert candidateId to number if it's a string, or use === for exact match
-      const numericCandidateId = typeof candidateId === 'string' ? parseInt(candidateId) : candidateId;
-
-      if (candidate.candidate_id === numericCandidateId && candidate.jobId === jobId) {
-        console.log("Found candidate to update:", candidate.name, "from", candidate.status, "to", newStatus); // Debug log
-        return { ...candidate, status: newStatus };
-      }
-      return candidate;
-    });
-
-    const newChangedCandidates = new Set(state.changedCandidates);
-    newChangedCandidates.add(`${candidateId}-${jobId}`);
-
-    console.log("Updated candidates:", updatedCandidates); // Debug log
-    console.log("Changed candidates:", newChangedCandidates); // Debug log
-
-    set({
-      candidates: updatedCandidates,
-      hasUnsavedChanges: true,
-      changedCandidates: newChangedCandidates
-    });
-
-    // Add toast to confirm the change
-    toast.success(`Candidate status updated to ${newStatus}`);
-  },
+  // Add toast to confirm the change
+  toast.success(`Candidate status updated to ${newStatus}`);
+},
 
   resetUnsavedChanges: () => {
-    set({
+    set({ 
       hasUnsavedChanges: false,
       changedCandidates: new Set()
     });

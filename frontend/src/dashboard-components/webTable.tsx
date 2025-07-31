@@ -10,7 +10,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Key, Trash2 } from "lucide-react";
+import { MoreVertical, Edit, Key, Trash2 } from "lucide-react";
+import {useAuthStore} from "@/Login/useAuthStore";
 
 interface WebTableProps {
   users: User[];
@@ -20,6 +21,7 @@ interface WebTableProps {
 }
 
 export default function WebTable({ users, onEditUser, onResetUser, onDeleteUser }: WebTableProps) {
+  const permission = useAuthStore((state) => state.authUser?.permission);
   return (
     <Table>
       <TableHeader>
@@ -28,7 +30,8 @@ export default function WebTable({ users, onEditUser, onResetUser, onDeleteUser 
           <TableHead>Role</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Last Active</TableHead>
-          <TableHead className="text-left">Actions</TableHead>
+          {permission == 10 && (<TableHead className="text-left">Actions</TableHead>)}
+          
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -66,10 +69,12 @@ export default function WebTable({ users, onEditUser, onResetUser, onDeleteUser 
               </Badge>
             </TableCell>
             <TableCell align="left">{user.lastActive}</TableCell>
+            {permission == 10 && (
+              <>
             <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <MoreHorizontal className="w-5 h-5 cursor-pointer" />
+                  <MoreVertical className="w-5 h-5 cursor-pointer" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
@@ -93,6 +98,9 @@ export default function WebTable({ users, onEditUser, onResetUser, onDeleteUser 
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
+              </>
+            )}
+            
           </TableRow>
         ))}
       </TableBody>

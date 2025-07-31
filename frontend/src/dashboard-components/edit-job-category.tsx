@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
-
+import { useAdminStore } from "@/dashboard/adminDashboard/admin-store";
+import { useEffect } from "react";
 interface EditJobCategoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -25,6 +26,7 @@ interface EditJobCategoryDialogProps {
     education_level?: string;
     location?: string;
     is_active?: boolean;
+    assigned_to: number
   };
   onSave: (job: any) => void;
 }
@@ -43,7 +45,19 @@ export default function EditJobCategoryDialog({
     education_level: job.education_level || "",
     location: job.location || "",
     is_active: job.is_active ?? true,
+    assigned_to: job.assigned_to || 0,
   });
+  const users = useAdminStore((state) => state.users); // Get users from admin store
+  const fetchUsers = useAdminStore((state) => state.fetchUsers); // Get fetchUsers function
+  useEffect(() => {
+      if (!users || users.length === 0) {
+        fetchUsers();
+      }
+    }, [users, fetchUsers]);
+  
+    // Filter users to get only recruiters
+    const recruiters = users?.filter(user => user.role === "Recruiter") || [];
+    console.log("Recruiters:", recruiters); 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -102,20 +116,19 @@ export default function EditJobCategoryDialog({
               onValueChange={(val) => setForm({ ...form, job_type: val })}
             >
               <SelectTrigger className="!bg-white !text-primary !border-gray-200">
-                <SelectValue
-                  placeholder="Select job type"
-                // Show capitalized value if selected
-                // fallback to placeholder if not selected
-                >
-                  {form.job_type
-                    ? form.job_type.charAt(0).toUpperCase() + form.job_type.slice(1)
-                    : "Select job type"}
-                </SelectValue>
+                 <SelectValue
+                     placeholder="Select job type"
+                     // Show capitalized value if selected
+                     // fallback to placeholder if not selected
+                   >
+                     {form.job_type
+                       ? form.job_type.charAt(0).toUpperCase() + form.job_type.slice(1)
+                       : "Select job type"}
+                   </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Full-time">Full Time</SelectItem>
-                <SelectItem value="Part-time">Part Time</SelectItem>
-                <SelectItem value="Contract">Contract</SelectItem>
+                <SelectItem value="onsite">Onsite</SelectItem>
+                <SelectItem value="remote">Remote</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -176,6 +189,27 @@ export default function EditJobCategoryDialog({
               <SelectContent>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label>Assign to</label>
+            <Select
+            value={form.assigned_to.toString()}
+            onValueChange={(val) => setForm({ ...form, assigned_to: parseInt(val) })}>
+              <SelectTrigger>
+                <SelectValue placeholder="select recruiter"/>
+              </SelectTrigger>
+              <SelectContent>
+                {recruiters.length > 0 ? (
+                  recruiters.map((recruiter) => (
+                    <SelectItem key={recruiter.id} value={recruiter.id.toString()}>
+                      {recruiter.name}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="no recruiters" disabled>No recruiters found</SelectItem>
+                )}
               </SelectContent>
             </Select>
           </div>

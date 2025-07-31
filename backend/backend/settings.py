@@ -29,7 +29,9 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'https://95d9d1f563f5.ngrok-free.app',]
+    'host.docker.internal',
+    'https://95d9d1f563f5.ngrok-free.app',
+    ]
 
 
 # Application definition

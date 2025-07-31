@@ -22,7 +22,7 @@ export default function ViewCandidates() {
   console.log(filteredJobs);
 
   return (
-    <div className="flex flex-col items-center justify-start h-auto w-full py-10 px-10">
+    <div className="flex flex-col items-center justify-start h-auto w-full pt-4 pb-10 px-4">
       <div className="w-full flex justify-between items-center">
         <h2 className="text-3xl font-poppins-semibold mb-6">View Candidates</h2>
       </div>

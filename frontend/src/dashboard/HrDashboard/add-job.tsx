@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useHrStore } from "./hr-store";
 import { useAuthStore } from "../../Login/useAuthStore";
 
-// Zod schema for validation
+// Fixed Zod schema - added missing fields
 const jobSchema = z.object({
   industry: z.string().min(1, "Industry is required"),
   role: z.string().min(1, "Role is required"),
@@ -21,10 +21,25 @@ const jobSchema = z.object({
   education: z.string().min(1, "Education is required"),
   skills: z.string().min(1, "Skills are required"),
   experience: z.string().min(1, "Experience is required"),
-  jobType: z.string().min(1, "Job type is required"),
+  assignTo: z.string().min(1, "Please assign to a recruiter"), // Added validation
+  jobType: z.string().min(1, "Job type is required"), // Added validation
 });
 
-type JobForm = z.infer<typeof jobSchema>;
+// Fixed type - added missing fields
+type JobForm = {
+  industry: string;
+  role: string;
+  description: string;
+  location: string;
+  salary: string;
+  salaryCurrency: string;
+  salaryPeriod: string;
+  education: string;
+  skills: string;
+  experience: string;
+  assignTo: string;
+  jobType: string;
+};
 
 export default function AddJob() {
   const [form, setForm] = useState<JobForm>({
@@ -38,6 +53,7 @@ export default function AddJob() {
     education: "",
     skills: "",
     experience: "",
+    assignTo: "",
     jobType: "",
   });
 
@@ -46,6 +62,14 @@ export default function AddJob() {
   // Get addJob function and loading state from HR store
   const addJob = useHrStore((state) => state.addJob);
   const loading = useHrStore((state) => state.loading);
+  const recruiters = useHrStore((state) => state.recruiters);
+  const fetchRecruiters = useHrStore((state) => state.fetchRecruiters);
+
+  useEffect(() => {
+    if (fetchRecruiters) {
+      fetchRecruiters();
+    }
+  }, [fetchRecruiters]);
   
   // Get auth user for posted_by field
   const authUser = useAuthStore((state) => state.authUser);
@@ -85,20 +109,18 @@ export default function AddJob() {
         role: form.role,
         description: form.description,
         location: form.location,
-        salary: form.salary, // Convert to number
+        salary: form.salary,
         salary_currency: form.salaryCurrency,
         salary_period: form.salaryPeriod,
         education_level: form.education,
         skills: form.skills,
         experience_level: form.experience,
-        posted_by: authUser.user_id, // Safe to use after null check
-        assigned_to: 5, // Will be assigned later
+        posted_by: authUser.user_id,
+        assigned_to: parseInt(form.assignTo), // Fixed: use form.assignTo and convert to number
         is_active: true,
-        job_type: form.jobType, // Use form value instead of hardcoded "Full-time"
-        date_posted: currentDate, // Format as YYYY-MM-DD
+        job_type: form.jobType, // Fixed: use form.jobType instead of hardcoded value
+        date_posted: currentDate,
       };
-
-      console.log("Submitting job data:", jobData);
 
       await addJob(jobData);
       
@@ -114,6 +136,7 @@ export default function AddJob() {
         education: "",
         skills: "",
         experience: "",
+        assignTo: "",
         jobType: "",
       });
       setErrors({});
@@ -123,8 +146,8 @@ export default function AddJob() {
     }
   };
 
-  return (
-    <div className="flex items-center justify-center w-full">
+    return (
+    <div className="flex items-center justify-center w-full pb-8">
       <form className="flex flex-col gap-5 md:w-[95%] w-[90%] font-inter-regular mt-8" onSubmit={handleSubmit}>
         <h2 className="text-3xl text-left font-poppins-semibold mb-2">Add New Job</h2>
 
@@ -170,13 +193,19 @@ export default function AddJob() {
         {/* Location */}
         <div className="flex flex-col gap-1">
           <Label>Location</Label>
-          <Input
-            placeholder="e.g. Remote, New York"
+          <Select
             value={form.location}
-            onChange={e => handleChange("location", e.target.value)}
-            className="bg-white"
-            disabled={loading}
-          />
+            onValueChange={val => handleChange("location", val)}
+            disabled={loading}  
+          >
+            <SelectTrigger className="!bg-white !w-full !border-gray-200">
+              <SelectValue placeholder="Select location" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Remote">Remote</SelectItem>
+              <SelectItem value="On-site">Onsite</SelectItem>
+            </SelectContent>
+          </Select>
           {errors.location && <span className="text-red-600 text-xs">{errors.location}</span>}
         </div>
 
@@ -234,26 +263,6 @@ export default function AddJob() {
           {errors.salaryPeriod && <span className="text-red-600 text-xs">{errors.salaryPeriod}</span>}
         </div>
 
-        {/* Job Type */}
-        <div className="flex flex-col gap-1">
-          <Label>Job Type</Label>
-          <Select
-            value={form.jobType}
-            onValueChange={val => handleChange("jobType", val)}
-            disabled={loading}
-          >
-            <SelectTrigger className="!bg-white !w-[30%] !border-gray-200">
-              <SelectValue placeholder="Select job type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Full-time">Full-time</SelectItem>
-              <SelectItem value="Part-time">Part-time</SelectItem>
-              <SelectItem value="Contract">Contract</SelectItem>
-            </SelectContent>
-          </Select>
-          {errors.jobType && <span className="text-red-600 text-xs">{errors.jobType}</span>}
-        </div>
-
         {/* Education */}
         <div className="flex flex-col gap-1">
           <Label>Education</Label>
@@ -280,6 +289,52 @@ export default function AddJob() {
           {errors.skills && <span className="text-red-600 text-xs">{errors.skills}</span>}
         </div>
 
+        {/* Assign to - FIXED */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="assignTo">Assign To</Label>
+          <Select
+            value={form.assignTo}
+            onValueChange={val => handleChange("assignTo", val)}
+            disabled={loading}
+          >
+            <SelectTrigger id="assignTo" className="w-full !bg-white !border-gray-200 !text-primary !text-sm">
+              <SelectValue placeholder="Select Recruiter" />
+            </SelectTrigger>
+            <SelectContent>
+              {recruiters && recruiters.length > 0 ? (
+                recruiters.map((recruiter) => (
+                  <SelectItem key={recruiter.id} value={recruiter.id.toString()}>
+                    {recruiter.name}
+                  </SelectItem>
+                ))
+              ) : (
+                <div className="p-2 text-sm text-gray-500">No recruiters found</div>
+              )}
+            </SelectContent>
+          </Select>
+          {errors.assignTo && <span className="text-red-600 text-xs">{errors.assignTo}</span>}
+        </div>
+
+        {/* Job Type */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="jobType">Job Type</Label>
+          <Select
+            value={form.jobType}
+            onValueChange={val => handleChange("jobType", val)}
+            disabled={loading}
+          >
+            <SelectTrigger id="jobType" className="w-full !bg-white !border-gray-200 !text-primary !text-sm">
+              <SelectValue placeholder="Select Job Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Contract">Contract</SelectItem>
+              <SelectItem value="Full-time">Full Time</SelectItem>
+              <SelectItem value="Part-time">Part Time</SelectItem>
+            </SelectContent>
+          </Select>
+          {errors.jobType && <span className="text-red-600 text-xs">{errors.jobType}</span>}
+        </div>
+
         {/* Experience */}
         <div className="flex flex-col gap-1">
           <Label>Experience</Label>
@@ -292,9 +347,9 @@ export default function AddJob() {
           />
           {errors.experience && <span className="text-red-600 text-xs">{errors.experience}</span>}
         </div>
-
-        <Button
-          type="submit"
+        
+        <Button 
+          type="submit" 
           className="!bg-blue w-[120px] mt-2"
           disabled={loading}
         >

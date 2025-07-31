@@ -5,3 +5,4 @@ celery==5.4.0
 django-prometheus
 pandas==2.2.2 
 xlsxwriter==3.2.0
+requests==2.32.3
