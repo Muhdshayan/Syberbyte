@@ -15,7 +15,7 @@ interface CandidateProfileCardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   candidate: Candidate;
-  
+  id: number; 
   onReject?: () => void;
   referToHr?: () => void;
   Shortlist?: () => void;
@@ -25,6 +25,7 @@ export default function CandidateProfileCard({
   open,
   onOpenChange,
   candidate,
+  id,
   onReject,
   referToHr,
   Shortlist
@@ -40,9 +41,9 @@ export default function CandidateProfileCard({
     setCurrentPage(page => Math.min(numPages, page + 1));
   };
   const pdfUrl = "/resume.pdf";
+  console.log("candidate props id:", id)
   
   if (!open) return null;
-  
   return (
     <Card className="w-full shadow-lg p-6 relative animate-in fade-in font-inter-regular">
       <div className="flex justify-between items-start">
@@ -143,7 +144,7 @@ export default function CandidateProfileCard({
         
         {permission === 3 && (
           <FeedbackDialog 
-            candidateId={candidate.id}
+            candidateId={id}
             jobId={candidate.jobId}
             candidateName={candidate.name}
             currentScore={candidate.score}

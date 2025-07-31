@@ -25,7 +25,7 @@ export default function ActiveJobs() {
         : [];
 
     return (
-        <div className="flex flex-col mt-5 justify-start items-center w-full ">
+        <div className="flex flex-col mt-5 justify-start items-center w-full pb-8">
             <HrDashboardCards/>
             <div className="flex md:w-[98%] w-[90%] items-center justify-between py-4">
                 <h2 className="text-3xl font-poppins-semibold">Active Jobs</h2>

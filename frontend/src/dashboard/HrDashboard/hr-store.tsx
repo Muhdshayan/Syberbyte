@@ -320,7 +320,6 @@ export const useHrStore = create<hrStore>((set, get) => ({
     }
   },
   submitFeedback: async (feedbackData) => {
-    set({ loading: true, error: null });
     try {
       console.log("Submitting feedback with data:", feedbackData);
 
@@ -330,9 +329,9 @@ export const useHrStore = create<hrStore>((set, get) => ({
         feedback_text: feedbackData.feedback,
         suggested_score: feedbackData.correctScore,
       });
+      console.log("response:",res)
 
       if (res.status === 200 || res.status === 201) {
-        set({ loading: false, error: null });
         toast.success("Feedback submitted successfully!");
         console.log("Feedback submitted successfully:", res.data);
       } else {

@@ -114,7 +114,6 @@ const filteredCandidates = selectedFilter
   useEffect(() => {
     fetchCandidates();
   }, [fetchCandidates]);
-
   return (
     <div className="p-4 pb-1 w-screen flex flex-col gap-4">
       <div className="flex flex-row justify-between w-full gap-4">
@@ -247,6 +246,7 @@ const filteredCandidates = selectedFilter
                 <CandidateProfileDialog
                   open={openProfile !== null}
                   onOpenChange={(open) => !open && setOpenProfile(null)}
+                  id={selectedCandidate.candidate_id}
                   candidate={selectedCandidate}
                   onReject={() => handleReject(selectedCandidate?.candidate_id, selectedCandidate?.jobId)}
                   Shortlist={() => handleShortlist(selectedCandidate?.candidate_id, selectedCandidate?.jobId)}
@@ -258,6 +258,7 @@ const filteredCandidates = selectedFilter
                   <CandidateProfileDialog
                     open={openProfile !== null}
                     onOpenChange={(open) => !open && setOpenProfile(null)}
+                    id={selectedCandidate.candidate_id}
                     candidate={selectedCandidate}
                     onReject={() => handleReject(selectedCandidate?.candidate_id, selectedCandidate?.jobId)}
                     Shortlist={() => handleShortlist(selectedCandidate?.candidate_id, selectedCandidate?.jobId)}

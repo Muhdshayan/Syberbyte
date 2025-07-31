@@ -147,7 +147,7 @@ export default function AddJob() {
   };
 
     return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center w-full pb-8">
       <form className="flex flex-col gap-5 md:w-[95%] w-[90%] font-inter-regular mt-8" onSubmit={handleSubmit}>
         <h2 className="text-3xl text-left font-poppins-semibold mb-2">Add New Job</h2>
 

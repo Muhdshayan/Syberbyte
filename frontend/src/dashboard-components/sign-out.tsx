@@ -31,9 +31,6 @@ export default function SignOutDialog({ children }: SignOutDialogProps) {
     localStorage.removeItem('authToken');
     sessionStorage.clear();
     
-    // Show success message
-    toast.success("Signed out successfully");
-    
     // Redirect to login page
     navigate("/");
     
