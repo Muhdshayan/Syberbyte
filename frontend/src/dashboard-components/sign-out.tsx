@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useAuthStore } from "@/Login/useAuthStore";
-import { toast } from "sonner";
 
 interface SignOutDialogProps {
   children?: React.ReactNode;

@@ -17,7 +17,6 @@ import { Toaster } from "sonner";
 import { useAuthStore } from "@/Login/useAuthStore" // Update with your actual store path
 import FinalScreeningPage from "./dashboard/HrDashboard/final-screening"
 import AddJob from "./dashboard/HrDashboard/add-job"
-import Demo from "./dashboard-components/demo"
 
 
 // Protected Route Component
@@ -61,7 +60,6 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Login/>} />
-        <Route path="/demo" element={ <Demo />} />
         <Route path="/dashboard" element={<DashboardLayout/>}>
           {/* Default dashboard route - redirects based on permission */}
           <Route index element={<DashboardRedirect />} />
