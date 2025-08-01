@@ -27,7 +27,6 @@ const menu: Record<string, MenuItem[]> = {
     { label: "User management", icon: <Users className="w-6 h-6 text-green" />,  to:"/dashboard/admin"},
     { label: "Job category management", icon: <Briefcase className="w-6 h-6 text-green" />, to:"/dashboard/admin/job-category-management" },
     { label: "System health moniter", icon: <BarChart className="w-6 h-6 text-green" />, to:"http://localhost:3000/d/Kbq9jQmiz/docker-and-system-monitoring", newTab:true },
-    { label: "AI performance metrics", icon: <Brain className="w-6 h-6 text-green" />, to:"/dashboard/admin/ai-performance-metrics" },
     { label: "Sign out", icon: <LogOut className="w-6 h-6 text-green" />, isSignOut: true },
   ],
   recruiter: [
