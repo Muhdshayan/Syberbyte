@@ -1,32 +1,37 @@
 [
   {
-    "file": "1_3_20250731_011520_366561.pdf",
-    "name": "Abdul Rehman Shahid",
-    "phone": "03334256116",
-    "email": "abdulrehmanshahidu580@gmail.com",
+    "file": "9_4_20250801_000716_721283.pdf",
+    "name": "Muhammad Hamza Nadeem",
+    "phone": "+923035386655",
+    "email": "hamzaatwork2000@gmail.com",
     "github": "Not found",
-    "linkedin": "https://www.linkedin.com/in/abdul-rehman-042129248/",
+    "linkedin": "https://linkedin.com/in/hamza-nadeem2000",
     "education": {
-      "institute": "Lahore School Of Economics",
-      "degree": "BBA",
-      "year": "September 2023 – Present"
+      "institute": "FAST NUCES",
+      "degree": "Bachelor of Science in Computer Science",
+      "year": "Aug. 2022 –Present"
     },
     "skills": {
       "technical_skills": {
-        "Python": 0,
-        "JavaScript": 60,
-        "Digital Marketing Tools": 80,
-        "SEO": 70
+        "Python": 75,
+        "JavaScript": 80,
+        "C++": 60,
+        "React.js": 85,
+        "HTML": 80,
+        "CSS": 80,
+        "Django Rest Framework": 75,
+        "Tailwind": 70,
+        "MUI": 70,
+        "Git/Github": 90,
+        "Mongo DB": 75,
+        "SQL": 75
       },
       "soft_skills": {
-        "Leadership": 0,
-        "Communication": 80,
-        "Customer Service": 80,
-        "Data Analysis": 80,
-        "Teamwork": 80
+        "Leadership": 60,
+        "Communication": 80
       }
     },
-    "years_of_experience": 2.5,
-    "media_id": "3"
+    "years_of_experience": 3.5,
+    "media_id": "4"
   }
 ]

@@ -1,0 +1,30 @@
+[
+    {
+        "title": "Devops",
+        "level": "1+",
+        "employment_type": "Full-time",
+        "location": "On-site",
+        "location_type": "On-site",
+        "required_skills": {
+            "technical_skills": {
+                "Docekr": 3,
+                "git": 3,
+                "kubernetes": 3
+            },
+            "soft_skills": {
+                "Communication": 5,
+                "Creativity": 4,
+                "Leadership": 4,
+                "Strategic Thinking": 4
+            }
+        },
+        "experience": "1+",
+        "education_level": "Computer Science",
+        "salary_range": "PKR 15000.00",
+        "important_skills": [
+            "Docekr",
+            "git",
+            "kubernetes"
+        ]
+    }
+]
