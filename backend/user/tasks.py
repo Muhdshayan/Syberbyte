@@ -109,7 +109,7 @@ def parse_cv_task():
             try:
                 response = requests.post(
                     "http://fastapi:5000/feedback",
-                    data=json.dumps(fb.text),
+                    data=json.dumps(fb.feedback),
                     headers={"Content-Type": "application/json"},
                     timeout=10
                 )

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { LayoutGrid } from "lucide-react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { useHrStore } from "./hr-store";
-import { useEffect, useState} from "react"; 
+import { useEffect, useState } from "react";
 import CandidatesScoreCard from "@/dashboard-components/candidates-score-card";
 import CandidateProfileDialog from "@/dashboard-components/candidate-profile-dailog";
 import { Button } from "@/components/ui/button";
@@ -27,9 +27,9 @@ export default function FinalScreeningPage() {
   const { JobId } = useParams();
   const [openProfile, setOpenProfile] = useState<any>(null);
   const [selectedFilter, setSelectedFilter] = useState<number | null>(null);
-  
+
   const {
-    updateCandidateStatusLocally, 
+    updateCandidateStatusLocally,
     editCandidates,
     hasUnsavedChanges,
     changedCandidates,
@@ -39,39 +39,39 @@ export default function FinalScreeningPage() {
   } = useHrStore();
   type CandidateStatus = 'final_screening' | 'initial_screening' | 'rejected_by_hr' | string;
 
-const finalScreeningCandidates = candidates.filter(candidate => 
-  candidate.jobId == JobId && candidate.status != "not_selected" && candidate.status != "rejected"
-);
+  const finalScreeningCandidates = candidates.filter(candidate =>
+    candidate.jobId == JobId && candidate.status != "not_selected" && candidate.status != "rejected"
+  );
 
-const sortCandidates = (candidates: any[], isFiltered: boolean) => {
-  return candidates.sort((a, b) => {
-    if (isFiltered) {
-      if (a.score !== b.score) {
-        return b.score - a.score;
+  const sortCandidates = (candidates: any[], isFiltered: boolean) => {
+    return candidates.sort((a, b) => {
+      if (isFiltered) {
+        if (a.score !== b.score) {
+          return b.score - a.score;
+        }
+        const statusPriority: Record<string, number> = {
+          final_screening: 3,
+          initial_screening: 2,
+          rejected_by_hr: 1
+        };
+        return (statusPriority[b.status as CandidateStatus] || 0) - (statusPriority[a.status as CandidateStatus] || 0);
+      } else {
+        // Default: Status priority first, then score
+        const statusPriority: Record<string, number> = {
+          final_screening: 3,
+          initial_screening: 2,
+          rejected_by_hr: 1
+        };
+        const statusDiff = (statusPriority[b.status as CandidateStatus] || 0) - (statusPriority[a.status as CandidateStatus] || 0);
+        return statusDiff !== 0 ? statusDiff : b.score - a.score;
       }
-      const statusPriority: Record<string, number> = { 
-        final_screening: 3, 
-        initial_screening: 2, 
-        rejected_by_hr: 1 
-      };
-      return (statusPriority[b.status as CandidateStatus] || 0) - (statusPriority[a.status as CandidateStatus] || 0);
-    } else {
-      // Default: Status priority first, then score
-      const statusPriority: Record<string, number> = { 
-        final_screening: 3, 
-        initial_screening: 2, 
-        rejected_by_hr: 1 
-      };
-      const statusDiff = (statusPriority[b.status as CandidateStatus] || 0) - (statusPriority[a.status as CandidateStatus] || 0);
-      return statusDiff !== 0 ? statusDiff : b.score - a.score;
-    }
-  });
-};
+    });
+  };
 
-// Apply filter and sorting
-const filteredCandidates = selectedFilter 
-  ? sortCandidates([...finalScreeningCandidates], true).slice(0, selectedFilter)
-  : sortCandidates([...finalScreeningCandidates], false);
+  // Apply filter and sorting
+  const filteredCandidates = selectedFilter
+    ? sortCandidates([...finalScreeningCandidates], true).slice(0, selectedFilter)
+    : sortCandidates([...finalScreeningCandidates], false);
   const selectedCandidate = filteredCandidates.find(c => c.candidate_id === openProfile);
 
   const handleReject = (candidateId: number, jobId: number) => {
@@ -96,14 +96,14 @@ const filteredCandidates = selectedFilter
 
   const handleSaveChanges = async () => {
     try {
-      const changedCandidatesList = candidates.filter(candidate => 
+      const changedCandidatesList = candidates.filter(candidate =>
         changedCandidates.has(`${candidate.candidate_id}-${candidate.jobId}`)
       );
 
       console.log("Saving changed candidates:", changedCandidatesList);
       await editCandidates(changedCandidatesList);
       resetUnsavedChanges();
-      
+
       toast.success(`Successfully saved ${changedCandidatesList.length} candidate updates`);
     } catch (error) {
       console.error("Error saving changes:", error);
@@ -117,8 +117,8 @@ const filteredCandidates = selectedFilter
   return (
     <div className="p-4 pb-1 w-screen flex flex-col gap-4">
       <div className="flex flex-row justify-between w-full gap-4">
-          {/* Filter Dropdown */}
-          <div className="flex md:flex-row flex-col  md:items-center items-start gap-2">
+        {/* Filter Dropdown */}
+        <div className="flex md:flex-row flex-col  md:items-center items-start gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="bg-blue text-white font-inter-regular hover:scale-105 gap-2">
@@ -156,88 +156,89 @@ const filteredCandidates = selectedFilter
             disabled={loading}
             className="bg-green text-white font-inter-regular hover:scale-105 transition-all duration-200"
           >
-             {loading ? (
+            {loading ? (
               <>
                 generating
               </>
             ) : "Download Excel"}
 
           </Button>
-          </div>
-          <Button 
-            className={`bg-gradient-to-bl from-green to-blue text-white font-inter-regular hover:scale-105 transition-all duration-200 ${
-              !hasUnsavedChanges ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-            disabled={!hasUnsavedChanges}
-            onClick={handleSaveChanges}
-          >
-            Save Changes {hasUnsavedChanges && changedCandidates ? `(${changedCandidates.size})` : ''}
-          </Button>
         </div>
-        <Card className="w-full shadow">
-            <CardHeader className="flex flex-row items-center gap-2 pb">
-              <LayoutGrid className="w-5 h-5" />
-              <CardTitle className="text-lg font-semibold">Comparison Matrix</CardTitle>
-            </CardHeader>
-            <CardContent className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="font-semibold">Candidate</TableHead>
-                    <TableHead className="font-semibold">Technical</TableHead>
-                    <TableHead className="font-semibold">Experience</TableHead>
-                    <TableHead className="font-semibold">Cultural</TableHead>
+        <Button
+          className={`bg-gradient-to-bl from-green to-blue text-white font-inter-regular hover:scale-105 transition-all duration-200 ${!hasUnsavedChanges ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          disabled={!hasUnsavedChanges}
+          onClick={handleSaveChanges}
+        >
+          Save Changes {hasUnsavedChanges && changedCandidates ? `(${changedCandidates.size})` : ''}
+        </Button>
+      </div>
+      <Card className="w-full shadow">
+        <CardHeader className="flex flex-row items-center gap-2 pb">
+          <LayoutGrid className="w-5 h-5" />
+          <CardTitle className="text-lg font-semibold">Comparison Matrix</CardTitle>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold">Candidate</TableHead>
+                <TableHead className="font-semibold">Technical</TableHead>
+                <TableHead className="font-semibold">Experience</TableHead>
+                <TableHead className="font-semibold">Cultural</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredCandidates.length > 0 ? (
+                filteredCandidates.slice(0, 5).map((candidate, idx) => (
+                  <TableRow key={candidate.candidate_id ?? idx}>
+                    <TableCell className="font-medium" align="left">{candidate.name}</TableCell>
+                    <TableCell align="left">{candidate.breakdown?.technical ?? 'N/A'}</TableCell>
+                    <TableCell align="left">{candidate.breakdown?.experience ?? 'N/A'}</TableCell>
+                    <TableCell align="left">{candidate.breakdown?.cultural ?? 'N/A'}</TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCandidates.length > 0 ? (
-                    filteredCandidates.slice(0, 5).map((candidate, idx) => (
-                      <TableRow key={candidate.candidate_id ?? idx}>
-                        <TableCell className="font-medium" align="left">{candidate.name}</TableCell>
-                        <TableCell align="left">{candidate.breakdown?.technical ?? 'N/A'}</TableCell>
-                        <TableCell align="left">{candidate.breakdown?.experience ?? 'N/A'}</TableCell>
-                        <TableCell align="left">{candidate.breakdown?.cultural ?? 'N/A'}</TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center text-gray-500">
-                        No candidates in final screening for Job ID: {JobId}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center text-gray-500">
+                    No candidates in final screening for Job ID: {JobId}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
       <div className="flex flex-col items-end justify-center w-full h-full">
         <div className="flex flex-row justify-center w-full pb-4">
           {/* Score Cards */}
           <div
-            className={`flex flex-col gap-2 items-start justify-start transition-all duration-300 ${
-              openProfile !== null ? "md:w-1/2 w-full h-[90vh] overflow-y-scroll p-2 pb-4" : "w-full"
-            }`}
+            className={`flex flex-col gap-2 items-start justify-start transition-all duration-300 ${openProfile !== null ? "md:w-1/2 w-full h-[90vh] overflow-y-scroll p-2 pb-4" : "w-full"
+              }`}
           >
             {loading ? (
               <Loading />
             ) : filteredCandidates.length > 0 ? (
               // Show filtered candidates when data is available
-              filteredCandidates.map((candidate) => (
-                <CandidatesScoreCard
-                  key={`${candidate.candidate_id}-${candidate.status}`}
-                  name={candidate.name}
-                  status={candidate.status}
-                  score={candidate.score}
-                  recommendation={candidate.recommendation}
-                  onViewProfile={() => setOpenProfile(candidate.candidate_id)}
-                />
-              ))
+              filteredCandidates.map((candidate) => {
+                console.log("Debug candidate_id:", candidate.candidate_id); // <-- Debug here
+                return (
+                  <CandidatesScoreCard
+                    key={`${candidate.candidate_id}-${candidate.status}`}
+                    name={candidate.name}
+                    status={candidate.status}
+                    score={candidate.score}
+                    recommendation={candidate.recommendation}
+                    onViewProfile={() => setOpenProfile(candidate.candidate_id)}
+                  />
+                );
+              })
             ) : (
               // Show NoData component when no candidates found
               <NoData title="No candidates assigned to this job." />
             )}
           </div>
-          
+
           {/* Side Dialog */}
           {openProfile !== null && selectedCandidate && (
             <>

@@ -42,7 +42,8 @@ export default function CandidateProfileCard({
   };
   const pdfUrl = "/resume.pdf";
   console.log("candidate props id:", id)
-  
+  console.log(candidate.cv)
+
   if (!open) return null;
   return (
     <Card className="w-full shadow-lg p-6 relative animate-in fade-in font-inter-regular">

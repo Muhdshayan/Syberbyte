@@ -25,6 +25,7 @@ export interface Candidate {
   application_id: any;
   candidate_id: any;
   jobId: any;
+  cv:string;
   name: string;
   score: number;
   status: string;
@@ -227,6 +228,7 @@ export const useHrStore = create<hrStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await axios.get<Candidate[]>("http://localhost:8000/api/jobapplication/");
+      console.log(res)
       if (!res.data || !Array.isArray(res.data)) {
         throw new Error("Invalid data format");
       }
@@ -235,6 +237,7 @@ export const useHrStore = create<hrStore>((set, get) => ({
         candidate_id: item.candidate.candidate_id,
         application_id: item.application_id,
         jobId: item.job.job_id,
+        cv:item.cv,
         status: item.status,
         name: item.candidate.name,
         score: item.score ?? 0,
