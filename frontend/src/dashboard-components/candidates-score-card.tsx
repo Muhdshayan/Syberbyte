@@ -57,12 +57,7 @@ function formatStatus(status: string) {
        {score}/100
       </span>
     </div>
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between mt-2 gap-2">
-      <p className="font-inter-regular text-secondary text-left text-sm">
-        <span className="font-inter-medium text-primary text-md mr-2">AI Recommendation:</span>
-        {recommendation}
-      </p>
-      
+    <div className="flex flex-col md:flex-row md:items-center md:justify-end mt-2 gap-2">
       <Button 
       
         className="!bg-blue !text-sm hover:!bg-blue-700 hover:scale-105 transition-all duration-200" 
@@ -72,6 +67,5 @@ function formatStatus(status: string) {
       </Button>
     </div>
   </Card>
-
   );
 }
