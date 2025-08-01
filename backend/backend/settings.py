@@ -149,4 +149,5 @@ CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
-
+TIME_ZONE = 'Asia/Karachi'    
+USE_TZ = False  

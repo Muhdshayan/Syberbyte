@@ -13,7 +13,7 @@ from .models import (
 import logging
 import re
 import json
-
+from datetime import datetime
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -35,6 +35,8 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid email or password.")
 
         data['user'] = user
+        user.time =  datetime.now()
+        user.save(update_fields=["time"])
         return data
 
 class CVUploadSerializer(serializers.ModelSerializer):
@@ -306,7 +308,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
         queryset=JobDetail.objects.all(), source='job', write_only=True
     )
     media_id = serializers.IntegerField(required=False, default=0, write_only=True)
-    cv = serializers.SerializerMethodField(read_only=True)
+    cv = serializers.SerializerMethodField(read_only=True)  # Only shown in GET
 
     class Meta:
         model = JobApplication
@@ -317,67 +319,56 @@ class JobApplicationSerializer(serializers.ModelSerializer):
         ]
 
     def get_cv(self, obj):
-        # Fetch the MediaUpload object using media_id and return the cv URL
+        """Return CV URL in GET using media_id."""
         if obj.media_id:
             try:
                 media = MediaUpload.objects.get(media_id=obj.media_id)
-                return media.cv.url  # Returns the URL of the CV file
+                return media.cv.url if media.cv else None
             except MediaUpload.DoesNotExist:
                 return None
         return None
 
     def to_internal_value(self, data):
-        print("=== JobApplicationSerializer to_internal_value ===")
-        print("Raw input data: %s", data)
-        print("media_id in raw data: %s", data.get('media_id'))
-        print("Type of media_id in raw data: %s", type(data.get('media_id')))
-
         processed_data = data.copy()
-        if 'media_id' in processed_data and processed_data['media_id'] is not None:
+
+        if 'media_id' in processed_data:
             try:
-                # Ensure media_id is an integer and corresponds to an existing MediaUpload
                 media_id = int(processed_data['media_id'])
-                if media_id != 0:  # Only validate if media_id is non-zero
-                    MediaUpload.objects.get(media_id=media_id)
-                print("Validated media_id: %s", media_id)
-            except (ValueError, TypeError):
-                print("Invalid media_id format: %s, setting to 0", processed_data['media_id'])
-                processed_data['media_id'] = 0
-            except MediaUpload.DoesNotExist:
-                print("MediaUpload with media_id=%s does not exist, setting to 0", processed_data['media_id'])
-                processed_data['media_id'] = 0
-        else:
-            print("media_id missing or None in input, setting to 0")
-            processed_data['media_id'] = 0
+                if media_id != 0:
+                    MediaUpload.objects.get(media_id=media_id)  # Validate existence
+                processed_data['media_id'] = media_id
+            except (TypeError, ValueError, MediaUpload.DoesNotExist):
+                processed_data['media_id'] = 0  # Fallback
+        # ⚠️ ELSE: Don't touch media_id if it's not provided
 
-        print("Processed data: %s", processed_data)
-        ret = super().to_internal_value(processed_data)
-        print("Validated internal value: %s", ret)
-        print("media_id in internal value: %s", ret.get('media_id'))
-        print("Type of media_id in internal value: %s", type(ret.get('media_id')))
-        return ret
-
-    def validate(self, data):
-        print("=== JobApplicationSerializer validate ===")
-        print("Validated data: %s", data)
-        print("media_id in validated data: %s", data.get('media_id'))
-        print("Type of media_id in validated data: %s", type(data.get('media_id')))
-        return data
+        return super().to_internal_value(processed_data)
 
     def create(self, validated_data):
-        print("=== JobApplicationSerializer create ===")
-        print("Creating JobApplication with validated data: %s", validated_data)
-        print("media_id in validated data: %s", validated_data.get('media_id'))
-        print("Type of media_id in validated data: %s", type(validated_data.get('media_id')))
-        try:
-            instance = super().create(validated_data)
-            print("Created JobApplication: %s", instance)
-            print("media_id in created instance: %s", instance.media_id)
-            return instance
-        except Exception as e:
-            print("Error creating JobApplication: %s", str(e))
-            raise
-                
+        """On POST: fetch MediaUpload and set JobApplication.cv."""
+        media_id = validated_data.get('media_id')
+        cv_file = None
+
+        if media_id:
+            try:
+                media = MediaUpload.objects.get(media_id=media_id)
+                cv_file = media.cv
+            except MediaUpload.DoesNotExist:
+                pass
+
+        job_app = JobApplication.objects.create(
+            job=validated_data['job'],
+            candidate=validated_data['candidate'],
+            media_id=media_id,
+            cv=cv_file,
+            status=validated_data.get('status', 'not_selected'),
+            score=validated_data.get('score'),
+            ai_recommendation=validated_data.get('ai_recommendation'),
+            technical_score=validated_data.get('technical_score'),
+            experience_score=validated_data.get('experience_score'),
+            cultural_score=validated_data.get('cultural_score')
+        )
+        return job_app
+
 class FeedbackSerializer(serializers.ModelSerializer):
     candidate_id = serializers.PrimaryKeyRelatedField(
         queryset=Candidate.objects.all(), source='candidate', write_only=True

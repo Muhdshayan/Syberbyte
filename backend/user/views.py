@@ -253,7 +253,18 @@ class JobApplicationUpdateView(APIView):
                     continue
 
                 app = JobApplication.objects.get(application_id=app_id)
+
+                # If media_id is being updated, fetch cv from MediaUpload
+                media_id = item.get('media_id')
+                if media_id:
+                    try:
+                        media = MediaUpload.objects.get(media_id=media_id)
+                        item['cv'] = media.cv  # Overwrite cv in update payload
+                    except MediaUpload.DoesNotExist:
+                        logger.warning(f"MediaUpload with id={media_id} does not exist. cv will not be updated.")
+
                 serializer = JobApplicationSerializer(app, data=item, partial=True)
+
                 if serializer.is_valid():
                     serializer.save()
                     updated.append(serializer.data)

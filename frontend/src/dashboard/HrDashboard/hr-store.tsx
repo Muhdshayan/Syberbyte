@@ -304,8 +304,10 @@ export const useHrStore = create<hrStore>((set, get) => ({
     });
   },
   editCandidates: async (updatedCandidates: Candidate[]) => {
+
     set({ loading: true, error: null });
     try {
+      console.log(updatedCandidates)
       const res = await axios.put("http://localhost:8000/api/jobapplication/update/", updatedCandidates);
       if (res.status === 200) {
 

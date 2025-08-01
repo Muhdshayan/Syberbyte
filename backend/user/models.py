@@ -161,7 +161,8 @@ class JobApplication(models.Model):
     application_id = models.AutoField(primary_key=True)
     job = models.ForeignKey(JobDetail, on_delete=models.CASCADE, related_name='applications')
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='applications')
-    media_id = models.IntegerField()
+    media_id = models.IntegerField(null=True, blank=True)
+    cv = models.FileField(upload_to='job_applications/', null=True, blank=True)  # <== NEW
     application_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=20,
@@ -175,17 +176,27 @@ class JobApplication(models.Model):
         default='not_selected'
     )
 
-    # New fields
     score = models.FloatField(null=True, blank=True)
     ai_recommendation = models.BooleanField(null=True, blank=True)
     technical_score = models.FloatField(null=True, blank=True)
     experience_score = models.FloatField(null=True, blank=True)
     cultural_score = models.FloatField(null=True, blank=True)
+
     class Meta:
         unique_together = ('job', 'candidate')
 
+    def save(self, *args, **kwargs):
+        if self.media_id and not self.cv:
+            try:
+                media = MediaUpload.objects.get(media_id=self.media_id)
+                self.cv = media.cv
+            except MediaUpload.DoesNotExist:
+                pass  # Optionally log warning here
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.candidate.name} - {self.job.role} ({self.status})"    
+        return f"{self.candidate.name} - {self.job.role} ({self.status})"
 
 class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)

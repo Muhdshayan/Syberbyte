@@ -203,6 +203,7 @@ export const useRecruiterStore = create<RecruiterStore>((set, get) => ({
     editCandidates: async (updatedCandidates: Candidate[]) => {
       set({ loading: true, error: null });
       try {
+        console.log(updatedCandidates)
         const res = await axios.put("http://localhost:8000/api/jobapplication/update/", updatedCandidates);
         console.log(updatedCandidates);
         if (res.status === 200 || res.status === 207) {
