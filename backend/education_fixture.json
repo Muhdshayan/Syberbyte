@@ -1,0 +1,502 @@
+[
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 1,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "UC Berkeley",
+      "start_year": 2018,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 1,
+      "degree_name": "Master's in Cybersecurity",
+      "university_name": "Stanford",
+      "start_year": 2013,
+      "end_year": 2016
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 2,
+      "degree_name": "Bachelor's in Computer Science",
+      "university_name": "Stanford",
+      "start_year": 2016,
+      "end_year": 2020
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 2,
+      "degree_name": "Master's in Data Science",
+      "university_name": "MIT",
+      "start_year": 2017,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 3,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "ETH Zurich",
+      "start_year": 2020,
+      "end_year": 2024
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 3,
+      "degree_name": "Master's in Data Science",
+      "university_name": "MIT",
+      "start_year": 2017,
+      "end_year": 2020
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 4,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "Oxford",
+      "start_year": 2020,
+      "end_year": 2023
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 4,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "NUS",
+      "start_year": 2018,
+      "end_year": 2022
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 5,
+      "degree_name": "Master's in Data Science",
+      "university_name": "Stanford",
+      "start_year": 2017,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 5,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "NUS",
+      "start_year": 2019,
+      "end_year": 2022
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 6,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "Oxford",
+      "start_year": 2014,
+      "end_year": 2017
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 6,
+      "degree_name": "Master's in Data Science",
+      "university_name": "Cambridge",
+      "start_year": 2018,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 7,
+      "degree_name": "Bachelor's in Computer Science",
+      "university_name": "Stanford",
+      "start_year": 2016,
+      "end_year": 2020
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 7,
+      "degree_name": "Bachelor's in Computer Science",
+      "university_name": "NUS",
+      "start_year": 2015,
+      "end_year": 2018
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 8,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "Oxford",
+      "start_year": 2018,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 8,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "Stanford",
+      "start_year": 2019,
+      "end_year": 2022
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 9,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "Cambridge",
+      "start_year": 2018,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 9,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "Cambridge",
+      "start_year": 2012,
+      "end_year": 2016
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 10,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "Cambridge",
+      "start_year": 2013,
+      "end_year": 2016
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 10,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "NUS",
+      "start_year": 2015,
+      "end_year": 2019
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 11,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "ETH Zurich",
+      "start_year": 2014,
+      "end_year": 2018
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 11,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "Cambridge",
+      "start_year": 2017,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 12,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "MIT",
+      "start_year": 2019,
+      "end_year": 2023
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 12,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "Oxford",
+      "start_year": 2013,
+      "end_year": 2016
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 13,
+      "degree_name": "Bachelor's in Computer Science",
+      "university_name": "ETH Zurich",
+      "start_year": 2020,
+      "end_year": 2024
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 13,
+      "degree_name": "Bachelor's in Computer Science",
+      "university_name": "UC Berkeley",
+      "start_year": 2020,
+      "end_year": 2024
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 14,
+      "degree_name": "Master's in Data Science",
+      "university_name": "MIT",
+      "start_year": 2018,
+      "end_year": 2022
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 14,
+      "degree_name": "Master's in Cybersecurity",
+      "university_name": "NUS",
+      "start_year": 2013,
+      "end_year": 2016
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 15,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "Cambridge",
+      "start_year": 2015,
+      "end_year": 2018
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 15,
+      "degree_name": "Master's in Data Science",
+      "university_name": "ETH Zurich",
+      "start_year": 2019,
+      "end_year": 2023
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 16,
+      "degree_name": "Master's in Data Science",
+      "university_name": "UC Berkeley",
+      "start_year": 2019,
+      "end_year": 2022
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 16,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "NUS",
+      "start_year": 2015,
+      "end_year": 2019
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 17,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "Oxford",
+      "start_year": 2017,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 17,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "Stanford",
+      "start_year": 2012,
+      "end_year": 2015
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 18,
+      "degree_name": "Master's in Data Science",
+      "university_name": "Harvard",
+      "start_year": 2017,
+      "end_year": 2020
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 18,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "NUS",
+      "start_year": 2020,
+      "end_year": 2023
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 19,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "NUS",
+      "start_year": 2015,
+      "end_year": 2019
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 19,
+      "degree_name": "Master's in Cybersecurity",
+      "university_name": "NUS",
+      "start_year": 2012,
+      "end_year": 2016
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 20,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "UC Berkeley",
+      "start_year": 2020,
+      "end_year": 2024
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 20,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "NUS",
+      "start_year": 2012,
+      "end_year": 2015
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 21,
+      "degree_name": "Bachelor's in Software Engineering",
+      "university_name": "Stanford",
+      "start_year": 2016,
+      "end_year": 2020
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 21,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "Cambridge",
+      "start_year": 2017,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 22,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "MIT",
+      "start_year": 2015,
+      "end_year": 2019
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 22,
+      "degree_name": "Bachelor's in Computer Science",
+      "university_name": "Stanford",
+      "start_year": 2012,
+      "end_year": 2016
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 23,
+      "degree_name": "PhD in Artificial Intelligence",
+      "university_name": "ETH Zurich",
+      "start_year": 2017,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 23,
+      "degree_name": "Master's in Cybersecurity",
+      "university_name": "Harvard",
+      "start_year": 2016,
+      "end_year": 2019
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 24,
+      "degree_name": "Master's in Cybersecurity",
+      "university_name": "MIT",
+      "start_year": 2014,
+      "end_year": 2017
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 24,
+      "degree_name": "Master's in Cybersecurity",
+      "university_name": "Cambridge",
+      "start_year": 2020,
+      "end_year": 2024
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 25,
+      "degree_name": "Bachelor's in Information Systems",
+      "university_name": "MIT",
+      "start_year": 2018,
+      "end_year": 2021
+    }
+  },
+  {
+    "model": "user.education",
+    "fields": {
+      "candidate": 25,
+      "degree_name": "Master's in Data Science",
+      "university_name": "Oxford",
+      "start_year": 2018,
+      "end_year": 2022
+    }
+  }
+]

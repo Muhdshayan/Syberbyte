@@ -9,9 +9,7 @@ ENV PATH="/py/bin:$PATH"
 # Install system dependencies using APT
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    libpq-dev \
     gcc \
-    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Create virtual environment
@@ -24,7 +22,7 @@ WORKDIR /backend
 # Copy and install dependencies
 COPY ./requirements.txt .
 RUN /py/bin/pip install -r requirements.txt
-
+RUN pip install django-system-monitor psutil
 # Copy the project code
 COPY . .
 

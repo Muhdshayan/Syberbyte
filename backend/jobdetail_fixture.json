@@ -1,0 +1,102 @@
+[
+  {
+    "model": "user.jobdetail",
+    "fields": {
+      "industry": "Information Technology",
+      "role": "Backend Developer",
+      "description": "Build and maintain REST APIs using Django.",
+      "location": "Remote",
+      "job_type": "Full-time",
+      "salary": "70000.00",
+      "salary_currency": "USD",
+      "salary_period": "year",
+      "education_level": "Bachelor's in Computer Science",
+      "skills": "Python, Django, REST, PostgreSQL",
+      "experience_level": "2+ years",
+      "date_posted": "2025-07-15T10:00:00Z",
+      "is_active": true,
+      "posted_by": 4,
+      "assigned_to": 5
+    }
+  },
+  {
+    "model": "user.jobdetail",
+    "fields": {
+      "industry": "Healthcare",
+      "role": "Data Analyst",
+      "description": "Analyze medical data and create reports.",
+      "location": "New York",
+      "job_type": "Contract",
+      "salary": "5000.00",
+      "salary_currency": "USD",
+      "salary_period": "month",
+      "education_level": "Master's in Data Science",
+      "skills": "SQL, Excel, PowerBI, R",
+      "experience_level": "1-3 years",
+      "date_posted": "2025-07-12T09:00:00Z",
+      "is_active": true,
+      "posted_by": 4,
+      "assigned_to": 6
+    }
+  },
+  {
+    "model": "user.jobdetail",
+    "fields": {
+      "industry": "E-commerce",
+      "role": "Frontend Engineer",
+      "description": "Work with React and Next.js to build UI.",
+      "location": "San Francisco",
+      "job_type": "Full-time",
+      "salary": "85000.00",
+      "salary_currency": "USD",
+      "salary_period": "year",
+      "education_level": "Bachelor's Degree",
+      "skills": "JavaScript, React, Next.js, Tailwind",
+      "experience_level": "2+ years",
+      "date_posted": "2025-07-10T15:30:00Z",
+      "is_active": true,
+      "posted_by": 4,
+      "assigned_to": 5
+    }
+  },
+  {
+    "model": "user.jobdetail",
+    "fields": {
+      "industry": "Finance",
+      "role": "DevOps Engineer",
+      "description": "Automate CI/CD pipelines for finance platform.",
+      "location": "Chicago",
+      "job_type": "Full-time",
+      "salary": "90000.00",
+      "salary_currency": "USD",
+      "salary_period": "year",
+      "education_level": "Bachelor's in Software Engineering",
+      "skills": "Docker, Jenkins, AWS, Kubernetes",
+      "experience_level": "3-5 years",
+      "date_posted": "2025-07-13T11:45:00Z",
+      "is_active": true,
+      "posted_by": 4,
+      "assigned_to": 5
+    }
+  },
+  {
+    "model": "user.jobdetail",
+    "fields": {
+      "industry": "Education",
+      "role": "AI Research Assistant",
+      "description": "Support AI faculty in research and experiments.",
+      "location": "Boston",
+      "job_type": "Part-time",
+      "salary": "3000.00",
+      "salary_currency": "USD",
+      "salary_period": "month",
+      "education_level": "Enrolled in PhD Program",
+      "skills": "Python, PyTorch, LaTeX, Research Writing",
+      "experience_level": "1+ years research",
+      "date_posted": "2025-07-14T08:00:00Z",
+      "is_active": true,
+      "posted_by": 4,
+      "assigned_to": 6
+    }
+  }
+]

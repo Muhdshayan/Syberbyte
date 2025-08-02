@@ -1,0 +1,68 @@
+[
+  {
+    "model": "user.useraccount",
+    "fields": {
+      "email": "fulladmin@gmail.com",
+      "name": "Hamza",
+      "password": "pbkdf2_sha256$260000$KfKXqfWWs3G4V2ZxExK4TT$UAhDKHzHK2Jr3c+6YXuqRQSEhHOGWJdrTPBCehIaXrE=", 
+      "role": "full_admin",
+      "permission": 10,
+      "time": "2025-07-15T12:00:00Z"
+    }
+  },
+  {
+    "model": "user.useraccount",
+    "fields": {
+      "email": "advanceadadmin@gmail.com",
+      "name": "Rida",
+      "password": "pbkdf2_sha256$260000$2X7u5A0nIkO3qwBgMgLre3$0r5uxnb16r1A5ipd8UR3xF7P1dYYHL1jrdks7Z8COF4=", 
+      "role": "advanced_admin",
+      "permission": 7,
+      "time": "2025-07-15T12:00:00Z"
+    }
+  },
+  {
+    "model": "user.useraccount",
+    "fields": {
+      "email": "basicadadmin@gmail.com",
+      "name": "Shayan",
+      "password": "pbkdf2_sha256$260000$guQRGVOYxwdrTqqWXcdUpK$Ef67GVpEexfOBqOKY/3ZzFhOfsn+6VKXPfuVIfKllOM=", 
+      "role": "basic_admin",
+      "permission": 5,
+      "time": "2025-07-15T12:00:00Z"
+    }
+  },
+  {
+    "model": "user.useraccount",
+    "fields": {
+      "email": "hr@gmail.com",
+      "name": "Wissam",
+      "password": "pbkdf2_sha256$260000$AbUEeiFnBy6NJxUJrZDtCL$Jt8XERbQIKR2Ipjch3YCBV1OyH0MKvlAe1efGzNjh2o=", 
+      "role": "hr_manager",
+      "permission": 3,
+      "time": "2025-07-15T12:00:00Z"
+    }
+  },
+  {
+    "model": "user.useraccount",
+    "fields": {
+      "email": "recruiter1@gmail.com",
+      "name": "Laiba",
+      "password": "pbkdf2_sha256$260000$pyEzMuJdI1GiKZMM9FbgOm$qWckZNaYQzy1wNL9hJZd1Yefik0f84Yp/0PnhhFakDc=", 
+      "role": "recruiter",
+      "permission": 1,
+      "time": "2025-07-15T12:00:00Z"
+    }
+  },
+  {
+    "model": "user.useraccount",
+    "fields": {
+      "email": "recruiter2@gmail.com",
+      "name": "Tamiyah",
+      "password": "pbkdf2_sha256$260000$pyEzMuJdI1GiKZMM9FbgOm$qWckZNaYQzy1wNL9hJZd1Yefik0f84Yp/0PnhhFakDc=", 
+      "role": "recruiter",
+      "permission": 1,
+      "time": "2025-07-15T12:00:00Z"
+    }
+  }
+]
