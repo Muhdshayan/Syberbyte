@@ -1,0 +1,30 @@
+# Core ML and Deep Learning
+torch
+torchvision
+torchaudio
+
+# Sentence Transformers and Embeddings
+sentence-transformers
+transformers
+tokenizers
+
+
+# Vector Database
+chromadb
+
+# Data Processing
+numpy
+pandas
+scikit-learn
+
+# HTTP Requests for Ollama API
+requests
+
+psutil
+tqdm
+docx2txt
+pdfminer.six
+python-docx
+PyMuPDF
+requests
+spacy

@@ -1,0 +1,39 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./models:/models
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    restart: unless-stopped
+    networks:
+      - syberbyte-network
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./resumes:/app/resumes
+      - ./jd:/app/jd
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    networks:
+      - syberbyte-network
+
+volumes:
+  ollama_data:
+
+networks:
+       syberbyte-network:
+         external: true 
