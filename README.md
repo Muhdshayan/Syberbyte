@@ -2,8 +2,16 @@
 
 ## Backend/Frontend Code Setup
 
-1. Navigate to the Syberbyte directory
-2. Run the following command:
+1. Run the following command:
+   ```bash
+   git clone https://github.com/Muhdshayan/Syberbyte.git
+   ```
+2. Navigate to the Syberbyte directory
+3.  Run the following command:
+   ```bash
+   git checkout -b Backend/Hamza origin/Backend/Hamza
+   ```
+4. Run the following command:
    ```bash
    docker compose up --watch --build
    ```
@@ -12,18 +20,27 @@
 
 ### Terminal 1 - Docker Compose Setup
 
-1. Navigate to the `CV_Scoring` directory
-2. Run the following command:
+1. Run the following command:
+   ```bash
+   git clone https://github.com/Muhdshayan/Syberbyte.git
+   ```
+2. Navigate to the Syberbyte directory
+3. Run the following command:
+   ```bash
+   git checkout -b Ai/Wisam origin/Ai/Wisam
+   ```
+4. Navigate to the `CV_Scoring` directory
+4. Run the following command:
    ```bash
    docker compose up --build
    ```
-3. Download the Mistral model from: [https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf)
-4. Place the downloaded model file in `CV_Scoring/models` directory
-5. Open another PowerShell terminal and run:
+5. Download the Mistral model from: [https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf)
+6. Place the downloaded model file in `CV_Scoring/models` directory
+7. Open another PowerShell terminal and run:
    ```bash
    docker exec -it ollama bash
    ```
-6. Run the following command to create the model configuration:
+8. Run the following command to create the model configuration:
    ```bash
    cat > /tmp/Modelfile-mistral <<EOF
    FROM /models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
@@ -36,11 +53,11 @@
    PARAMETER num_predict 200
    EOF
    ```
-7. Create the Mistral model:
+9. Create the Mistral model:
    ```bash
    ollama create mistral -f /tmp/Modelfile-mistral
    ```
-8. Exit the container:
+10. Exit the container:
    ```bash
    exit
    ```
