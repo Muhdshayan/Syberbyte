@@ -7,7 +7,7 @@
    git clone https://github.com/Muhdshayan/Syberbyte.git
    ```
 2. Navigate to the Syberbyte directory
-3.  Run the following command:
+3. Run the following command:
    ```bash
    git checkout -b Backend/Hamza origin/Backend/Hamza
    ```
