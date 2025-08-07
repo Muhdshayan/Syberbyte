@@ -8,8 +8,7 @@ docker exec ollama ls -la /models/
 echo "📥 Creating Mistral model from your local file..."
 
 # Safer heredoc with input redirection (-i)
-docker exec -i ollama bash -c 'cat > /tmp/Modelfile-mistral' << 'EOF'
-FROM /models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
+docker exec -i ollama bash -c 'cat > /tmp/Modelfile-mistral' << 'EOF' FROM /models/Mistral-7B-v0.3.Q3_K_M.gguf
 
 TEMPLATE """<s>[INST] {{ .Prompt }} [/INST]"""
 

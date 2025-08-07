@@ -35,5 +35,5 @@ volumes:
   ollama_data:
 
 networks:
-       syberbyte-network:
-         external: true 
+  syberbyte-network:
+    driver: bridge

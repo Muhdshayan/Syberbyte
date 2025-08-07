@@ -1,0 +1,10 @@
+FROM /models/Mistral-7B-v0.3.Q3_K_M.gguf
+
+TEMPLATE \"\"\"<s>[INST] {{ .Prompt }} [/INST]\"\"\"
+
+PARAMETER temperature 0.1
+PARAMETER top_p 0.9
+PARAMETER stop \"</s>\"
+PARAMETER stop \"[/INST]\"
+PARAMETER stop \"[INST]\"
+PARAMETER num_predict 200

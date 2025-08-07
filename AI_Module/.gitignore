@@ -1,7 +1,7 @@
-models/
+
 venv/
 chromadb/
 penv/
 parsed/
 resumes/
-Step_w_chromadb.py
+models/
