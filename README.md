@@ -122,4 +122,5 @@ and wait for everything to load (takes about 5-10 mins)
 
 ### Your Project is now UP and Running.
 
-1. open the ui and use the application at localhost:5173/
+1. open the ui and use the application by opening the browser and going to the link localhost:5173/
+2. Upload Resumes to see the *MAGIC*
