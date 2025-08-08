@@ -1,32 +1,29 @@
 # Syberbyte Setup Instructions
 
+A. Download and install vscode:
+https://code.visualstudio.com/
 
-A. Download and Install Docker Desktop and Select Windows Container instead of Wsl in the setup.
+B. Download and Install Docker Desktop and Select Windows Container instead of Wsl 2 integration During the setup:
 https://docs.docker.com/desktop/
 
-B. Download and Install Github Desktop and Login on it.
+C. Download and Install Github Desktop and Login on it after installation:
 https://desktop.github.com/download/
 
-C. Start Both Docker and Github Desktop
+D. Download and Install Python3.11 from the Windows Store and tick the 'ADD PATH variables' option if it appears.
 
-D. Cloning:
+E. Start Both Docker and Github Desktop
+
+F. Cloning:
 1. Make a folder to store your project
 2. Go to Github Desktop and From the Top right menu select 'File' and then select 'Clone repository'.
-3. A dialog box will appear, select 'URL' from the options on this dialog box and in the search field paste the URL: https://github.com/Muhdshayan/Syberbyte.git
+3. A dialog box will appear, select 'URL' from the options on this dialog box and in the 'Repository URL or GitHub usemame and repository' field paste the URL: https://github.com/Muhdshayan/Syberbyte.git
 4. In the bottom of the box select the path of the folder you made to store your project.
-5. Click Clone. 
+5. Click Clone and wait for it to complete.
+6. Now from the options click 
 
 . ## Backend/Frontend Code Setup
+
 1. Run the following command:
-   ```bash
-   git clone https://github.com/Muhdshayan/Syberbyte.git
-   ```
-2. Navigate to the Syberbyte directory
-3. Run the following command:
-   ```bash
-  
-   ```
-4. Run the following command:
    ```bash
    docker compose up --watch --build
    ```
