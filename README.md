@@ -110,12 +110,18 @@ and wait for everything to load (takes about 5-10 mins)
    ```bash
    python -m spacy download en_core_web_sm
    ```
-3. Install requirements by writing the following command in terminal:
+3. Install requirements by writing the following commands in terminal:
+   ```bash
+   python -m venv venv
+   ```
+   ```bash
+   venv\Scripts\Activate.ps1
+   ```
    ```bash
    pip install -r req.txt
    ```
    
-4. Run the application:
+5. Run the application:
    ```bash
    python run_both.py
    ```
