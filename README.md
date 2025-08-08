@@ -60,52 +60,66 @@ and wait for everything to load (takes about 5-10 mins)
    ```
 4. In the project folder create a new folder named 'models'.   
 5. Download the Mistral model from: https://huggingface.co/bartowski/Mistral-7B-Instruct-v0.3-GGUF?show_file_info=Mistral-7B-Instruct-v0.3-Q3_K_M.gguf and place it in that folder.
+
+
+### NEW TERMINAL
 6. In the terminal header click on the '+' option and a new terminal is created.
 7. In this new terminal run:
    ```bash
    docker cp "models\Mistral-7B-v0.3.Q3_K_M.gguf" ollama:/models/
    ```
-8. 2. In this new terminal navigate to the 'AI_Module' directory using the command
+8. In this new terminal navigate to the 'AI_Module' directory using the command
    ```bash
    cd AI_Module
    ```
-10. Then in the  Run the following command to create the model configuration: 
-   ```bash
-   cat > /tmp/Modelfile-mistral <<EOF
-   FROM /models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
-   TEMPLATE """<s>[INST] {{ .Prompt }} [/INST]"""
-   PARAMETER temperature 0.1
-   PARAMETER top_p 0.9
-   PARAMETER stop "</s>"
-   PARAMETER stop "[/INST]"
-   PARAMETER stop "[INST]"
-   PARAMETER num_predict 200
-   EOF
+9. Now create a file named 'Modelfile-mistral' in the AI_Module Folder using the commad:
+    ```bash
+   touch Modelfile-mistral
    ```
-11. Create the Mistral model:
+10. Now click on the 'AI_Module' folder in the left pane of vs code.
+11. Then click on the Modelfile-mistral file to edit it and place the following content in it
+    
+12. Then in the  Run the following command to create the model configuration: 
    ```bash
-   ollama create mistral -f /tmp/Modelfile-mistral
+      FROM /models/Mistral-7B-v0.3.Q3_K_M.gguf
+      TEMPLATE \"\"\"<s>[INST] {{ .Prompt }} [/INST]\"\"\"
+      PARAMETER temperature 0.1
+      PARAMETER top_p 0.9
+      PARAMETER stop \"</s>\"
+      PARAMETER stop \"[/INST]\"
+      PARAMETER stop \"[INST]\"
+      PARAMETER num_predict 200
    ```
-11. Exit the container:
+13. Now copy the Mistral model file to docker container through the terminal using command:
    ```bash
-   exit
+   docker cp Modelfile-mistral ollama:/tmp/Modelfile-mistral
    ```
+14. Then create the model using the following command in the terminal:
+   ```bash
+   docker exec -it ollama ollama create mistral -f /tmp/Modelfile-mistral
+   ```
+15. Wait for the model to be created and up and running, your model is now deployed.
 
-### Terminal 2 - Python Setup
+### Python Setup
 
-1. Install spaCy:
+1. Install spaCy by writing the following command in terminal:
    ```bash
    pip install spacy
    ```
-2. Download the English language model:
+2. Then Download the English language model by writing the following command in terminal:
    ```bash
    python -m spacy download en_core_web_sm
    ```
-3. Install requirements:
+3. Install requirements by writing the following command in terminal:
    ```bash
-   pip install -r server.txt
+   pip install -r req.txt
    ```
+   
 4. Run the application:
    ```bash
    python run_both.py
    ```
+
+### Your Project is now UP and Running.
+
+1. open the ui and use the application at localhost:5173/
