@@ -48,24 +48,28 @@ G. Cloning:
 and wait for everything to load (takes about 5-10 mins)
 ## AI/ML Code Setup
 
+1. In the terminal header click on the '+' option and a new terminal is created.
 
-
-
-2. Navigate to the `AI_Module` directory using the command
+2. In this new terminal navigate to the 'AI_Module' directory using the command
    ```bash
    cd AI_Module
    ```
-3. The Run the following command:
+3. Then Run the following command:
    ```bash
    docker compose up --build
    ```
-4. Download the Mistral model from: [https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf)
-5. Place the downloaded model file in `CV_Scoring/models` directory
-6. Open another PowerShell terminal and run:
+4. In the project folder create a new folder named 'models'.   
+5. Download the Mistral model from: https://huggingface.co/bartowski/Mistral-7B-Instruct-v0.3-GGUF?show_file_info=Mistral-7B-Instruct-v0.3-Q3_K_M.gguf and place it in that folder.
+6. In the terminal header click on the '+' option and a new terminal is created.
+7. In this new terminal run:
    ```bash
-   docker exec -it ollama bash
+   docker cp "models\Mistral-7B-v0.3.Q3_K_M.gguf" ollama:/models/
    ```
-7. Run the following command to create the model configuration: 
+8. 2. In this new terminal navigate to the 'AI_Module' directory using the command
+   ```bash
+   cd AI_Module
+   ```
+10. Then in the  Run the following command to create the model configuration: 
    ```bash
    cat > /tmp/Modelfile-mistral <<EOF
    FROM /models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
@@ -78,11 +82,11 @@ and wait for everything to load (takes about 5-10 mins)
    PARAMETER num_predict 200
    EOF
    ```
-9. Create the Mistral model:
+11. Create the Mistral model:
    ```bash
    ollama create mistral -f /tmp/Modelfile-mistral
    ```
-10. Exit the container:
+11. Exit the container:
    ```bash
    exit
    ```
