@@ -1,7 +1,22 @@
 # Syberbyte Setup Instructions
 
-## Backend/Frontend Code Setup
 
+A. Download and Install Docker Desktop and Select Windows Container instead of Wsl in the setup.
+https://docs.docker.com/desktop/
+
+B. Download and Install Github Desktop and Login on it.
+https://desktop.github.com/download/
+
+C. Start Both Docker and Github Desktop
+
+D. Cloning:
+1. Make a folder to store your project
+2. Go to Github Desktop and From the Top right menu select 'File' and then select 'Clone repository'.
+3. A dialog box will appear, select 'URL' from the options on this dialog box and in the search field paste the URL: https://github.com/Muhdshayan/Syberbyte.git
+4. In the bottom of the box select the path of the folder you made to store your project.
+5. Click Clone. 
+
+. ## Backend/Frontend Code Setup
 1. Run the following command:
    ```bash
    git clone https://github.com/Muhdshayan/Syberbyte.git
@@ -9,7 +24,7 @@
 2. Navigate to the Syberbyte directory
 3. Run the following command:
    ```bash
-   git checkout -b Backend/Hamza origin/Backend/Hamza
+  
    ```
 4. Run the following command:
    ```bash
