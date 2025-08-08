@@ -1,58 +1,71 @@
 # Syberbyte Setup Instructions
 
+
+## Installation Process:
+
 A. Download and install vscode:
 https://code.visualstudio.com/
 
-B. Download and Install Docker Desktop and Select Windows Container instead of Wsl 2 integration During the setup:
+B. In the windows search bar search turn windows features on or off and click on it when the option appears, the tick all of the following features:
+1. Containers
+2. Hyper-V
+3. Windows Hypervisor Platform
+4. Virtual Machine Platform
+click ok and then restart the device.
+
+Note: If this fails enable Virtualization from the bios. 
+
+
+C. Download and Install Docker Desktop and Select Windows Container instead of Wsl 2 integration During the setup:
 https://docs.docker.com/desktop/
 
-C. Download and Install Github Desktop and Login on it after installation:
+D. Download and Install Github Desktop and Login on it after installation:
 https://desktop.github.com/download/
 
-D. Download and Install Python3.11 from the Windows Store and tick the 'ADD PATH variables' option if it appears.
+E. Download and Install Python3.11 from the Windows Store and tick the 'ADD PATH variables' option if it appears.
 
-E. Start Both Docker and Github Desktop
+F. Start Both Docker Desktop and Github Desktop applications.
 
-F. Cloning:
+G. Cloning:
 1. Make a folder to store your project
 2. Go to Github Desktop and From the Top right menu select 'File' and then select 'Clone repository'.
 3. A dialog box will appear, select 'URL' from the options on this dialog box and in the 'Repository URL or GitHub usemame and repository' field paste the URL: https://github.com/Muhdshayan/Syberbyte.git
 4. In the bottom of the box select the path of the folder you made to store your project.
 5. Click Clone and wait for it to complete.
-6. Now from the options click 
+6. Now from the options on github desktop click open in visual studio code.
+7. From the options in the top of vs code click on 'View' and then 'Terminal' and wait for the terminal to load.
 
-. ## Backend/Frontend Code Setup
+## Backend/Frontend Code Setup
 
-1. Run the following command:
+1. In the terminal write the following command:
+   ```bash
+   cd Application
+   ```
+2. Then Run the following command:
    ```bash
    docker compose up --watch --build
    ```
-
+and wait for everything to load (takes about 5-10 mins)
 ## AI/ML Code Setup
 
-### Terminal 1 - Docker Compose Setup
 
-1. Run the following command:
+
+
+2. Navigate to the `AI_Module` directory using the command
    ```bash
-   git clone https://github.com/Muhdshayan/Syberbyte.git
+   cd AI_Module
    ```
-2. Navigate to the Syberbyte directory
-3. Run the following command:
-   ```bash
-   git checkout -b Ai/Wisam origin/Ai/Wisam
-   ```
-4. Navigate to the `CV_Scoring` directory
-4. Run the following command:
+3. The Run the following command:
    ```bash
    docker compose up --build
    ```
-5. Download the Mistral model from: [https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf)
-6. Place the downloaded model file in `CV_Scoring/models` directory
-7. Open another PowerShell terminal and run:
+4. Download the Mistral model from: [https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf)
+5. Place the downloaded model file in `CV_Scoring/models` directory
+6. Open another PowerShell terminal and run:
    ```bash
    docker exec -it ollama bash
    ```
-8. Run the following command to create the model configuration:
+7. Run the following command to create the model configuration: 
    ```bash
    cat > /tmp/Modelfile-mistral <<EOF
    FROM /models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
