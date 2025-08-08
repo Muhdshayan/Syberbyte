@@ -1,82 +1,132 @@
 # Syberbyte Setup Instructions
 
+
+## Installation Process:
+
+A. Download and install vscode:
+https://code.visualstudio.com/
+
+B. In the windows search bar search turn windows features on or off and click on it when the option appears, the tick all of the following features:
+1. Containers
+2. Hyper-V
+3. Windows Hypervisor Platform
+4. Virtual Machine Platform
+click ok and then restart the device.
+
+Note: If this fails enable Virtualization from the bios. 
+
+
+C. Download and Install Docker Desktop and Select Windows Container instead of Wsl 2 integration During the setup:
+https://docs.docker.com/desktop/
+
+D. Download and Install Github Desktop and Login on it after installation:
+https://desktop.github.com/download/
+
+E. Download and Install Python3.11 from the Windows Store and tick the 'ADD PATH variables' option if it appears.
+
+F. Start Both Docker Desktop and Github Desktop applications.
+
+G. Cloning:
+1. Make a folder to store your project
+2. Go to Github Desktop and From the Top right menu select 'File' and then select 'Clone repository'.
+3. A dialog box will appear, select 'URL' from the options on this dialog box and in the 'Repository URL or GitHub usemame and repository' field paste the URL: https://github.com/Muhdshayan/Syberbyte.git
+4. In the bottom of the box select the path of the folder you made to store your project.
+5. Click Clone and wait for it to complete.
+6. Now from the options on github desktop click open in visual studio code.
+7. From the options in the top of vs code click on 'View' and then 'Terminal' and wait for the terminal to load.
+
 ## Backend/Frontend Code Setup
 
-1. Run the following command:
+1. In the terminal write the following command:
    ```bash
-   git clone https://github.com/Muhdshayan/Syberbyte.git
+   cd Application
    ```
-2. Navigate to the Syberbyte directory
-3. Run the following command:
-   ```bash
-   git checkout -b Backend/Hamza origin/Backend/Hamza
-   ```
-4. Run the following command:
+2. Then Run the following command:
    ```bash
    docker compose up --watch --build
    ```
-
+and wait for everything to load (takes about 5-10 mins)
 ## AI/ML Code Setup
 
-### Terminal 1 - Docker Compose Setup
+1. In the terminal header click on the '+' option and a new terminal is created.
 
-1. Run the following command:
+2. In this new terminal navigate to the 'AI_Module' directory using the command
    ```bash
-   git clone https://github.com/Muhdshayan/Syberbyte.git
+   cd AI_Module
    ```
-2. Navigate to the Syberbyte directory
-3. Run the following command:
-   ```bash
-   git checkout -b Ai/Wisam origin/Ai/Wisam
-   ```
-4. Navigate to the `CV_Scoring` directory
-4. Run the following command:
+3. Then Run the following command:
    ```bash
    docker compose up --build
    ```
-5. Download the Mistral model from: [https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf)
-6. Place the downloaded model file in `CV_Scoring/models` directory
-7. Open another PowerShell terminal and run:
-   ```bash
-   docker exec -it ollama bash
-   ```
-8. Run the following command to create the model configuration:
-   ```bash
-   cat > /tmp/Modelfile-mistral <<EOF
-   FROM /models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
-   TEMPLATE """<s>[INST] {{ .Prompt }} [/INST]"""
-   PARAMETER temperature 0.1
-   PARAMETER top_p 0.9
-   PARAMETER stop "</s>"
-   PARAMETER stop "[/INST]"
-   PARAMETER stop "[INST]"
-   PARAMETER num_predict 200
-   EOF
-   ```
-9. Create the Mistral model:
-   ```bash
-   ollama create mistral -f /tmp/Modelfile-mistral
-   ```
-10. Exit the container:
-   ```bash
-   exit
-   ```
+4. In the project folder create a new folder named 'models'.   
+5. Download the Mistral model from: https://huggingface.co/bartowski/Mistral-7B-Instruct-v0.3-GGUF?show_file_info=Mistral-7B-Instruct-v0.3-Q3_K_M.gguf and place it in that folder.
 
-### Terminal 2 - Python Setup
 
-1. Install spaCy:
+### NEW TERMINAL
+6. In the terminal header click on the '+' option and a new terminal is created.
+7. In this new terminal run:
+   ```bash
+   docker cp "models\Mistral-7B-v0.3.Q3_K_M.gguf" ollama:/models/
+   ```
+8. In this new terminal navigate to the 'AI_Module' directory using the command
+   ```bash
+   cd AI_Module
+   ```
+9. Now create a file named 'Modelfile-mistral' in the AI_Module Folder using the commad:
+    ```bash
+   touch Modelfile-mistral
+   ```
+10. Now click on the 'AI_Module' folder in the left pane of vs code.
+11. Then click on the Modelfile-mistral file to edit it and place the following content in it
+    
+12. Then in the  Run the following command to create the model configuration: 
+   ```bash
+      FROM /models/Mistral-7B-v0.3.Q3_K_M.gguf
+      TEMPLATE \"\"\"<s>[INST] {{ .Prompt }} [/INST]\"\"\"
+      PARAMETER temperature 0.1
+      PARAMETER top_p 0.9
+      PARAMETER stop \"</s>\"
+      PARAMETER stop \"[/INST]\"
+      PARAMETER stop \"[INST]\"
+      PARAMETER num_predict 200
+   ```
+13. Now copy the Mistral model file to docker container through the terminal using command:
+   ```bash
+   docker cp Modelfile-mistral ollama:/tmp/Modelfile-mistral
+   ```
+14. Then create the model using the following command in the terminal:
+   ```bash
+   docker exec -it ollama ollama create mistral -f /tmp/Modelfile-mistral
+   ```
+15. Wait for the model to be created and up and running, your model is now deployed.
+
+### Python Setup
+
+1. Install spaCy by writing the following command in terminal:
    ```bash
    pip install spacy
    ```
-2. Download the English language model:
+2. Then Download the English language model by writing the following command in terminal:
    ```bash
    python -m spacy download en_core_web_sm
    ```
-3. Install requirements:
+3. Install requirements by writing the following commands in terminal:
    ```bash
-   pip install -r server.txt
+   python -m venv venv
    ```
-4. Run the application:
+   ```bash
+   venv\Scripts\Activate.ps1
+   ```
+   ```bash
+   pip install -r req.txt
+   ```
+   
+5. Run the application:
    ```bash
    python run_both.py
    ```
+
+### Your Project is now UP and Running.
+
+1. open the ui and use the application by opening the browser and going to the link localhost:5173/
+2. Upload Resumes to see the *MAGIC*
