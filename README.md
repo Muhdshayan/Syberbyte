@@ -82,7 +82,9 @@ and wait for everything to load (takes about 5-10 mins)
 12. Then in the  Run the following command to create the model configuration: 
    ```bash
       FROM /models/Mistral-7B-v0.3.Q3_K_M.gguf
+
       TEMPLATE \"\"\"<s>[INST] {{ .Prompt }} [/INST]\"\"\"
+
       PARAMETER temperature 0.1
       PARAMETER top_p 0.9
       PARAMETER stop \"</s>\"
