@@ -50,15 +50,15 @@ and wait for everything to load (takes about 5-10 mins)
 
 1. In the terminal header click on the '+' option and a new terminal is created.
 
-2. In this new terminal navigate to the 'AI_Module' directory using the command
+2. In this new terminal navigate to the 'CV_Scoring' directory using the command
    ```bash
-   cd AI_Module
+   cd CV_Scoring
    ```
 3. Then Run the following command:
    ```bash
    docker compose up --build
    ```
-4. In the project folder create a new folder named 'models'.   
+4. In the project folder models copy the mistral model in it.   
 5. Download the Mistral model from: https://huggingface.co/bartowski/Mistral-7B-Instruct-v0.3-GGUF?show_file_info=Mistral-7B-Instruct-v0.3-Q3_K_M.gguf and place it in that folder.
 
 
@@ -68,15 +68,15 @@ and wait for everything to load (takes about 5-10 mins)
    ```bash
    docker cp "models\Mistral-7B-v0.3.Q3_K_M.gguf" ollama:/models/
    ```
-8. In this new terminal navigate to the 'AI_Module' directory using the command
+8. In this new terminal navigate to the 'CV_Scoring' directory using the command
    ```bash
-   cd AI_Module
+   cd CV_Scoring
    ```
-9. Now create a file named 'Modelfile-mistral' in the AI_Module Folder using the commad:
+9. Now create a file named 'Modelfile-mistral' in the CV_Scoring Folder using the commad:
     ```bash
    touch Modelfile-mistral
    ```
-10. Now click on the 'AI_Module' folder in the left pane of vs code.
+10. Now click on the 'CV_Scoring' folder in the left pane of vs code.
 11. Then click on the Modelfile-mistral file to edit it and place the following content in it
     
 12. Then in the  Run the following command to create the model configuration: 
