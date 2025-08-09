@@ -46,6 +46,13 @@ G. Cloning:
    docker compose up --watch --build
    ```
 and wait for everything to load (takes about 5-10 mins)
+
+3. open one more powershell terminal:
+   ```
+   cd Syberbyte
+   cd Application
+   docker compose exec backend python manage.py createsuperuser
+   ```
 ## AI/ML Code Setup
 
 1. In the terminal header click on the '+' option and a new terminal is created.
@@ -63,45 +70,33 @@ and wait for everything to load (takes about 5-10 mins)
 
 
 ### NEW TERMINAL
-6. In the terminal header click on the '+' option and a new terminal is created.
-7. In this new terminal run:
-   ```bash
-   docker cp "models\Mistral-7B-v0.3.Q3_K_M.gguf" ollama:/models/
-   ```
-8. In this new terminal navigate to the 'CV_Scoring' directory using the command
-   ```bash
-   cd CV_Scoring
-   ```
-9. Now create a file named 'Modelfile-mistral' in the CV_Scoring Folder using the commad:
-    ```bash
-   touch Modelfile-mistral
-   ```
-10. Now click on the 'CV_Scoring' folder in the left pane of vs code.
-11. Then click on the Modelfile-mistral file to edit it and place the following content in it
-    
-12. Then in the  Run the following command to create the model configuration: 
-   ```bash
-      FROM /models/Mistral-7B-v0.3.Q3_K_M.gguf
 
-      TEMPLATE \"\"\"<s>[INST] {{ .Prompt }} [/INST]\"\"\"
-
+# Access the Ollama container shell
+6. Run this command 
+   ```bash
+   docker exec -it ollama bash
+   ```
+7. Run this command 
+   ```bash
+      cat > /tmp/Modelfile-mistral <<EOF
+      FROM /models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
+      TEMPLATE """<s>[INST] {{ .Prompt }} [/INST]"""
+      TEMPLATE """<s>[INST] {{ .Prompt }} [/INST]"""
+      PARAMETER temperature 0.1
       PARAMETER temperature 0.1
       PARAMETER top_p 0.9
-      PARAMETER stop \"</s>\"
-      PARAMETER stop \"[/INST]\"
-      PARAMETER stop \"[INST]\"
+      PARAMETER stop "</s>"
+      PARAMETER stop "[/INST]"
+      PARAMETER stop "[INST]"
       PARAMETER num_predict 200
+      EOF
    ```
-13. Now copy the Mistral model file to docker container through the terminal using command:
+8. Run this command 
    ```bash
-   docker cp Modelfile-mistral ollama:/tmp/Modelfile-mistral
+   ollama create mistral -f /tmp/Modelfile-mistral
    ```
-14. Then create the model using the following command in the terminal:
-   ```bash
-   docker exec -it ollama ollama create mistral -f /tmp/Modelfile-mistral
-   ```
-15. Wait for the model to be created and up and running, your model is now deployed.
 
+   
 ### Python Setup
 
 1. Install spaCy by writing the following command in terminal:
